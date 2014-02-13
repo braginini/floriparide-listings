@@ -7,6 +7,7 @@
 	<groupId>com.floriparide.listings</groupId>
 	<artifactId>model</artifactId>
 	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
 	<properties>
 		<com.intellij.annotations.version>12.0</com.intellij.annotations.version>
