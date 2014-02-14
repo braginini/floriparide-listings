@@ -21,7 +21,7 @@ public class Rubric {
 
 	List<Long> children;
 
-	List<RubricAttribute> attributes;
+	List<AttributesGroup> attributesGroups;
 
 	public Rubric(Long id, String name, Long parentId, List<Long> children) {
 		this(name, parentId, children);
@@ -34,12 +34,12 @@ public class Rubric {
 		this.children = children;
 	}
 
-	public Rubric(Long id, String name, Long parentId, List<Long> children, List<RubricAttribute> attributes) {
+	public Rubric(Long id, String name, Long parentId, List<Long> children, List<AttributesGroup> attributesGroups) {
 		this.id = id;
 		this.name = name;
 		this.parentId = parentId;
 		this.children = children;
-		this.attributes = attributes;
+		this.attributesGroups = attributesGroups;
 	}
 
 	public Long getId() {
@@ -55,8 +55,8 @@ public class Rubric {
 	}
 
 	@NotNull
-	public List<RubricAttribute> getAttributes() {
-		return (this.attributes != null) ? this.attributes : Collections.<RubricAttribute>emptyList();
+	public List<AttributesGroup> getAttributesGroups() {
+		return (this.attributesGroups != null) ? this.attributesGroups : Collections.<AttributesGroup>emptyList();
 	}
 
 	@NotNull
