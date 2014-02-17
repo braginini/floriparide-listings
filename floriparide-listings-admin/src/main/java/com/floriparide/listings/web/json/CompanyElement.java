@@ -1,6 +1,9 @@
 package com.floriparide.listings.web.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.floriparide.listings.model.Company;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Mikhail Bragin
@@ -20,6 +23,13 @@ public class CompanyElement {
 	String promo;
 
 	public CompanyElement() {
+	}
+
+	public CompanyElement(@NotNull Company c) {
+		this.id = c.getId();
+		this.name = c.getName();
+		this.description = c.getDescription();
+		this.promo = c.getPromoText();
 	}
 
 	public String getName() {

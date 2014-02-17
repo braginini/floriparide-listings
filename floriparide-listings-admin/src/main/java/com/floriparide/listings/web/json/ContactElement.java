@@ -1,6 +1,12 @@
 package com.floriparide.listings.web.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.floriparide.listings.model.Contact;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Defines a web representation of {@link com.floriparide.listings.model.Contact} object
@@ -22,6 +28,23 @@ public class ContactElement {
 	String comment;
 
 	public ContactElement() {
+	}
+
+	public ContactElement(@NotNull Contact contact) {
+		this.id = contact.getId();
+		this.type = contact.getType().name();
+		this.value = contact.getValue();
+		this.comment = contact.getValue();
+	}
+
+
+	public static List<ContactElement> contactsToContactElements(@NotNull List<Contact> contacts) {
+		List<ContactElement> contactElements = new ArrayList<ContactElement>(contacts.size());
+		for (Contact c : contacts) {
+			contactElements.add(new ContactElement(c));
+		}
+
+		return contactElements;
 	}
 
 	public Long getId() {

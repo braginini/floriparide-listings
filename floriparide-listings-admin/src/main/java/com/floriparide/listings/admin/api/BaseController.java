@@ -14,7 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created by Mikhail Bragin
+ * Defines basic behaviour of a controller
+ *
+ * All API methods defined in classes that extends this abstract class should return result wrapped by {@link org.springframework.http.ResponseEntity} object which makes easier to
+ * manage {@link org.springframework.http.HttpStatus} status codes and {@link org.springframework.http.HttpHeaders} headers.
+ *
+ * @author Mikhail Bragin
  */
 public class BaseController {
 

@@ -36,71 +36,117 @@ public class Branch {
 	//only for paid
 	String article;
 
-	public Branch(Long id, String name, Long companyId, String description, Point point, List<Contact> contacts, String address, String office, String currency, List<PaymentOption> paymentOptions, List<Rubric> rubrics, Schedule schedule, String article) {
-		this.id = id;
-		this.name = name;
-		this.companyId = companyId;
-		this.description = description;
-		this.point = point;
-		this.contacts = contacts;
-		this.address = address;
-		this.office = office;
-		this.currency = currency;
-		this.paymentOptions = paymentOptions;
-		this.rubrics = rubrics;
-		this.schedule = schedule;
-		this.article = article;
-	}
+	List<Attribute> attributes;
 
 	public Long getId() {
 		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public Long getCompanyId() {
 		return companyId;
+	}
+
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public Point getPoint() {
 		return point;
+	}
+
+	public void setPoint(Point point) {
+		this.point = point;
 	}
 
 	public List<Contact> getContacts() {
 		return contacts;
 	}
 
+	public void setContacts(List<Contact> contacts) {
+		this.contacts = contacts;
+	}
+
 	public String getAddress() {
 		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public String getOffice() {
 		return office;
 	}
 
+	public void setOffice(String office) {
+		this.office = office;
+	}
+
 	public String getCurrency() {
 		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 
 	public List<PaymentOption> getPaymentOptions() {
 		return paymentOptions;
 	}
 
+	public void setPaymentOptions(List<PaymentOption> paymentOptions) {
+		this.paymentOptions = paymentOptions;
+	}
+
 	public List<Rubric> getRubrics() {
 		return rubrics;
+	}
+
+	public void setRubrics(List<Rubric> rubrics) {
+		this.rubrics = rubrics;
 	}
 
 	public Schedule getSchedule() {
 		return schedule;
 	}
 
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
+	}
+
 	public String getArticle() {
 		return article;
+	}
+
+	public void setArticle(String article) {
+		this.article = article;
+	}
+
+	public List<Attribute> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(List<Attribute> attributes) {
+		this.attributes = attributes;
 	}
 }

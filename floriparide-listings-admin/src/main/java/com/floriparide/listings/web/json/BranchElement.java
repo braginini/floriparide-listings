@@ -1,7 +1,10 @@
 package com.floriparide.listings.web.json;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.floriparide.listings.model.Branch;
+import com.floriparide.listings.model.PaymentOption;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,16 +29,16 @@ public class BranchElement {
 	List<RubricElement> rubrics;
 
 	@JsonProperty("")
-	List<RubricAttributeElement> attributes;
+	List<AttributeElement> attributes;
 
 	@JsonProperty("company_id")
 	Long companyId;
 
 	@JsonProperty("")
-	String lat;
+	Double lat;
 
 	@JsonProperty("")
-	String lon;
+	Double lon;
 
 	@JsonProperty("")
 	String address;
@@ -50,9 +53,29 @@ public class BranchElement {
 	String article;
 
 	@JsonProperty("payment_opts")
-	String paymentOptions; //comma-separated values
+	List<String> paymentOptions; //comma-separated values
 
 	public BranchElement() {
+	}
+
+	public BranchElement(Branch branch) {
+		this.id = branch.getId();
+		this.name = branch.getName();
+		this.description = branch.getDescription();
+		this.contacts = ContactElement.contactsToContactElements(branch.getContacts());
+		this.rubrics = RubricElement.rubricsToRubricElements(branch.getRubrics());
+		this.attributes = AttributeElement.attributesToAttributeElements(branch.getAttributes());
+		this.companyId = branch.getCompanyId();
+		this.lat = branch.getPoint().getLat();
+		this.lon = branch.getPoint().getLon();
+		this.address = branch.getAddress();
+		this.office = branch.getOffice();
+		this.currency = branch.getCurrency();
+		this.article = branch.getArticle();
+
+		this.paymentOptions = new ArrayList<String>();
+		for (PaymentOption po : branch.getPaymentOptions())
+			paymentOptions.add(po.name());
 	}
 
 	public String getName() {
@@ -103,22 +126,6 @@ public class BranchElement {
 		this.companyId = companyId;
 	}
 
-	public String getLat() {
-		return lat;
-	}
-
-	public void setLat(String lat) {
-		this.lat = lat;
-	}
-
-	public String getLon() {
-		return lon;
-	}
-
-	public void setLon(String lon) {
-		this.lon = lon;
-	}
-
 	public String getAddress() {
 		return address;
 	}
@@ -151,19 +158,35 @@ public class BranchElement {
 		this.article = article;
 	}
 
-	public String getPaymentOptions() {
-		return paymentOptions;
-	}
-
-	public void setPaymentOptions(String paymentOptions) {
-		this.paymentOptions = paymentOptions;
-	}
-
-	public List<RubricAttributeElement> getAttributes() {
+	public List<AttributeElement> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<RubricAttributeElement> attributes) {
+	public void setAttributes(List<AttributeElement> attributes) {
 		this.attributes = attributes;
+	}
+
+	public Double getLat() {
+		return lat;
+	}
+
+	public void setLat(Double lat) {
+		this.lat = lat;
+	}
+
+	public Double getLon() {
+		return lon;
+	}
+
+	public void setLon(Double lon) {
+		this.lon = lon;
+	}
+
+	public List<String> getPaymentOptions() {
+		return paymentOptions;
+	}
+
+	public void setPaymentOptions(List<String> paymentOptions) {
+		this.paymentOptions = paymentOptions;
 	}
 }

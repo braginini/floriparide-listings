@@ -1,9 +1,9 @@
 package com.floriparide.listings.admin.api;
 
-import com.floriparide.listings.admin.api.request.CreateBranchRequest;
 import com.floriparide.listings.admin.api.request.CreateCompanyRequest;
-import com.floriparide.listings.admin.api.request.UpdateBranchRequest;
 import com.floriparide.listings.admin.api.request.UpdateCompanyRequest;
+import com.floriparide.listings.admin.api.response.CompanyListResponse;
+import com.floriparide.listings.admin.api.response.CompanyResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,13 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Controller that defines all operations with organizations and branches.
- * All API methods should return result wrapped by {@link org.springframework.http.ResponseEntity} object which makes easier to
- * manage {@link org.springframework.http.HttpStatus} status codes and {@link org.springframework.http.HttpHeaders} headers.
- * <p/>
- * Since two entities ({@link com.floriparide.listings.model.Company} and {@link com.floriparide.listings.model.Branch})
- * are present in this controller here we use action+Entity as a request mapping, e.g. {@link this#createCompany(String, String, javax.servlet.http.HttpServletRequest)}
- * where 'create' is an action and 'Company' is an entity.
- * <p/>
+ *
  * All the methods should throw an exception that are handled and converted to proper JSON response in
  * {@link com.floriparide.listings.admin.api.BaseController#handleException(javax.servlet.http.HttpServletResponse, Exception)}
  *
@@ -44,7 +38,7 @@ public class CompanyController extends BaseController {
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/createCompany/")
+	@RequestMapping(method = RequestMethod.POST, value = "/create")
 	public ResponseEntity<Long> createCompany(@RequestBody CreateCompanyRequest request,
 	                                          HttpServletRequest httpRequest) throws Exception {
 
@@ -60,7 +54,7 @@ public class CompanyController extends BaseController {
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.DELETE, value = "/deleteCompany/")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/delete")
 	public ResponseEntity deleteCompany(
 			@RequestParam(value = "id", required = true) long id,
 			HttpServletRequest httpRequest) throws Exception {
@@ -77,7 +71,7 @@ public class CompanyController extends BaseController {
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/updateCompany/")
+	@RequestMapping(method = RequestMethod.POST, value = "/update")
 	public ResponseEntity updateCompany(
 			UpdateCompanyRequest request,
 			HttpServletRequest httpRequest) throws Exception {
@@ -86,56 +80,40 @@ public class CompanyController extends BaseController {
 	}
 
 	/**
-	 * Creates a branch
+	 * Gets a specific company
 	 *
-	 * @param request     {@link com.floriparide.listings.admin.api.request.CreateBranchRequest} branch data to create
-	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
-	 *                    (headers, statuses, etc)
-	 * @return an instance of {@link org.springframework.http.ResponseEntity} with an id of newly created organization
-	 * with a HTTP 200 or HTTP 204 status code
+	 * @param id The id of the company to get
+	 * @return an instance of {@link com.floriparide.listings.admin.api.response.CompanyResponse} wrapped with
+	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found, HTTP 404 status code
+	 * should be returned along with custom error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/createBranch/")
-	public ResponseEntity<Long> createBranch(CreateBranchRequest request,
-	                                         HttpServletRequest httpRequest) throws Exception {
-
-		return new ResponseEntity<Long>(1l, HttpStatus.OK);
-	}
-
-	/**
-	 * Deletes a specific branch
-	 *
-	 * @param id The id of the branch to delete
-	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
-	 * with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found, a HTTP 404 status should be returned along with custom
-	 * error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
-	@RequestMapping(method = RequestMethod.DELETE, value = "/deleteBranch/")
-	public ResponseEntity deleteBranch(
+	@RequestMapping(method = RequestMethod.GET, value = "/get")
+	public ResponseEntity<CompanyResponse> getCompany(
 			@RequestParam(value = "id", required = true) long id,
 			HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity(HttpStatus.OK);
+		return new ResponseEntity<CompanyResponse>(new CompanyResponse(), HttpStatus.OK);
 	}
 
 	/**
-	 * Updates a specific branch
+	 * Gets a list of companies
 	 *
-	 * @param request     {@link com.floriparide.listings.admin.api.request.UpdateBranchRequest} branch data to update
-	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
-	 *                    (headers, statuses, etc)
-	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
-	 * with a HTTP 200 or HTTP 204 status code. In case if resource was not found, a HTTP 404 status should be returned along with custom
-	 * error response. //todo create ExceptionResponse
+	 * @param start Start index of a company list
+	 * @param end End index of a company list
+	 * @return an instance of {@link com.floriparide.listings.admin.api.response.CompanyListResponse} wrapped with
+	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/updateBranch/")
-	public ResponseEntity updateBranch(UpdateBranchRequest request,
-	                                         HttpServletRequest httpRequest) throws Exception {
+	@RequestMapping(method = RequestMethod.GET, value = "/list")
+	public ResponseEntity<CompanyListResponse> listCompanies(
+			@RequestParam(value = "start", required = true) int start,
+			@RequestParam(value = "end", required = true) int end,
+			HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity(HttpStatus.OK);
+		return new ResponseEntity<CompanyListResponse>(new  CompanyListResponse(), HttpStatus.OK);
 	}
+
 
 
 }
