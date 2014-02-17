@@ -33,7 +33,7 @@ public class BranchController extends BaseController {
 	 * with a HTTP 200 or HTTP 204 status code
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/create/")
+	@RequestMapping(method = RequestMethod.POST, value = "/create")
 	public ResponseEntity<Long> createBranch(CreateBranchRequest request,
 	                                         HttpServletRequest httpRequest) throws Exception {
 
@@ -45,11 +45,11 @@ public class BranchController extends BaseController {
 	 *
 	 * @param id The id of the branch to delete
 	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
-	 * with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found, a HTTP 404 status should be returned along with custom
+	 * with a HTTP 200 or HTTP 204 status code. In case if resource was not found, a HTTP 404 status should be returned along with custom
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.DELETE, value = "/delete/")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/delete")
 	public ResponseEntity deleteBranch(
 			@RequestParam(value = "id", required = true) long id,
 			HttpServletRequest httpRequest) throws Exception {
@@ -68,7 +68,7 @@ public class BranchController extends BaseController {
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/update/")
+	@RequestMapping(method = RequestMethod.POST, value = "/update")
 	public ResponseEntity updateBranch(UpdateBranchRequest request,
 	                                   HttpServletRequest httpRequest) throws Exception {
 
