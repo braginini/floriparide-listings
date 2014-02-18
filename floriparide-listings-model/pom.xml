@@ -10,22 +10,13 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>floriparide-listings-model</artifactId>
+	<artifactId>model</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
-	<properties>
-		<war-plugin.version>2.1.1</war-plugin.version>
-		<intellij.annotations.version>12.0</intellij.annotations.version>
-		<maven.plugin.version>2.3.2</maven.plugin.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.source.version>1.6</project.source.version>
-		<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
-	</properties>
-
 	<build>
-		<finalName>floriparide-listings-admin-${project.version}</finalName>
+		<finalName>floriparide-listings-model-${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -62,16 +53,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<dependencies>
-
-		<dependency>
-			<groupId>com.intellij</groupId>
-			<artifactId>annotations</artifactId>
-			<version>${intellij.annotations.version}</version>
-		</dependency>
-
-	</dependencies>
 
 
 </project>

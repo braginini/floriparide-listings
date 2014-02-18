@@ -10,13 +10,12 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>floriparide-listings-admin</artifactId>
+	<artifactId>admin</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<name>FloripaRide Listings Admin</name>
 	<packaging>war</packaging>
 
 	<properties>
-		<com.floriparide.listings.model.version>1.0-SNAPSHOT</com.floriparide.listings.model.version>
 		<spring.version>4.0.0.RELEASE</spring.version>
 		<jackson.version>2.3.0</jackson.version>
 		<war-plugin.version>2.1.1</war-plugin.version>
@@ -71,14 +70,24 @@
 		</plugins>
 	</build>
 
-
-
 	<dependencies>
 
 		<dependency>
 			<groupId>com.floriparide.listings</groupId>
 			<artifactId>model</artifactId>
 			<version>${com.floriparide.listings.model.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.floriparide.listings</groupId>
+			<artifactId>floriparide-listings-dao-api</artifactId>
+			<version>${com.floriparide.listings.dao.api.vesrion}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.floriparide.listings</groupId>
+			<artifactId>floriparide-listings-dao-postgres</artifactId>
+			<version>${com.floriparide.listings.dao.postgres.vesrion}</version>
 		</dependency>
 
 		<!--spring dependencies-->

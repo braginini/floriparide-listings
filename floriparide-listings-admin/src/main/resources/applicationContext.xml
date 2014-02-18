@@ -9,6 +9,7 @@
 
     <context:component-scan base-package="com.floriparide.listings.admin"/>
     <context:property-placeholder location="classpath*:app.properties"/>
+	<import resource="applicationContext-dao.xml"/>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
@@ -35,38 +36,5 @@
           class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
         <property name="attributeSource" ref="attributeSource"/>
     </bean>
-
-	<!--<bean id="namedParamsJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-		<constructor-arg ref="dataSource"/>
-	</bean>
-	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-		<constructor-arg ref="dataSource"/>
-	</bean>
-
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-		<property name="driverClassName" value="${jdbc.driverClassName}"/>
-		<property name="url" value="${jdbc.url}"/>
-		&lt;!&ndash;<property name="username" value="${jdbc.username}"/>
-		<property name="password" value="${jdbc.password}"/>&ndash;&gt;
-
-		<property name="initialSize" value="2" />
-		<property name="maxActive" value="2" />
-		<property name="maxIdle" value="2" />
-
-		<property name="maxWait" value="60000" />
-
-		&lt;!&ndash;<property name="defaultAutoCommit" value="false" />&ndash;&gt;
-
-		&lt;!&ndash; тут такая штука для того, чтобы можно было достать родной connection от постгрескла и запихать его в CopyManager &ndash;&gt;
-		<property name="accessToUnderlyingConnectionAllowed" value="true" />
-	</bean>-->
-
-	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
-		<property name="messageConverters">
-			<list>
-				<bean class="org.springframework.http.converter.xml.SourceHttpMessageConverter"/>
-			</list>
-		</property>
-	</bean>
 
 </beans>

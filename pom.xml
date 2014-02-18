@@ -18,6 +18,8 @@
 
 	<properties>
 		<com.floriparide.listings.model.version>1.0-SNAPSHOT</com.floriparide.listings.model.version>
+		<com.floriparide.listings.dao.postgres.vesrion>1.0-SNAPSHOT</com.floriparide.listings.dao.postgres.vesrion>
+		<com.floriparide.listings.dao.api.vesrion>1.0-SNAPSHOT</com.floriparide.listings.dao.api.vesrion>
 		<spring.version>4.0.0.RELEASE</spring.version>
 		<slf4j.version>1.6.4</slf4j.version>
 		<intellij.annotations.version>12.0</intellij.annotations.version>
@@ -28,12 +30,6 @@
 	</properties>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>com.floriparide.listings</groupId>
-			<artifactId>model</artifactId>
-			<version>${com.floriparide.listings.model.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
