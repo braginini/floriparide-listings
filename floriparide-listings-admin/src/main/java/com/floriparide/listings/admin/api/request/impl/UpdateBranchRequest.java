@@ -1,4 +1,4 @@
-package com.floriparide.listings.admin.api.request;
+package com.floriparide.listings.admin.api.request.impl;
 
 /**
  * @author Mikhail Bragin

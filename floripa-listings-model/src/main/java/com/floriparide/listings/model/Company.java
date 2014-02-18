@@ -19,6 +19,9 @@ public class Company {
 
 	Integer branchesCount;
 
+	public Company() {
+	}
+
 	public Company(Long projectId, String name, String description, String promoText, Integer branchesCount) {
 		this.projectId = projectId;
 		this.name = name;

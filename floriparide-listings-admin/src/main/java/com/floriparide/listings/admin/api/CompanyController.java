@@ -1,9 +1,10 @@
 package com.floriparide.listings.admin.api;
 
-import com.floriparide.listings.admin.api.request.CreateCompanyRequest;
-import com.floriparide.listings.admin.api.request.UpdateCompanyRequest;
-import com.floriparide.listings.admin.api.response.CompanyListResponse;
-import com.floriparide.listings.admin.api.response.CompanyResponse;
+import com.floriparide.listings.admin.api.request.impl.CreateCompanyRequest;
+import com.floriparide.listings.admin.api.request.impl.UpdateCompanyRequest;
+import com.floriparide.listings.admin.api.response.impl.CompanyListResponse;
+import com.floriparide.listings.admin.api.response.impl.CompanyResponse;
+import com.floriparide.listings.model.Company;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Arrays;
 
 /**
  * Controller that defines all operations with organizations and branches.
@@ -30,7 +33,7 @@ public class CompanyController extends BaseController {
 	/**
 	 * Creates a company
 	 *
-	 * @param request     {@link com.floriparide.listings.admin.api.request.CreateCompanyRequest} request object
+	 * @param request     {@link com.floriparide.listings.admin.api.request.impl.CreateCompanyRequest} request object
 	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
 	 *                    (headers, statuses, etc)
 	 * @return an instance of {@link org.springframework.http.ResponseEntity} with an id of newly created organization
@@ -38,7 +41,8 @@ public class CompanyController extends BaseController {
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/create")
+	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity<Long> createCompany(@RequestBody CreateCompanyRequest request,
 	                                          HttpServletRequest httpRequest) throws Exception {
 
@@ -54,7 +58,8 @@ public class CompanyController extends BaseController {
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.DELETE, value = "/delete")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity deleteCompany(
 			@RequestParam(value = "id", required = true) long id,
 			HttpServletRequest httpRequest) throws Exception {
@@ -65,13 +70,14 @@ public class CompanyController extends BaseController {
 	/**
 	 * Updates a specific company
 	 *
-	 * @param request {@link com.floriparide.listings.admin.api.request.UpdateCompanyRequest} company data to update
+	 * @param request {@link com.floriparide.listings.admin.api.request.impl.UpdateCompanyRequest} company data to update
 	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
 	 * with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found HTTP 404 should be returned along with custom
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/update")
+	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity updateCompany(
 			UpdateCompanyRequest request,
 			HttpServletRequest httpRequest) throws Exception {
@@ -83,17 +89,18 @@ public class CompanyController extends BaseController {
 	 * Gets a specific company
 	 *
 	 * @param id The id of the company to get
-	 * @return an instance of {@link com.floriparide.listings.admin.api.response.CompanyResponse} wrapped with
+	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.CompanyResponse} wrapped with
 	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found, HTTP 404 status code
 	 * should be returned along with custom error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/get")
+	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity<CompanyResponse> getCompany(
 			@RequestParam(value = "id", required = true) long id,
 			HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<CompanyResponse>(new CompanyResponse(), HttpStatus.OK);
+		return new ResponseEntity<CompanyResponse>(new CompanyResponse(new Company()), HttpStatus.OK);
 	}
 
 	/**
@@ -101,17 +108,18 @@ public class CompanyController extends BaseController {
 	 *
 	 * @param start Start index of a company list
 	 * @param end End index of a company list
-	 * @return an instance of {@link com.floriparide.listings.admin.api.response.CompanyListResponse} wrapped with
+	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.CompanyListResponse} wrapped with
 	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/list")
+	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity<CompanyListResponse> listCompanies(
 			@RequestParam(value = "start", required = true) int start,
 			@RequestParam(value = "end", required = true) int end,
 			HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<CompanyListResponse>(new  CompanyListResponse(), HttpStatus.OK);
+		return new ResponseEntity<CompanyListResponse>(new CompanyListResponse(0, 1, Arrays.asList(new Company())), HttpStatus.OK);
 	}
 
 

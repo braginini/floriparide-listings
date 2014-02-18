@@ -1,11 +1,10 @@
 package com.floriparide.listings.admin.api;
 
-import com.floriparide.listings.admin.api.request.CreateRubricRequest;
-import com.floriparide.listings.admin.api.request.UpdateRubricRequest;
-import com.floriparide.listings.admin.api.response.BranchListResponse;
-import com.floriparide.listings.admin.api.response.BranchResponse;
-import com.floriparide.listings.admin.api.response.RubricListResponse;
-import com.floriparide.listings.admin.api.response.RubricResponse;
+import com.floriparide.listings.admin.api.request.impl.CreateRubricRequest;
+import com.floriparide.listings.admin.api.request.impl.UpdateRubricRequest;
+import com.floriparide.listings.admin.api.response.impl.RubricListResponse;
+import com.floriparide.listings.admin.api.response.impl.RubricResponse;
+import com.floriparide.listings.model.Rubric;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Arrays;
 
 /**
  * Created by Mikhail Bragin
@@ -26,14 +27,15 @@ public class RubricController extends BaseController {
 	/**
 	 * Creates a rubric
 	 *
-	 * @param request     {@link com.floriparide.listings.admin.api.request.CreateRubricRequest} rubric data to create
+	 * @param request     {@link com.floriparide.listings.admin.api.request.impl.CreateRubricRequest} rubric data to create
 	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
 	 *                    (headers, statuses, etc)
 	 * @return an instance of {@link org.springframework.http.ResponseEntity} with an id of newly created rubric
 	 * with a HTTP 200 or HTTP 204 status code
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/create")
+	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity<Long> createRubric(CreateRubricRequest request,
 	                                         HttpServletRequest httpRequest) throws Exception {
 
@@ -49,7 +51,8 @@ public class RubricController extends BaseController {
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.DELETE, value = "/delete")
+	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity deleteRubric(
 			@RequestParam(value = "id", required = true) long id,
 			HttpServletRequest httpRequest) throws Exception {
@@ -60,7 +63,7 @@ public class RubricController extends BaseController {
 	/**
 	 * Updates a specific rubric
 	 *
-	 * @param request     {@link com.floriparide.listings.admin.api.request.UpdateRubricRequest} rubric data to update
+	 * @param request     {@link com.floriparide.listings.admin.api.request.impl.UpdateRubricRequest} rubric data to update
 	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
 	 *                    (headers, statuses, etc)
 	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
@@ -68,7 +71,8 @@ public class RubricController extends BaseController {
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "/update")
+	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity updateRubric(UpdateRubricRequest request,
 	                                   HttpServletRequest httpRequest) throws Exception {
 
@@ -79,18 +83,19 @@ public class RubricController extends BaseController {
 	 * Gets a specific rubric
 	 *
 	 * @param id The id of the branch to get
-	 * @return an instance of {@link com.floriparide.listings.admin.api.response.RubricResponse} wrapped with
+	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.RubricResponse} wrapped with
 	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * In case of resource was not found, HTTP 404 status code
 	 * should be returned along with custom error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/get")
+	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity<RubricResponse> getRubric(
 			@RequestParam(value = "id", required = true) long id,
 			HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<RubricResponse>(new RubricResponse(), HttpStatus.OK);
+		return new ResponseEntity<RubricResponse>(new RubricResponse(new Rubric()), HttpStatus.OK);
 	}
 
 	/**
@@ -98,16 +103,17 @@ public class RubricController extends BaseController {
 	 *
 	 * @param start Start index of a branch list
 	 * @param end End index of a branch list
-	 * @return an instance of {@link com.floriparide.listings.admin.api.response.RubricListResponse} wrapped with
+	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.RubricListResponse} wrapped with
 	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/list")
+	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity<RubricListResponse> listRubrics(
 			@RequestParam(value = "start", required = true) int start,
 			@RequestParam(value = "end", required = true) int end,
 			HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<RubricListResponse>(new  RubricListResponse(), HttpStatus.OK);
+		return new ResponseEntity<RubricListResponse>(new RubricListResponse(0, 1, Arrays.asList(new Rubric())), HttpStatus.OK);
 	}
 }

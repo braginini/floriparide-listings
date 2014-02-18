@@ -5,6 +5,9 @@ import com.floriparide.listings.model.Company;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Mikhail Bragin
  */
@@ -22,6 +25,12 @@ public class CompanyElement {
 	@JsonProperty("")
 	String promo;
 
+	@JsonProperty("project_id")
+	Long projectId;
+
+	@JsonProperty("branches_count")
+	Integer branchesCount;
+
 	public CompanyElement() {
 	}
 
@@ -30,6 +39,17 @@ public class CompanyElement {
 		this.name = c.getName();
 		this.description = c.getDescription();
 		this.promo = c.getPromoText();
+		this.projectId = c.getProjectId();
+		this.branchesCount = c.getBranchesCount();
+	}
+
+	public static List<CompanyElement> companiesToElements(@NotNull List<Company> companies) {
+		ArrayList<CompanyElement> companyElements = new ArrayList<CompanyElement>(companies.size());
+
+		for (Company c : companies)
+			companyElements.add(new CompanyElement(c));
+
+		return companyElements;
 	}
 
 	public String getName() {
@@ -62,5 +82,21 @@ public class CompanyElement {
 
 	public void setPromo(String promo) {
 		this.promo = promo;
+	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
+	}
+
+	public Integer getBranchesCount() {
+		return branchesCount;
+	}
+
+	public void setBranchesCount(Integer branchesCount) {
+		this.branchesCount = branchesCount;
 	}
 }
