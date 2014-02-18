@@ -56,8 +56,8 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>com.floriparide.listings.dao</groupId>
-			<artifactId>api</artifactId>
+			<groupId>com.floriparide.listings</groupId>
+			<artifactId>dao-api</artifactId>
 			<version>${com.floriparide.listings.dao.api.vesrion}</version>
 		</dependency>
 

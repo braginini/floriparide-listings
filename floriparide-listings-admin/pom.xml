@@ -80,13 +80,7 @@
 
 		<dependency>
 			<groupId>com.floriparide.listings</groupId>
-			<artifactId>floriparide-listings-dao-api</artifactId>
-			<version>${com.floriparide.listings.dao.api.vesrion}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.floriparide.listings</groupId>
-			<artifactId>floriparide-listings-dao-postgres</artifactId>
+			<artifactId>dao-postgres</artifactId>
 			<version>${com.floriparide.listings.dao.postgres.vesrion}</version>
 		</dependency>
 
