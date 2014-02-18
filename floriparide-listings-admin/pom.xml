@@ -4,8 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.floriparide.listings</groupId>
-	<artifactId>admin</artifactId>
+	<parent>
+		<groupId>com.floriparide.listings</groupId>
+		<artifactId>root</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>floriparide-listings-admin</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<name>FloripaRide Listings Admin</name>
 	<packaging>war</packaging>

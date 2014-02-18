@@ -39,23 +39,47 @@ public class Company {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
+	}
+
 	public String getName() {
 		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 	public String getPromoText() {
 		return promoText;
+	}
+
+	public void setPromoText(String promoText) {
+		this.promoText = promoText;
 	}
 
 	public Integer getBranchesCount() {
 		return branchesCount;
 	}
 
-	public Long getProjectId() {
-		return projectId;
+	public void setBranchesCount(Integer branchesCount) {
+		this.branchesCount = branchesCount;
 	}
 }

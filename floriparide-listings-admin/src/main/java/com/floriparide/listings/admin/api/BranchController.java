@@ -103,8 +103,8 @@ public class BranchController extends BaseController {
 	/**
 	 * Gets a list of branches
 	 *
-	 * @param start Start index of a branch list
-	 * @param end End index of a branch list
+	 * @param start Start index of a branch list (inclusive)
+	 * @param end End index of a branch list (exclusive)
 	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.BranchListResponse} wrapped with
 	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
