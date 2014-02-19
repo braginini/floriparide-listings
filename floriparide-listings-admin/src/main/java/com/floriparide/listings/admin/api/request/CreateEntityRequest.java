@@ -2,6 +2,8 @@ package com.floriparide.listings.admin.api.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Basic class for Create entity requests.
  *
@@ -10,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public abstract class CreateEntityRequest<T> implements IRequest {
 
 	@JsonProperty("")
-	T entity;
+	protected T entity;
 
 	protected CreateEntityRequest() {
 	}

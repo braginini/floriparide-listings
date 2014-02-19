@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.annotation.PostConstruct;
@@ -50,9 +52,10 @@ public abstract class BaseController {
 	 */
 	@ExceptionHandler(Exception.class)
 	public void handleException(HttpServletResponse response,  Exception exception) throws IOException {
+		exception.printStackTrace();
 		response.addHeader("X-application-error-code", "some_code");
 		response.addHeader("X-application-error-subcode", "some_subcode");
-		/*jsonConverter.write(new ExceptionResponse("exception"), MediaType.APPLICATION_JSON, new ServletServerHttpResponse(response));*/
+		jsonConverter.write("{\"error\":\"exception_body\"}", MediaType.APPLICATION_JSON, new ServletServerHttpResponse(response));
 
 	}
 }

@@ -4,8 +4,11 @@ import com.floriparide.listings.admin.api.request.impl.CreateCompanyRequest;
 import com.floriparide.listings.admin.api.request.impl.UpdateCompanyRequest;
 import com.floriparide.listings.admin.api.response.impl.CompanyListResponse;
 import com.floriparide.listings.admin.api.response.impl.CompanyResponse;
+import com.floriparide.listings.dao.ICompanyDao;
 import com.floriparide.listings.model.Company;
+import com.floriparide.listings.web.json.CompanyElement;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Arrays;
+import java.util.List;
+
+import junit.framework.Assert;
 
 /**
  * Controller that defines all operations with organizations and branches.
@@ -29,6 +35,9 @@ import java.util.Arrays;
 @Controller
 @RequestMapping("/admin/v1/company")
 public class CompanyController extends BaseController {
+
+	@Autowired
+	ICompanyDao companyDao;
 
 	/**
 	 * Creates a company
@@ -46,7 +55,11 @@ public class CompanyController extends BaseController {
 	public ResponseEntity<Long> createCompany(@RequestBody CreateCompanyRequest request,
 	                                          HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<Long>(1l, HttpStatus.OK);
+		request.validate();
+		CompanyElement companyElement = request.getEntity();
+		long id = companyDao.create(companyElement.getProjectId(), companyElement.getModel());
+
+		return new ResponseEntity<Long>(id, HttpStatus.OK);
 	}
 
 	/**
@@ -62,7 +75,10 @@ public class CompanyController extends BaseController {
 			headers = "Accept=application/json")
 	public ResponseEntity deleteCompany(
 			@RequestParam(value = "id", required = true) long id,
+			@RequestParam(value = "project_id", required = true) long projectId,
 			HttpServletRequest httpRequest) throws Exception {
+
+		companyDao.delete(projectId, id);
 
 		return new ResponseEntity(HttpStatus.OK);
 	}
@@ -82,6 +98,9 @@ public class CompanyController extends BaseController {
 			UpdateCompanyRequest request,
 			HttpServletRequest httpRequest) throws Exception {
 
+		Company company = request.getEntity().getModel();
+		companyDao.update(company.getProjectId(), company);
+
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
@@ -98,9 +117,15 @@ public class CompanyController extends BaseController {
 			headers = "Accept=application/json")
 	public ResponseEntity<CompanyResponse> getCompany(
 			@RequestParam(value = "id", required = true) long id,
+			@RequestParam(value = "project_id", required = true) long projectId,
 			HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<CompanyResponse>(new CompanyResponse(new Company()), HttpStatus.OK);
+		Company company = companyDao.get(projectId, id);
+
+		if (company == null)
+			return new ResponseEntity<CompanyResponse>(HttpStatus.NOT_FOUND);
+
+		return new ResponseEntity<CompanyResponse>(new CompanyResponse(company), HttpStatus.OK);
 	}
 
 	/**
@@ -117,9 +142,12 @@ public class CompanyController extends BaseController {
 	public ResponseEntity<CompanyListResponse> listCompanies(
 			@RequestParam(value = "start", required = true) int start,
 			@RequestParam(value = "end", required = true) int end,
+			@RequestParam(value = "project_id", required = true) long projectId,
 			HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<CompanyListResponse>(new CompanyListResponse(0, 1, Arrays.asList(new Company())), HttpStatus.OK);
+		List<Company> companies = companyDao.getCompanies(projectId);
+
+		return new ResponseEntity<CompanyListResponse>(new CompanyListResponse(0, companies.size(), companies), HttpStatus.OK);
 	}
 
 

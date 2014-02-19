@@ -3,6 +3,7 @@ package com.floriparide.listings.dao;
 import com.floriparide.listings.model.Company;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,7 +21,7 @@ public interface ICompanyDao {
 	 * @return an id of newly created company
 	 * @throws IOException if I/O error occurred
 	 */
-	public long create(long projectId, @NotNull Company company) throws IOException;
+	public long create(long projectId, @NotNull Company company) throws Exception;
 
 	/**
 	 * Deletes a record of a company {@link com.floriparide.listings.model.Company }in a database
@@ -29,17 +30,16 @@ public interface ICompanyDao {
 	 * @param companyId an id of the company to delete
 	 * @throws IOException if I/O error occurred
 	 */
-	public void delete(long projectId, long companyId) throws IOException;
+	public void delete(long projectId, long companyId) throws Exception;
 
 	/**
 	 * Updates a record of a company {@link com.floriparide.listings.model.Company }in a database
 	 *
-	 *  @param projectId the id of the {@link com.floriparide.listings.model.Project} to look in
+	 * @param projectId the id of the {@link com.floriparide.listings.model.Project} to look in
 	 * @param company {@link com.floriparide.listings.model.Company} to update
-	 * @return an id of newly created company
 	 * @throws IOException if I/O error occurred
 	 */
-	public long update(long projectId, @NotNull Company company) throws IOException;
+	public void update(long projectId, @NotNull Company company) throws Exception;
 
 	/**
 	 * Gets a company
@@ -49,8 +49,8 @@ public interface ICompanyDao {
 	 * @return a {@link com.floriparide.listings.model.Company}
 	 * @throws IOException if I/O error occurred
 	 */
-	@NotNull
-	public Company get(long projectId, long companyId) throws IOException;
+	@Nullable
+	public Company get(long projectId, long companyId) throws Exception;
 
 	/**
 	 * Gets a part of a list of the companies {@link com.floriparide.listings.model.Company}
@@ -62,7 +62,7 @@ public interface ICompanyDao {
 	 * @throws IOException if I/O error occurred
 	 */
 	@NotNull
-	public List<Company> getCompanies(long projectId, int start, int end) throws IOException;
+	public List<Company> getCompanies(long projectId, int start, int end) throws Exception;
 
 	/**
 	 * Gets a list of all companies {@link com.floriparide.listings.model.Company}
@@ -72,5 +72,6 @@ public interface ICompanyDao {
 	 * @throws IOException if I/O error occurred
 	 */
 	@NotNull
-	public List<Company> getCompanies(long projectId) throws IOException;
+	//todo add order
+	public List<Company> getCompanies(long projectId) throws Exception;
 }

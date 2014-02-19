@@ -1,5 +1,6 @@
 package com.floriparide.listings.web.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.model.Company;
 
@@ -50,6 +51,19 @@ public class CompanyElement {
 			companyElements.add(new CompanyElement(c));
 
 		return companyElements;
+	}
+
+	@NotNull
+	@JsonIgnore
+	public Company getModel() {
+		Company company = new Company();
+		company.setName(this.name);
+		company.setDescription(this.description);
+		company.setProjectId(this.projectId);
+		company.setId(this.id);
+		company.setPromoText(this.promo);
+
+		return company;
 	}
 
 	public String getName() {

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="1" author="mbragin">
+		<createTable tableName="project">
+			<column name="id" type="bigserial">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="2" author="mbragin">
+		<createTable tableName="company">
+			<column name="id" type="bigserial">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="varchar (500)">
+				<constraints unique="true" nullable="false"/>
+			</column>
+			<column name="description" type="varchar"/>
+			<column name="promo" type="varchar"/>
+			<column name="project_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="company"
+		                         baseColumnNames="project_id"
+		                         constraintName="company_project_id"
+		                         referencedTableName="project"
+		                         referencedColumnNames="id" />
+	</changeSet>
+
+	<changeSet id="3" author="mbragin">
+		<insert tableName="project">
+			<column name="id" value="0"/>
+		</insert>
+	</changeSet>
+
+</databaseChangeLog>
