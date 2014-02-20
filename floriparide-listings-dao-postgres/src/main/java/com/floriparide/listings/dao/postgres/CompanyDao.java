@@ -18,12 +18,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.util.Assert;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Mikhail Bragin
@@ -139,5 +134,17 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 		return getNamedJdbcTemplate().query(query,
 				new MapSqlParameterSource("project_id", projectId),
 				new CompanyRowMapper());
+	}
+
+	@Override
+	public int size(long projectId) throws Exception {
+
+		String query = "SELECT COUNT(*) FROM company WHERE " + Schema.FIELD_PROJECT_ID_TABLE_COMPANY + " = :project_id";
+
+		return getNamedJdbcTemplate().queryForObject(query,
+				new MapSqlParameterSource("project_id", projectId),
+				Integer.class);
+
+
 	}
 }

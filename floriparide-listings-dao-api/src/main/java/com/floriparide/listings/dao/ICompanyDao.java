@@ -74,4 +74,13 @@ public interface ICompanyDao {
 	@NotNull
 	//todo add order
 	public List<Company> getCompanies(long projectId) throws Exception;
+
+	/**
+	 * Gets company table size (count)
+	 *
+	 * @param projectId the id of the {@link com.floriparide.listings.model.Project} to look in
+	 * @return the size of the companies list
+	 * @throws Exception
+	 */
+	public int size(long projectId) throws Exception;
 }
