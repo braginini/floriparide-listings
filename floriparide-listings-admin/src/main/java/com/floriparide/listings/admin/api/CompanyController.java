@@ -1,5 +1,6 @@
 package com.floriparide.listings.admin.api;
 
+import com.floriparide.listings.admin.api.request.PagingRequest;
 import com.floriparide.listings.admin.api.request.impl.CreateCompanyRequest;
 import com.floriparide.listings.admin.api.request.impl.UpdateCompanyRequest;
 import com.floriparide.listings.admin.api.response.impl.CompanyListResponse;
@@ -16,13 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.Arrays;
 import java.util.List;
-
-import junit.framework.Assert;
 
 /**
  * Controller that defines all operations with organizations and branches.
@@ -131,8 +130,7 @@ public class CompanyController extends BaseController {
 	/**
 	 * Gets a list of companies
 	 *
-	 * @param start Start index of a company list
-	 * @param end End index of a company list
+	 * @param request {@link com.floriparide.listings.admin.api.request.PagingRequest} with start and end indexes
 	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.CompanyListResponse} wrapped with
 	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
@@ -140,12 +138,13 @@ public class CompanyController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity<CompanyListResponse> listCompanies(
-			@RequestParam(value = "start", required = true) int start,
-			@RequestParam(value = "end", required = true) int end,
+			PagingRequest request,
 			@RequestParam(value = "project_id", required = true) long projectId,
 			HttpServletRequest httpRequest) throws Exception {
 
-		List<Company> companies = companyDao.getCompanies(projectId);
+		request.validate();
+
+		List<Company> companies = companyDao.getCompanies(projectId, request.getStart(), request.getEnd());
 
 		return new ResponseEntity<CompanyListResponse>(new CompanyListResponse(0, companies.size(), companies), HttpStatus.OK);
 	}

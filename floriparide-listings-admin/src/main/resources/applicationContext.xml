@@ -9,7 +9,7 @@
 
     <context:component-scan base-package="com.floriparide.listings.admin"/>
     <context:property-placeholder location="classpath*:app.properties,
-                                            classpath*:db.properties"/>
+                                            classpath*:postgres.properties"/>
 	<import resource="applicationContext-dao.xml"/>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>

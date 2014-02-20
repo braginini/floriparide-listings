@@ -55,7 +55,7 @@ public abstract class BaseController {
 		exception.printStackTrace();
 		response.addHeader("X-application-error-code", "some_code");
 		response.addHeader("X-application-error-subcode", "some_subcode");
-		jsonConverter.write("{\"error\":\"exception_body\"}", MediaType.APPLICATION_JSON, new ServletServerHttpResponse(response));
+		jsonConverter.write("{\"error\":\"exception\"}", MediaType.APPLICATION_JSON, new ServletServerHttpResponse(response));
 
 	}
 }
