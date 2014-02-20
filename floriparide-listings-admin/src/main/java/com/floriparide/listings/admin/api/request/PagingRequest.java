@@ -7,7 +7,7 @@ import org.springframework.util.Assert;
 
 /**
  * Basic class for paging requests .
- *
+ * <p/>
  * {@link this#offset} row to start from
  * {@link this#limit} how many rows to return
  *
@@ -59,10 +59,14 @@ public class PagingRequest implements IRequest {
 	}
 
 	public SortField getSortFieldModel() {
+		if (sortField == null)
+			return null;
 		return SortField.lookup(sortField);
 	}
 
 	public SortType getSortTypeModel() {
+		if (sortType == null)
+			return null;
 		return SortType.lookup(sortType);
 	}
 
@@ -73,10 +77,13 @@ public class PagingRequest implements IRequest {
 		Assert.isTrue(offset >= 0, "Field offset must be non-negative");
 		Assert.isTrue(limit >= 0, "Field limit must be non-negative");
 
-		Assert.notNull(sortField, "Field sortField must not be null");
-		Assert.notNull(sortType, "Field sortType must not be null");
+		if (sortField != null && sortType == null)
+			sortType = SortType.ASC.getKey();
 
-		Assert.notNull(SortField.lookup(sortField), "SortField not supported " + sortField);
-		Assert.notNull(SortType.lookup(sortType), "SortType not supported " + sortType);
+		if (sortField != null)
+			Assert.notNull(SortField.lookup(sortField), "SortField not supported " + sortField);
+
+		if (sortType != null)
+			Assert.notNull(SortType.lookup(sortType), "SortType not supported " + sortType);
 	}
 }

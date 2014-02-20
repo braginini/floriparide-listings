@@ -54,6 +54,7 @@ public class CompanyController extends BaseController {
 	                                          HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
+
 		CompanyElement companyElement = request.getEntity();
 		long id = companyDao.create(companyElement.getProjectId(), companyElement.getModel());
 
@@ -71,10 +72,9 @@ public class CompanyController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity deleteCompany(
-			@RequestParam(value = "id", required = true) long id,
-			@RequestParam(value = "project_id", required = true) long projectId,
-			HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity deleteCompany(@RequestParam(value = "id", required = true) long id,
+	                                    @RequestParam(value = "project_id", required = true) long projectId,
+	                                    HttpServletRequest httpRequest) throws Exception {
 
 		companyDao.delete(projectId, id);
 
@@ -92,9 +92,10 @@ public class CompanyController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity updateCompany(
-			UpdateCompanyRequest request,
-			HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity updateCompany(UpdateCompanyRequest request,
+	                                    HttpServletRequest httpRequest) throws Exception {
+
+		request.validate();
 
 		Company company = request.getEntity().getModel();
 		companyDao.update(company.getProjectId(), company);
@@ -113,10 +114,9 @@ public class CompanyController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<CompanyResponse> getCompany(
-			@RequestParam(value = "id", required = true) long id,
-			@RequestParam(value = "project_id", required = true) long projectId,
-			HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity<CompanyResponse> getCompany(@RequestParam(value = "id", required = true) long id,
+	                                                  @RequestParam(value = "project_id", required = true) long projectId,
+	                                                  HttpServletRequest httpRequest) throws Exception {
 
 		Company company = companyDao.get(projectId, id);
 
@@ -136,16 +136,20 @@ public class CompanyController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<CompanyListResponse> listCompanies(
-			PagingRequest request,
-			@RequestParam(value = "project_id", required = true) long projectId,
-			HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity<CompanyListResponse> listCompanies(PagingRequest request,
+	                                                         @RequestParam(value = "project_id", required = true) long projectId,
+	                                                         HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
 
 		int totalCount = companyDao.size(projectId); //todo mb do it other way and in transaction?
-		List<Company> companies = companyDao.getCompanies(projectId, request.getOffset(), request.getLimit(),
-				request.getSortFieldModel(), request.getSortTypeModel());
+		List<Company> companies;
+
+		if (request.getSortFieldModel() == null) //no sorting specified
+			companies = companyDao.getCompanies(projectId, request.getOffset(), request.getLimit());
+		else
+			companies = companyDao.getCompanies(projectId, request.getOffset(), request.getLimit(),
+					request.getSortFieldModel(), request.getSortTypeModel());
 
 		return new ResponseEntity<CompanyListResponse>(new CompanyListResponse(totalCount, companies.size(), companies), HttpStatus.OK);
 	}
