@@ -1,5 +1,8 @@
 package com.floriparide.listings.admin.api.request;
 
+import com.floriparide.listings.model.sort.SortField;
+import com.floriparide.listings.model.sort.SortType;
+
 import org.springframework.util.Assert;
 
 /**
@@ -39,12 +42,12 @@ public class PagingRequest implements IRequest {
 		this.limit = limit;
 	}
 
-	public String getSortField() {
-		return sortField;
-	}
-
 	public void setSortField(String sortField) {
 		this.sortField = sortField;
+	}
+
+	public String getSortField() {
+		return sortField;
 	}
 
 	public String getSortType() {
@@ -55,11 +58,25 @@ public class PagingRequest implements IRequest {
 		this.sortType = sortType;
 	}
 
+	public SortField getSortFieldModel() {
+		return SortField.lookup(sortField);
+	}
+
+	public SortType getSortTypeModel() {
+		return SortType.lookup(sortType);
+	}
+
 	@Override
 	public void validate() throws Exception {
-		Assert.notNull(offset, "Field start must not be null");
-		Assert.notNull(limit, "Field end must not be null");
-		Assert.isTrue(offset >= 0, "Field start must be non-negative");
-		Assert.isTrue(limit >= 0, "Field end must be non-negative");
+		Assert.notNull(offset, "Field offset must not be null");
+		Assert.notNull(limit, "Field limit must not be null");
+		Assert.isTrue(offset >= 0, "Field offset must be non-negative");
+		Assert.isTrue(limit >= 0, "Field limit must be non-negative");
+
+		Assert.notNull(sortField, "Field sortField must not be null");
+		Assert.notNull(sortType, "Field sortType must not be null");
+
+		Assert.notNull(SortField.lookup(sortField), "SortField not supported " + sortField);
+		Assert.notNull(SortType.lookup(sortType), "SortType not supported " + sortType);
 	}
 }

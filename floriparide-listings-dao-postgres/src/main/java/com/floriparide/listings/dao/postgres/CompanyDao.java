@@ -5,6 +5,8 @@ import com.floriparide.listings.dao.postgres.springjdbc.AbstractSpringJdbc;
 import com.floriparide.listings.dao.postgres.springjdbc.mapper.CompanyRowMapper;
 import com.floriparide.listings.model.Company;
 import com.floriparide.listings.model.Schema;
+import com.floriparide.listings.model.sort.SortField;
+import com.floriparide.listings.model.sort.SortType;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -146,5 +148,19 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 				Integer.class);
 
 
+	}
+
+	@NotNull
+	@Override
+	public List<Company> getCompanies(long projectId, int offset, int limit, @NotNull SortField sortField, @NotNull SortType sortType) throws Exception {
+		String query = "SELECT * FROM " + table + " WHERE " + Schema.FIELD_PROJECT_ID_TABLE_COMPANY + " = :project_id" +
+				" ORDER BY " + sortField.getKey() + " " + sortType.getKey() + " LIMIT :limit OFFSET :offset";
+
+		return getNamedJdbcTemplate().query(query,
+				new MapSqlParameterSource()
+						.addValue("limit", limit)
+						.addValue("offset", offset)
+						.addValue("project_id", projectId),
+				new CompanyRowMapper());
 	}
 }

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.NativeWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,7 +24,7 @@ import java.util.List;
 
 /**
  * Controller that defines all operations with organizations and branches.
- *
+ * <p/>
  * All the methods should throw an exception that are handled and converted to proper JSON response in
  * {@link com.floriparide.listings.admin.api.BaseController#handleException(javax.servlet.http.HttpServletResponse, Exception)}
  *
@@ -130,7 +129,7 @@ public class CompanyController extends BaseController {
 	/**
 	 * Gets a list of companies
 	 *
-	 * @param request {@link com.floriparide.listings.admin.api.request.PagingRequest} with start and end indexes
+	 * @param request {@link com.floriparide.listings.admin.api.request.PagingRequest} with limit and offset
 	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.CompanyListResponse} wrapped with
 	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
@@ -145,11 +144,11 @@ public class CompanyController extends BaseController {
 		request.validate();
 
 		int totalCount = companyDao.size(projectId); //todo mb do it other way and in transaction?
-		List<Company> companies = companyDao.getCompanies(projectId, request.getOffset(), request.getLimit());
+		List<Company> companies = companyDao.getCompanies(projectId, request.getOffset(), request.getLimit(),
+				request.getSortFieldModel(), request.getSortTypeModel());
 
 		return new ResponseEntity<CompanyListResponse>(new CompanyListResponse(totalCount, companies.size(), companies), HttpStatus.OK);
 	}
-
 
 
 }

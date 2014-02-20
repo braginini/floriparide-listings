@@ -1,5 +1,9 @@
 package com.floriparide.listings.model;
 
+import com.floriparide.listings.model.sort.SortField;
+
+import java.util.HashSet;
+
 /**
  * Defines basic fields for all branches in this entity.
  *
@@ -18,6 +22,14 @@ public class Company {
 	String promoText;
 
 	Integer branchesCount;
+
+	static final HashSet<SortField> supportedSorts = new HashSet<>();
+
+	static {
+		supportedSorts.add(SortField.CREATED);
+		supportedSorts.add(SortField.UPDATED);
+		supportedSorts.add(SortField.NAME);
+	}
 
 	public Company() {
 	}
@@ -81,5 +93,9 @@ public class Company {
 
 	public void setBranchesCount(Integer branchesCount) {
 		this.branchesCount = branchesCount;
+	}
+
+	public static boolean supportsSorting(SortField sort) {
+		return supportedSorts.contains(sort);
 	}
 }
