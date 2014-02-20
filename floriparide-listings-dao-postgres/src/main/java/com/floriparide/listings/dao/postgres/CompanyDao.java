@@ -36,7 +36,7 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 	}
 
 	@Override
-	public long create(long projectId, @NotNull Company company) throws Exception {
+	public long create(@NotNull Company company) throws Exception {
 
 		Assert.notNull(company, "Parameter company must not be null");
 
@@ -63,7 +63,7 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 	}
 
 	@Override
-	public void delete(long projectId, long companyId) throws Exception {
+	public void delete(long companyId) throws Exception {
 
 		String query = "DELETE FROM " + table + " WHERE " + Schema.FIELD_ID_TABLE_COMPANY + " = :id";
 
@@ -72,7 +72,7 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 	}
 
 	@Override
-	public void update(long projectId, @NotNull Company company) throws Exception {
+	public void update(@NotNull Company company) throws Exception {
 
 		Assert.notNull(company);
 
@@ -87,14 +87,14 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 				new MapSqlParameterSource()
 						.addValue("name", company.getName())
 						.addValue("description", company.getDescription())
-						.addValue("project_id", projectId)
+						.addValue("project_id", company.getProjectId())
 						.addValue("promo", company.getPromoText())
 						.addValue("id", company.getId()));
 	}
 
 	@Nullable
 	@Override
-	public Company get(long projectId, long companyId) throws Exception {
+	public Company get(long companyId) throws Exception {
 
 		try {
 

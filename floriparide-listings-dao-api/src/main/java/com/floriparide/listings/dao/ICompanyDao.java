@@ -5,7 +5,6 @@ import com.floriparide.listings.model.sort.SortField;
 import com.floriparide.listings.model.sort.SortType;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,46 +12,7 @@ import java.util.List;
 /**
  * @author Mikhail Bragin
  */
-public interface ICompanyDao {
-
-	/**
-	 * Creates a record of a company {@link com.floriparide.listings.model.Company }in a database
-	 *
-	 * @param projectId the id of the {@link com.floriparide.listings.model.Project} to look in
-	 * @param company   {@link com.floriparide.listings.model.Company} to create
-	 * @return an id of newly created company
-	 * @throws IOException if I/O error occurred
-	 */
-	public long create(long projectId, @NotNull Company company) throws Exception;
-
-	/**
-	 * Deletes a record of a company {@link com.floriparide.listings.model.Company }in a database
-	 *
-	 * @param projectId the id of the {@link com.floriparide.listings.model.Project} to look in
-	 * @param companyId an id of the company to delete
-	 * @throws IOException if I/O error occurred
-	 */
-	public void delete(long projectId, long companyId) throws Exception;
-
-	/**
-	 * Updates a record of a company {@link com.floriparide.listings.model.Company }in a database
-	 *
-	 * @param projectId the id of the {@link com.floriparide.listings.model.Project} to look in
-	 * @param company   {@link com.floriparide.listings.model.Company} to update
-	 * @throws IOException if I/O error occurred
-	 */
-	public void update(long projectId, @NotNull Company company) throws Exception;
-
-	/**
-	 * Gets a company
-	 *
-	 * @param projectId the id of the {@link com.floriparide.listings.model.Project} to look in
-	 * @param companyId the id of the {@link com.floriparide.listings.model.Company} to look for
-	 * @return a {@link com.floriparide.listings.model.Company}
-	 * @throws IOException if I/O error occurred
-	 */
-	@Nullable
-	public Company get(long projectId, long companyId) throws Exception;
+public interface ICompanyDao extends IBaseEntityDao<Company> {
 
 	/**
 	 * Gets a part of a list of the companies {@link com.floriparide.listings.model.Company}

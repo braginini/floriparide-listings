@@ -56,7 +56,7 @@ public class CompanyController extends BaseController {
 		request.validate();
 
 		CompanyElement companyElement = request.getEntity();
-		long id = companyDao.create(companyElement.getProjectId(), companyElement.getModel());
+		long id = companyDao.create(companyElement.getModel());
 
 		return new ResponseEntity<Long>(id, HttpStatus.OK);
 	}
@@ -76,7 +76,7 @@ public class CompanyController extends BaseController {
 	                                    @RequestParam(value = "project_id", required = true) long projectId,
 	                                    HttpServletRequest httpRequest) throws Exception {
 
-		companyDao.delete(projectId, id);
+		companyDao.delete(id);
 
 		return new ResponseEntity(HttpStatus.OK);
 	}
@@ -98,7 +98,7 @@ public class CompanyController extends BaseController {
 		request.validate();
 
 		Company company = request.getEntity().getModel();
-		companyDao.update(company.getProjectId(), company);
+		companyDao.update(company);
 
 		return new ResponseEntity(HttpStatus.OK);
 	}
@@ -118,7 +118,7 @@ public class CompanyController extends BaseController {
 	                                                  @RequestParam(value = "project_id", required = true) long projectId,
 	                                                  HttpServletRequest httpRequest) throws Exception {
 
-		Company company = companyDao.get(projectId, id);
+		Company company = companyDao.get(id);
 
 		if (company == null)
 			return new ResponseEntity<CompanyResponse>(HttpStatus.NOT_FOUND);
