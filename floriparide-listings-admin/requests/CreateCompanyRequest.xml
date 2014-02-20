@@ -25,6 +25,6 @@
 	<option name="haveTextToSend" value="true" />
 	<option name="haveFileToSend" value="false" />
 	<option name="isFileUpload" value="false" />
-	<option name="textToSend" value="{     &quot;entity&quot;: {         &quot;name&quot;: &quot;Company&quot;,         &quot;description&quot;: &quot;description&quot;     } }" />
+	<option name="textToSend" value="{     &quot;entity&quot;: {         &quot;name&quot;: &quot;Company2323&quot;,         &quot;description&quot;: &quot;description&quot;, &quot;project_id&quot;:&quot;0&quot;     } }" />
 	<option name="filesToSend" value="" />
 </RestClientRequest>
