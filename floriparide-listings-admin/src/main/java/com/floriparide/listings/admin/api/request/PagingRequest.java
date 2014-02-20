@@ -5,38 +5,38 @@ import org.springframework.util.Assert;
 /**
  * Basic class for paging requests .
  *
- * {@link this#start} is inclusive
- * {@link this#end} is exclusive
+ * {@link this#offset} row to start from
+ * {@link this#limit} how many rows to return
  *
  * @author Mikhail Bragin
  */
 public class PagingRequest implements IRequest {
 
-	Integer start;
+	Integer offset;
 
-	Integer end;
+	Integer limit;
 
 	String sortField;
 
-	String type;  //asc/desc
+	String sortType;  //asc/desc
 
 	public PagingRequest() {
 	}
 
-	public Integer getStart() {
-		return start;
+	public Integer getOffset() {
+		return offset;
 	}
 
-	public void setStart(Integer start) {
-		this.start = start;
+	public void setOffset(Integer offset) {
+		this.offset = offset;
 	}
 
-	public Integer getEnd() {
-		return end;
+	public Integer getLimit() {
+		return limit;
 	}
 
-	public void setEnd(Integer end) {
-		this.end = end;
+	public void setLimit(Integer limit) {
+		this.limit = limit;
 	}
 
 	public String getSortField() {
@@ -47,20 +47,19 @@ public class PagingRequest implements IRequest {
 		this.sortField = sortField;
 	}
 
-	public String getType() {
-		return type;
+	public String getSortType() {
+		return sortType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setSortType(String sortType) {
+		this.sortType = sortType;
 	}
 
 	@Override
 	public void validate() throws Exception {
-		Assert.notNull(start, "Field start must not be null");
-		Assert.notNull(end, "Field end must not be null");
-		Assert.isTrue(end > start, "Field end must be bigger than start");
-		Assert.isTrue(start >= 0, "Field start must be non-negative");
-		Assert.isTrue(end >= 0, "Field end must be non-negative");
+		Assert.notNull(offset, "Field start must not be null");
+		Assert.notNull(limit, "Field end must not be null");
+		Assert.isTrue(offset >= 0, "Field start must be non-negative");
+		Assert.isTrue(limit >= 0, "Field end must be non-negative");
 	}
 }

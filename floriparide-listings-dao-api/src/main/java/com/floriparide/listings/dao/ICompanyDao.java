@@ -56,13 +56,13 @@ public interface ICompanyDao {
 	 * Gets a part of a list of the companies {@link com.floriparide.listings.model.Company}
 	 *
 	 * @param projectId the id of the {@link com.floriparide.listings.model.Project} to look in
-	 * @param start Start index of the list to return (inclusive)
-	 * @param end End index of the list to return (exclusive)
+	 * @param offset row offset to return from
+	 * @param limit number of rows to return
 	 * @return a list of companies {@link com.floriparide.listings.model.Company}
 	 * @throws IOException if I/O error occurred
 	 */
 	@NotNull
-	public List<Company> getCompanies(long projectId, int start, int end) throws Exception;
+	public List<Company> getCompanies(long projectId, int offset, int limit) throws Exception;
 
 	/**
 	 * Gets a list of all companies {@link com.floriparide.listings.model.Company}

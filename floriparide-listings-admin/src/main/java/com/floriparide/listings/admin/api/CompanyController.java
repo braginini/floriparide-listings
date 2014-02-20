@@ -145,7 +145,7 @@ public class CompanyController extends BaseController {
 		request.validate();
 
 		int totalCount = companyDao.size(projectId); //todo mb do it other way and in transaction?
-		List<Company> companies = companyDao.getCompanies(projectId, request.getStart(), request.getEnd());
+		List<Company> companies = companyDao.getCompanies(projectId, request.getOffset(), request.getLimit());
 
 		return new ResponseEntity<CompanyListResponse>(new CompanyListResponse(totalCount, companies.size(), companies), HttpStatus.OK);
 	}

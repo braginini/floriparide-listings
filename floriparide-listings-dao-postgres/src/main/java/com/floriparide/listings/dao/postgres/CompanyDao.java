@@ -111,15 +111,15 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 
 	@NotNull
 	@Override
-	public List<Company> getCompanies(long projectId, int start, int end) throws Exception {
+	public List<Company> getCompanies(long projectId, int offset, int limit) throws Exception {
 
 		String query = "SELECT * FROM " + table + " WHERE " + Schema.FIELD_PROJECT_ID_TABLE_COMPANY + " = :project_id" +
 				" LIMIT :limit OFFSET :offset";
 
 		return getNamedJdbcTemplate().query(query,
 				new MapSqlParameterSource()
-						.addValue("limit", end - start)
-						.addValue("offset", start)
+						.addValue("limit", limit)
+						.addValue("offset", offset)
 						.addValue("project_id", projectId),
 				new CompanyRowMapper());
 	}
