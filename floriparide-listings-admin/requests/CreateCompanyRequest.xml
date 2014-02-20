@@ -1,117 +1,30 @@
 <RestClientRequest>
-  <option name="httpMethod" value="POST" />
-  <option name="urlBase" value="http://localhost:8080" />
-  <option name="urlPath" value="/admin/v1/company/create/" />
-  <option name="headers">
-    <list>
-      <KeyValuePair>
-        <option name="key" value="Accept" />
-        <option name="value" value="*/*" />
-      </KeyValuePair>
-      <KeyValuePair>
-        <option name="key" value="Cache-Control" />
-        <option name="value" value="no-cache" />
-      </KeyValuePair>
-      <KeyValuePair>
-        <option name="key" value="Content-type" />
-        <option name="value" value="application/json" />
-      </KeyValuePair>
-    </list>
-  </option>
-  <option name="parameters">
-    <list />
-  </option>
-  <option name="parametersEnabled" value="true" />
-  <option name="haveTextToSend" value="true" />
-  <option name="haveFileToSend" value="false" />
-  <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{     &quot;entity&quot;: {         &quot;name&quot;: &quot;Company&quot;,         &quot;description&quot;: &quot;description&quot;     } }" />
-  <option name="filesToSend" value="" />
-</RestClientRequest><RestClientRequest>
-  <option name="httpMethod" value="POST" />
-  <option name="urlBase" value="http://localhost:8080" />
-  <option name="urlPath" value="/admin/v1/company/create/" />
-  <option name="headers">
-    <list>
-      <KeyValuePair>
-        <option name="key" value="Accept" />
-        <option name="value" value="*/*" />
-      </KeyValuePair>
-      <KeyValuePair>
-        <option name="key" value="Cache-Control" />
-        <option name="value" value="no-cache" />
-      </KeyValuePair>
-      <KeyValuePair>
-        <option name="key" value="Content-type" />
-        <option name="value" value="application/json" />
-      </KeyValuePair>
-    </list>
-  </option>
-  <option name="parameters">
-    <list />
-  </option>
-  <option name="parametersEnabled" value="true" />
-  <option name="haveTextToSend" value="true" />
-  <option name="haveFileToSend" value="false" />
-  <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{     &quot;entity&quot;: {         &quot;name&quot;: &quot;Company&quot;,         &quot;description&quot;: &quot;description&quot;         &quot;promo&quot;: &quot;promo&quot;         &quot;project_id&quot;: &quot;0&quot;     } }" />
-  <option name="filesToSend" value="" />
-</RestClientRequest><RestClientRequest>
-  <option name="httpMethod" value="POST" />
-  <option name="urlBase" value="http://localhost:8080" />
-  <option name="urlPath" value="/admin/v1/company/create/" />
-  <option name="headers">
-    <list>
-      <KeyValuePair>
-        <option name="key" value="Accept" />
-        <option name="value" value="*/*" />
-      </KeyValuePair>
-      <KeyValuePair>
-        <option name="key" value="Cache-Control" />
-        <option name="value" value="no-cache" />
-      </KeyValuePair>
-      <KeyValuePair>
-        <option name="key" value="Content-type" />
-        <option name="value" value="application/json" />
-      </KeyValuePair>
-    </list>
-  </option>
-  <option name="parameters">
-    <list />
-  </option>
-  <option name="parametersEnabled" value="true" />
-  <option name="haveTextToSend" value="true" />
-  <option name="haveFileToSend" value="false" />
-  <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{     &quot;entity&quot;: {         &quot;name&quot;: &quot;c2&quot;,         &quot;description&quot;: &quot;description&quot;,    &quot;project_id&quot;: &quot;0&quot;     } }" />
-  <option name="filesToSend" value="" />
-</RestClientRequest><RestClientRequest>
-  <option name="httpMethod" value="POST" />
-  <option name="urlBase" value="http://localhost:8080" />
-  <option name="urlPath" value="/admin/v1/company/create" />
-  <option name="headers">
-    <list>
-      <KeyValuePair>
-        <option name="key" value="Accept" />
-        <option name="value" value="*/*" />
-      </KeyValuePair>
-      <KeyValuePair>
-        <option name="key" value="Cache-Control" />
-        <option name="value" value="no-cache" />
-      </KeyValuePair>
-      <KeyValuePair>
-        <option name="key" value="Content-type" />
-        <option name="value" value="application/json" />
-      </KeyValuePair>
-    </list>
-  </option>
-  <option name="parameters">
-    <list />
-  </option>
-  <option name="parametersEnabled" value="true" />
-  <option name="haveTextToSend" value="true" />
-  <option name="haveFileToSend" value="false" />
-  <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{     &quot;entity&quot;: {        &quot;name&quot;: &quot;Company6&quot;,        &quot;description&quot;:&quot;description&quot;, &quot;project_id&quot;:&quot;0&quot;     } }" />
-  <option name="filesToSend" value="" />
+	<option name="httpMethod" value="POST" />
+	<option name="urlBase" value="http://localhost:8080" />
+	<option name="urlPath" value="/admin/v1/company/create/" />
+	<option name="headers">
+		<list>
+			<KeyValuePair>
+				<option name="key" value="Accept" />
+				<option name="value" value="*/*" />
+			</KeyValuePair>
+			<KeyValuePair>
+				<option name="key" value="Cache-Control" />
+				<option name="value" value="no-cache" />
+			</KeyValuePair>
+			<KeyValuePair>
+				<option name="key" value="Content-type" />
+				<option name="value" value="application/json" />
+			</KeyValuePair>
+		</list>
+	</option>
+	<option name="parameters">
+		<list />
+	</option>
+	<option name="parametersEnabled" value="true" />
+	<option name="haveTextToSend" value="true" />
+	<option name="haveFileToSend" value="false" />
+	<option name="isFileUpload" value="false" />
+	<option name="textToSend" value="{     &quot;entity&quot;: {         &quot;name&quot;: &quot;Company&quot;,         &quot;description&quot;: &quot;description&quot;     } }" />
+	<option name="filesToSend" value="" />
 </RestClientRequest>
