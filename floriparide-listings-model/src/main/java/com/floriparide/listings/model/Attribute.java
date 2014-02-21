@@ -23,6 +23,9 @@ public class Attribute {
 	@Nullable
 	List<Object> possibleValues;
 
+	//the current value set while creating/editing branch
+	Object currentValue;
+
 	public Attribute(Long id, Long groupId, String name, List<Object> possibleValues) {
 		this.id = id;
 		this.groupId = groupId;
@@ -44,5 +47,13 @@ public class Attribute {
 
 	public List<Object> getPossibleValues() {
 		return possibleValues;
+	}
+
+	public Object getCurrentValue() {
+		return currentValue;
+	}
+
+	public void setCurrentValue(Object currentValue) {
+		this.currentValue = currentValue;
 	}
 }

@@ -46,9 +46,9 @@ public class BranchController extends BaseController {
 	public ResponseEntity<Long> createBranch(CreateBranchRequest request,
 	                                         HttpServletRequest httpRequest) throws Exception {
 
-
-
-		return new ResponseEntity<Long>(1l, HttpStatus.OK);
+		request.validate();
+		long id = branchDao.create(request.getEntity().getModel());
+		return new ResponseEntity<Long>(id, HttpStatus.OK);
 	}
 
 	/**

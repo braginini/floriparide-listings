@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Mikhail Bragin
  */
-public class CompanyElement {
+public class CompanyElement implements Element<Company>  {
 
 	@JsonProperty("")
 	Long id;
@@ -57,11 +57,11 @@ public class CompanyElement {
 	@JsonIgnore
 	public Company getModel() {
 		Company company = new Company();
-		company.setName(this.name);
-		company.setDescription(this.description);
-		company.setProjectId(this.projectId);
-		company.setId(this.id);
-		company.setPromoText(this.promo);
+		company.setName(name);
+		company.setDescription(description);
+		company.setProjectId(projectId);
+		company.setId(id);
+		company.setPromoText(promo);
 
 		return company;
 	}

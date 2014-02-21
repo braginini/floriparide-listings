@@ -11,7 +11,7 @@ import java.util.List;
  * @author Mikhail Bragin
  */
 //todo Schedule
-public class BranchElement {
+public class BranchElement implements Element<Branch> {
 
 	@JsonProperty("")
 	Long id;
@@ -188,5 +188,15 @@ public class BranchElement {
 
 	public void setPaymentOptions(List<String> paymentOptions) {
 		this.paymentOptions = paymentOptions;
+	}
+
+	@Override
+	public Branch getModel() {
+		Branch branch = new Branch();
+		branch.setId(id);
+		branch.setName(name);
+		branch.setAddress(address);
+		branch.setArticle(article);
+		return branch;
 	}
 }

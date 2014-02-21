@@ -29,6 +29,9 @@ public class Company extends SortModel {
 		SortingDictionary.registerSortFields(Company.class, SortField.CREATED, SortField.UPDATED, SortField.NAME);
 	}
 
+	public Company() {
+	}
+
 	public Company(Long projectId, String name, String description, String promoText, Integer branchesCount) {
 		this.projectId = projectId;
 		this.name = name;

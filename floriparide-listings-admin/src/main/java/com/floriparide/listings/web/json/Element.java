@@ -3,5 +3,7 @@ package com.floriparide.listings.web.json;
 /**
  *@author Mikhail Bragin
  */
-public class Element {
+public interface Element<T> {
+
+	public T getModel();
 }

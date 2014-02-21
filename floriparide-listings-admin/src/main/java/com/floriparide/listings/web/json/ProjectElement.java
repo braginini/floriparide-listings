@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author Andrey Parfenov
  */
-public class ProjectElement {
+public class ProjectElement implements Element<Project> {
 
     @JsonProperty("")
     Long id;

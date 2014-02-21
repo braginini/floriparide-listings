@@ -264,4 +264,54 @@
         </addColumn>
     </changeSet>
 
+	<changeSet id="18" author="mbragin">
+		<createTable tableName="branch_rubrics">
+			<column name="branch_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="rubric_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="branch_rubrics"
+		                         baseColumnNames="branch_id"
+		                         constraintName="branch_id_branch_rubrics"
+		                         referencedTableName="branch"
+		                         referencedColumnNames="id"/>
+
+		<addForeignKeyConstraint baseTableName="branch_rubrics"
+		                         baseColumnNames="rubric_id"
+		                         constraintName="rubric_id_branch_rubrics"
+		                         referencedTableName="rubric"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="19" author="mbragin">
+		<addPrimaryKey tableName="branch_rubrics"
+		               columnNames="branch_id, rubric_id"
+		               constraintName="pk_branch_rubrics"/>
+	</changeSet>
+
+	<changeSet id="20" author="mbragin">
+		<dropColumn columnName="payment_option"
+		            tableName="branch"/>
+
+		<createTable tableName="branch_payment_options">
+			<column name="branch_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="payment_option" type="payment_option">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="branch_payment_options"
+		                         baseColumnNames="branch_id"
+		                         constraintName="fk_branch_id_branch_payment_options"
+		                         referencedTableName="branch"
+		                         referencedColumnNames="id"/>
+
+	</changeSet>
+
 </databaseChangeLog>
