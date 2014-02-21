@@ -21,6 +21,7 @@ public class ProjectRowMapper implements RowMapper<Project> {
 
         Project project = new Project();
         project.setId(rs.getLong(Schema.FIELD_ID_TABLE_PROJECT));
+        project.setName(rs.getString(Schema.FIELD_NAME_TABLE_PROJECT));
 
         return project;
     }

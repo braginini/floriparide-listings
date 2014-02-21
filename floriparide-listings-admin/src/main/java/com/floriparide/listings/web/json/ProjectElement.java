@@ -16,11 +16,15 @@ public class ProjectElement {
     @JsonProperty("")
     Long id;
 
+    @JsonProperty("")
+    String name;
+
     public ProjectElement() {
     }
 
     public ProjectElement(@NotNull Project p) {
         this.id = p.getId();
+        this.name = p.getName();
     }
 
     public static List<ProjectElement> projectsToElements(@NotNull List<Project> projects) {
@@ -37,6 +41,7 @@ public class ProjectElement {
     public Project getModel() {
         Project project = new Project();
         project.setId(this.id);
+        project.setName(this.name);
 
         return project;
     }
@@ -47,5 +52,13 @@ public class ProjectElement {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

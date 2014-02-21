@@ -258,4 +258,10 @@
 		               constraintName="pk_rubric_attributes_group"/>
 	</changeSet>
 
+    <changeSet id="18" author="andpar">
+        <addColumn tableName="project">
+            <column name="name" type="varchar"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

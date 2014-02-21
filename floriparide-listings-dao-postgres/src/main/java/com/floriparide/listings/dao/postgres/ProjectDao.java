@@ -43,12 +43,12 @@ public class ProjectDao extends AbstractSpringJdbc implements IProjectDao {
 
         Assert.notNull(project, "Parameter project must not be null");
 
-        String query = "INSERT INTO " + table + " () VALUES ()";
+        String query = "INSERT INTO " + table + " (" + Schema.FIELD_NAME_TABLE_COMPANY + ") VALUES (:name)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         getNamedJdbcTemplate().update(query,
-                new MapSqlParameterSource(),
+                new MapSqlParameterSource("name", project.getName()),
                 keyHolder);
 
         Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID_TABLE_PROJECT);
@@ -70,21 +70,14 @@ public class ProjectDao extends AbstractSpringJdbc implements IProjectDao {
 
         Assert.notNull(project);
 
-        /*String query = "UPDATE " + table + " SET " +
-                Schema.FIELD_NAME_TABLE_COMPANY + "= :name," +
-                Schema.FIELD_DESCRIPTION_TABLE_COMPANY + "= : description," +
-                Schema.FIELD_PROJECT_ID_TABLE_COMPANY + "= : project_id," +
-                Schema.FIELD_PROMO_TABLE_COMPANY + "= : promo" +
-                " WHERE " + Schema.FIELD_ID_TABLE_COMPANY + " = :id";
+        String query = "UPDATE " + table + " SET " +
+                Schema.FIELD_NAME_TABLE_PROJECT + "= :name" +
+                " WHERE " + Schema.FIELD_ID_TABLE_PROJECT + " = :id";
 
         getNamedJdbcTemplate().update(query,
                 new MapSqlParameterSource()
-                        .addValue("name", company.getName())
-                        .addValue("description", company.getDescription())
-                        .addValue("project_id", company.getProjectId())
-                        .addValue("promo", company.getPromoText())
-                        .addValue("id", company.getId()));*/
-        //TODO implement where there is something to update
+                        .addValue("name", project.getName())
+                        .addValue("id", project.getId()));
     }
 
     @Nullable

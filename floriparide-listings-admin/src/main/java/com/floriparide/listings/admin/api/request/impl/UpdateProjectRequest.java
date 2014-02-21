@@ -10,6 +10,6 @@ public class UpdateProjectRequest extends CreateProjectRequest {
     @Override
     public void validate() throws Exception {
         super.validate();
-        Assert.isTrue(false, "Nothing to update yet");
+        Assert.notNull(entity.getId(), "Field id must not be null");
     }
 }
