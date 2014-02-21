@@ -5,6 +5,6 @@ package com.floriparide.listings.model;
  */
 public enum PaymentOption {
 
-	CASH, VISA, MASTERCARD, INTERNET
+	CASH, VISA, MASTERCARD, CHEQUE, AMERICAN_EXPRESS
 
 }

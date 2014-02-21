@@ -32,13 +32,230 @@
 		                         baseColumnNames="project_id"
 		                         constraintName="company_project_id"
 		                         referencedTableName="project"
-		                         referencedColumnNames="id" />
+		                         referencedColumnNames="id"/>
 	</changeSet>
 
 	<changeSet id="3" author="mbragin">
 		<insert tableName="project">
 			<column name="id" value="0"/>
 		</insert>
+	</changeSet>
+
+	<changeSet id="4" author="mbragin">
+		<createTable tableName="branch">
+			<column name="id" type="bigserial">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="varchar (500)">
+				<constraints unique="true" nullable="false"/>
+			</column>
+			<column name="description" type="varchar"/>
+			<column name="article" type="varchar"/>
+			<column name="company_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="address" type="varchar"/>
+			<column name="lat" type="double precision"/>
+			<column name="lon" type="double precision"/>
+			<column name="office" type="varchar"/>
+			<column name="currency" type="varchar"/>
+			<column name="created" type="bigint"/>
+			<column name="updated" type="bigint"/>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="branch"
+		                         baseColumnNames="company_id"
+		                         constraintName="branch_company_id"
+		                         referencedTableName="company"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="5" author="mbragin">
+		<addColumn tableName="company">
+			<column name="created" type="bigint"/>
+			<column name="updated" type="bigint"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="6" author="mbragin">
+		<sql>
+			UPDATE company SET created = 1392996233, updated = 1392996233;
+			UPDATE branch SET created = 1392996233, updated = 1392996233;
+		</sql>
+	</changeSet>
+
+	<changeSet id="7" author="mbragin">
+		<sql>CREATE TYPE contact_type AS ENUM ('email','website', 'phone', 'fax', 'skype', 'jabber', 'twitter',
+			'instagram',
+			'facebook')
+		</sql>
+		<createTable tableName="contact">
+			<column name="id" type="bigserial">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="value" type="varchar (20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="type" type="contact_type">
+				<constraints nullable="false"/>
+			</column>
+			<column name="comment" type="varchar (100)"/>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="8" author="mbragin">
+		<sql>CREATE TYPE payment_option AS ENUM ('visa','mastercard', 'cash', 'american_express', 'cheque')</sql>
+		<addColumn tableName="branch">
+			<column name="payment_option" type="payment_option"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="9" author="mbragin">
+		<sql>DROP TABLE IF EXISTS contact</sql>
+
+		<createTable tableName="branch_contacts">
+			<column name="branch_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="contact" type="contact_type">
+				<constraints nullable="false"/>
+			</column>
+			<column name="value" type="varchar (100)">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="branch_contacts"
+		                         baseColumnNames="branch_id"
+		                         constraintName="branch_contacts_id"
+		                         referencedTableName="branch"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="10" author="mbragin">
+		<addColumn tableName="branch_contacts">
+			<column name="comment" type="varchar (100)"/>
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="11" author="mbragin">
+		<createTable tableName="rubric">
+			<column name="id" type="bigserial">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="varchar (200)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="parent_id" type="bigserial"/>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="rubric"
+		                         baseColumnNames="parent_id"
+		                         constraintName="rubric_parent_id"
+		                         referencedTableName="rubric"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="12" author="mbragin">
+		<sql>CREATE TYPE attributes_type AS ENUM ('boolean', 'number', 'range', 'string')</sql>
+
+		<createTable tableName="attributes_group">
+			<column name="id" type="bigserial">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="varchar (100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="attributes_type" type="attributes_type">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="13" author="mbragin">
+		<createTable tableName="attribute">
+			<column name="id" type="bigserial">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="name" type="varchar (100)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="group_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="attribute"
+		                         baseColumnNames="group_id"
+		                         constraintName="attribute_group_id"
+		                         referencedTableName="attributes_group"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="14" author="mbragin">
+		<addColumn tableName="attribute">
+			<column name="possible_values" type="varchar"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="15" author="mbragin">
+		<createTable tableName="rubric_attributes_group">
+			<column name="rubric_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="attributes_group_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="rubric_attributes_group"
+		                         baseColumnNames="rubric_id"
+		                         constraintName="rubric_attributes_group_id"
+		                         referencedTableName="rubric"
+		                         referencedColumnNames="id"/>
+
+		<addForeignKeyConstraint baseTableName="rubric_attributes_group"
+		                         baseColumnNames="attributes_group_id"
+		                         constraintName="attributes_group_id_attributes_group_id"
+		                         referencedTableName="attributes_group"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="16" author="mbragin">
+		<createTable tableName="branch_attributes">
+			<column name="branch_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="attribute_id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="value" type="varchar">
+				<constraints nullable="false"/>
+			</column>
+		</createTable>
+
+		<addForeignKeyConstraint baseTableName="branch_attributes"
+		                         baseColumnNames="branch_id"
+		                         constraintName="branch_id_branch_attributes"
+		                         referencedTableName="branch"
+		                         referencedColumnNames="id"/>
+
+		<addForeignKeyConstraint baseTableName="branch_attributes"
+		                         baseColumnNames="attribute_id"
+		                         constraintName="attribute_id_branch_attributes"
+		                         referencedTableName="attribute"
+		                         referencedColumnNames="id"/>
+	</changeSet>
+
+	<changeSet id="17" author="mbragin">
+		<addPrimaryKey tableName="branch_attributes"
+		               columnNames="branch_id, attribute_id"
+		               constraintName="pk_branch_attributes"/>
+
+		<addPrimaryKey tableName="rubric_attributes_group"
+		               columnNames="rubric_id, attributes_group_id"
+		               constraintName="pk_rubric_attributes_group"/>
 	</changeSet>
 
 </databaseChangeLog>

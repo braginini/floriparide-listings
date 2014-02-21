@@ -15,11 +15,11 @@ public class AttributesGroup {
 	//todo make names for each language? Esp, En, pt?
 	String name;
 
-	AttributesGroupType type;
+	AttributesType type;
 
 	List<Attribute> attributes;
 
-	public AttributesGroup(Long id, String name, AttributesGroupType type) {
+	public AttributesGroup(Long id, String name, AttributesType type) {
 		this.id = id;
 		this.name = name;
 		this.type = type;
@@ -33,7 +33,7 @@ public class AttributesGroup {
 		return name;
 	}
 
-	public AttributesGroupType getType() {
+	public AttributesType getType() {
 		return type;
 	}
 
@@ -49,7 +49,7 @@ public class AttributesGroup {
 	 * Describes {@link com.floriparide.listings.model.AttributesGroup} type
 	 *
 	 */
-	public enum AttributesGroupType {
+	public enum AttributesType {
 		BOOLEAN, NUMBER, RANGE
 	}
 }
