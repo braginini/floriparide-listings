@@ -41,10 +41,10 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 		Assert.notNull(company, "Parameter company must not be null");
 
 		String query = "INSERT INTO " + table + " ("
-				+ Schema.FIELD_NAME_TABLE_COMPANY +
-				"," + Schema.FIELD_DESCRIPTION_TABLE_COMPANY +
-				"," + Schema.FIELD_PROJECT_ID_TABLE_COMPANY +
-				"," + Schema.FIELD_PROMO_TABLE_COMPANY +
+				+ Schema.FIELD_NAME +
+				"," + Schema.FIELD_DESCRIPTION +
+				"," + Schema.TABLE_COMPANY_FIELD_PROJECT_ID +
+				"," + Schema.TABLE_COMPANY_FIELD_PROMO +
 				") VALUES (:name, :description, :project_id, :promo)";
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -57,7 +57,7 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 						.addValue("project_id", company.getProjectId()),
 				keyHolder);
 
-		Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID_TABLE_COMPANY);
+		Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
 
 		return id;
 	}
@@ -65,7 +65,7 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 	@Override
 	public void delete(long companyId) throws Exception {
 
-		String query = "DELETE FROM " + table + " WHERE " + Schema.FIELD_ID_TABLE_COMPANY + " = :id";
+		String query = "DELETE FROM " + table + " WHERE " + Schema.FIELD_ID + " = :id";
 
 		getNamedJdbcTemplate().update(query,
 				new MapSqlParameterSource("id", companyId));
@@ -77,11 +77,11 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 		Assert.notNull(company);
 
 		String query = "UPDATE " + table + " SET " +
-				Schema.FIELD_NAME_TABLE_COMPANY + "= :name," +
-				Schema.FIELD_DESCRIPTION_TABLE_COMPANY + "= : description," +
-				Schema.FIELD_PROJECT_ID_TABLE_COMPANY + "= : project_id," +
-				Schema.FIELD_PROMO_TABLE_COMPANY + "= : promo" +
-				" WHERE " + Schema.FIELD_ID_TABLE_COMPANY + " = :id";
+				Schema.FIELD_NAME + "= :name," +
+				Schema.FIELD_DESCRIPTION + "= : description," +
+				Schema.TABLE_COMPANY_FIELD_PROJECT_ID + "= : project_id," +
+				Schema.TABLE_COMPANY_FIELD_PROMO + "= : promo" +
+				" WHERE " + Schema.FIELD_ID + " = :id";
 
 		getNamedJdbcTemplate().update(query,
 				new MapSqlParameterSource()
@@ -98,7 +98,7 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 
 		try {
 
-			String query = "SELECT * FROM " + table + " WHERE " + Schema.FIELD_ID_TABLE_COMPANY + " = :id";
+			String query = "SELECT * FROM " + table + " WHERE " + Schema.FIELD_ID + " = :id";
 
 			return getNamedJdbcTemplate().queryForObject(query,
 					new MapSqlParameterSource("id", companyId),
@@ -115,7 +115,7 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 	@Override
 	public List<Company> getCompanies(long projectId, int offset, int limit) throws Exception {
 
-		String query = "SELECT * FROM " + table + " WHERE " + Schema.FIELD_PROJECT_ID_TABLE_COMPANY + " = :project_id" +
+		String query = "SELECT * FROM " + table + " WHERE " + Schema.TABLE_COMPANY_FIELD_PROJECT_ID + " = :project_id" +
 				" LIMIT :limit OFFSET :offset";
 
 		return getNamedJdbcTemplate().query(query,
@@ -131,7 +131,7 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 	public List<Company> getCompanies(long projectId) throws Exception {
 
 
-		String query = "SELECT * FROM " + table + " WHERE " + Schema.FIELD_PROJECT_ID_TABLE_COMPANY + " = :project_id";
+		String query = "SELECT * FROM " + table + " WHERE " + Schema.TABLE_COMPANY_FIELD_PROJECT_ID + " = :project_id";
 
 		return getNamedJdbcTemplate().query(query,
 				new MapSqlParameterSource("project_id", projectId),
@@ -141,19 +141,17 @@ public class CompanyDao extends AbstractSpringJdbc implements ICompanyDao {
 	@Override
 	public int size(long projectId) throws Exception {
 
-		String query = "SELECT COUNT(*) FROM company WHERE " + Schema.FIELD_PROJECT_ID_TABLE_COMPANY + " = :project_id";
+		String query = "SELECT COUNT(*) FROM company WHERE " + Schema.TABLE_COMPANY_FIELD_PROJECT_ID + " = :project_id";
 
 		return getNamedJdbcTemplate().queryForObject(query,
 				new MapSqlParameterSource("project_id", projectId),
 				Integer.class);
-
-
 	}
 
 	@NotNull
 	@Override
 	public List<Company> getCompanies(long projectId, int offset, int limit, @NotNull SortField sortField, @NotNull SortType sortType) throws Exception {
-		String query = "SELECT * FROM " + table + " WHERE " + Schema.FIELD_PROJECT_ID_TABLE_COMPANY + " = :project_id" +
+		String query = "SELECT * FROM " + table + " WHERE " + Schema.TABLE_COMPANY_FIELD_PROJECT_ID + " = :project_id" +
 				" ORDER BY " + sortField.getKey() + " " + sortType.getKey() + " LIMIT :limit OFFSET :offset";
 
 		return getNamedJdbcTemplate().query(query,

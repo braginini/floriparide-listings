@@ -20,8 +20,8 @@ public class ProjectRowMapper implements RowMapper<Project> {
     public Project mapRow(ResultSet rs, int i) throws SQLException {
 
         Project project = new Project();
-        project.setId(rs.getLong(Schema.FIELD_ID_TABLE_PROJECT));
-        project.setName(rs.getString(Schema.FIELD_NAME_TABLE_PROJECT));
+        project.setId(rs.getLong(Schema.FIELD_ID));
+        project.setName(rs.getString(Schema.FIELD_NAME));
 
         return project;
     }

@@ -25,7 +25,6 @@
 
 		<!--<property name="defaultAutoCommit" value="false" />-->
 
-		<!-- тут такая штука для того, чтобы можно было достать родной connection от постгрескла и запихать его в CopyManager -->
 		<property name="accessToUnderlyingConnectionAllowed" value="true" />
 	</bean>
 
@@ -43,6 +42,11 @@
 	</bean>
 
 	<bean id="projectDao" class="com.floriparide.listings.dao.postgres.ProjectDao">
+		<constructor-arg index="0" ref="namedParamsJdbcTemplate"/>
+		<constructor-arg index="1" ref="jdbcTemplate"/>
+	</bean>
+
+	<bean id="branchDao" class="com.floriparide.listings.dao.postgres.BranchDao">
 		<constructor-arg index="0" ref="namedParamsJdbcTemplate"/>
 		<constructor-arg index="1" ref="jdbcTemplate"/>
 	</bean>

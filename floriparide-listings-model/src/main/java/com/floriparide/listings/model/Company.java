@@ -1,6 +1,8 @@
 package com.floriparide.listings.model;
 
 import com.floriparide.listings.model.sort.SortField;
+import com.floriparide.listings.model.sort.SortModel;
+import com.floriparide.listings.model.sort.SortingDictionary;
 
 import java.util.HashSet;
 
@@ -9,7 +11,7 @@ import java.util.HashSet;
  *
  * @author Mikhail Bragin
  */
-public class Company {
+public class Company extends SortModel {
 
 	Long id;
 
@@ -23,15 +25,8 @@ public class Company {
 
 	Integer branchesCount;
 
-	static final HashSet<SortField> supportedSorts = new HashSet<>();
-
 	static {
-		supportedSorts.add(SortField.CREATED);
-		supportedSorts.add(SortField.UPDATED);
-		supportedSorts.add(SortField.NAME);
-	}
-
-	public Company() {
+		SortingDictionary.registerSortFields(Company.class, SortField.CREATED, SortField.UPDATED, SortField.NAME);
 	}
 
 	public Company(Long projectId, String name, String description, String promoText, Integer branchesCount) {
@@ -93,9 +88,5 @@ public class Company {
 
 	public void setBranchesCount(Integer branchesCount) {
 		this.branchesCount = branchesCount;
-	}
-
-	public static boolean supportsSorting(SortField sort) {
-		return supportedSorts.contains(sort);
 	}
 }

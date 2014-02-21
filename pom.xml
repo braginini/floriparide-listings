@@ -30,6 +30,7 @@
 		<maven.javadoc.plugin.version>2.9.1</maven.javadoc.plugin.version>
 		<maven.liquibase.plugin.version>3.1.1</maven.liquibase.plugin.version>
 		<maven.source.plugin.version>2.2.1</maven.source.plugin.version>
+		<google.collections>1.0</google.collections>
 	</properties>
 
 	<dependencies>
@@ -51,6 +52,13 @@
 			<artifactId>annotations</artifactId>
 			<version>${intellij.annotations.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.google.collections</groupId>
+			<artifactId>google-collections</artifactId>
+			<version>${google.collections}</version>
+		</dependency>
+
 
 	</dependencies>
 

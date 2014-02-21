@@ -43,7 +43,7 @@ public class ProjectDao extends AbstractSpringJdbc implements IProjectDao {
 
         Assert.notNull(project, "Parameter project must not be null");
 
-        String query = "INSERT INTO " + table + " (" + Schema.FIELD_NAME_TABLE_COMPANY + ") VALUES (:name)";
+        String query = "INSERT INTO " + table + " (" + Schema.FIELD_NAME + ") VALUES (:name)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -51,7 +51,7 @@ public class ProjectDao extends AbstractSpringJdbc implements IProjectDao {
                 new MapSqlParameterSource("name", project.getName()),
                 keyHolder);
 
-        Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID_TABLE_PROJECT);
+        Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
 
         return id;
     }
@@ -59,7 +59,7 @@ public class ProjectDao extends AbstractSpringJdbc implements IProjectDao {
     @Override
     public void delete(long projectId) throws Exception {
 
-        String query = "DELETE FROM " + table + " WHERE " + Schema.FIELD_ID_TABLE_PROJECT + " = :id";
+        String query = "DELETE FROM " + table + " WHERE " + Schema.FIELD_ID + " = :id";
 
         getNamedJdbcTemplate().update(query,
                 new MapSqlParameterSource("id", projectId));
@@ -71,8 +71,8 @@ public class ProjectDao extends AbstractSpringJdbc implements IProjectDao {
         Assert.notNull(project);
 
         String query = "UPDATE " + table + " SET " +
-                Schema.FIELD_NAME_TABLE_PROJECT + "= :name" +
-                " WHERE " + Schema.FIELD_ID_TABLE_PROJECT + " = :id";
+                Schema.FIELD_NAME + "= :name" +
+                " WHERE " + Schema.FIELD_ID + " = :id";
 
         getNamedJdbcTemplate().update(query,
                 new MapSqlParameterSource()
@@ -86,7 +86,7 @@ public class ProjectDao extends AbstractSpringJdbc implements IProjectDao {
 
         try {
 
-            String query = "SELECT * FROM " + table + " WHERE " + Schema.FIELD_ID_TABLE_PROJECT + " = :id";
+            String query = "SELECT * FROM " + table + " WHERE " + Schema.FIELD_ID + " = :id";
 
             return getNamedJdbcTemplate().queryForObject(query,
                     new MapSqlParameterSource("id", projectId),

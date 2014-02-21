@@ -1,11 +1,15 @@
 package com.floriparide.listings.model;
 
+import com.floriparide.listings.model.sort.SortField;
+import com.floriparide.listings.model.sort.SortModel;
+import com.floriparide.listings.model.sort.SortingDictionary;
+
 /**
  * This class describes city and metro area.
  *
  * @author Mikhail Bragin
  */
-public class Project {
+public class Project extends SortModel {
 
 	Long id;
 
@@ -39,6 +43,10 @@ public class Project {
 
 	//number of geo objects
 	Integer geosCount;
+
+	static {
+		SortingDictionary.registerSortFields(Project.class, SortField.UPDATED, SortField.NAME);
+	}
 
 	public Long getId() {
 		return id;
@@ -159,4 +167,5 @@ public class Project {
 	public void setGeosCount(Integer geosCount) {
 		this.geosCount = geosCount;
 	}
+
 }

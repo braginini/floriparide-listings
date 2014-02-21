@@ -20,11 +20,11 @@ public class CompanyRowMapper implements RowMapper<Company> {
 	public Company mapRow(ResultSet rs, int i) throws SQLException {
 
 		Company company = new Company();
-		company.setId(rs.getLong(Schema.FIELD_ID_TABLE_COMPANY));
-		company.setName(rs.getString(Schema.FIELD_NAME_TABLE_COMPANY));
-		company.setProjectId(rs.getLong(Schema.FIELD_PROJECT_ID_TABLE_COMPANY));
-		company.setPromoText(rs.getString(Schema.FIELD_PROMO_TABLE_COMPANY));
-		company.setDescription(rs.getString(Schema.FIELD_DESCRIPTION_TABLE_COMPANY));
+		company.setId(rs.getLong(Schema.FIELD_ID));
+		company.setName(rs.getString(Schema.FIELD_NAME));
+		company.setProjectId(rs.getLong(Schema.TABLE_COMPANY_FIELD_PROJECT_ID));
+		company.setPromoText(rs.getString(Schema.TABLE_COMPANY_FIELD_PROMO));
+		company.setDescription(rs.getString(Schema.FIELD_DESCRIPTION));
 
 		return company;
 	}

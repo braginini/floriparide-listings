@@ -4,8 +4,10 @@ import com.floriparide.listings.admin.api.request.impl.CreateBranchRequest;
 import com.floriparide.listings.admin.api.request.impl.UpdateBranchRequest;
 import com.floriparide.listings.admin.api.response.impl.BranchListResponse;
 import com.floriparide.listings.admin.api.response.impl.BranchResponse;
+import com.floriparide.listings.dao.IBranchDao;
 import com.floriparide.listings.model.Branch;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,9 @@ import java.util.Arrays;
 @RequestMapping("/admin/v1/branch")
 public class BranchController extends BaseController {
 
+	@Autowired
+	IBranchDao branchDao;
+
 	/**
 	 * Creates a branch
 	 *
@@ -40,6 +45,8 @@ public class BranchController extends BaseController {
 			headers = "Accept=application/json")
 	public ResponseEntity<Long> createBranch(CreateBranchRequest request,
 	                                         HttpServletRequest httpRequest) throws Exception {
+
+
 
 		return new ResponseEntity<Long>(1l, HttpStatus.OK);
 	}
