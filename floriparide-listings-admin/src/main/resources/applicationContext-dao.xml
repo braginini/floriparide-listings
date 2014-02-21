@@ -42,4 +42,9 @@
 		<constructor-arg index="1" ref="jdbcTemplate"/>
 	</bean>
 
+	<bean id="projectDao" class="com.floriparide.listings.dao.postgres.ProjectDao">
+		<constructor-arg index="0" ref="namedParamsJdbcTemplate"/>
+		<constructor-arg index="1" ref="jdbcTemplate"/>
+	</bean>
+
 </beans>

@@ -17,4 +17,6 @@ public class Schema {
 	public static final String FIELD_DESCRIPTION_TABLE_COMPANY = "description";
 	public static final String FIELD_PROMO_TABLE_COMPANY = "promo";
 	public static final String FIELD_PROJECT_ID_TABLE_COMPANY = "project_id";
+
+    public static final String FIELD_ID_TABLE_PROJECT = "id";
 }

@@ -44,7 +44,8 @@ public class CompanyController extends BaseController {
 	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
 	 *                    (headers, statuses, etc)
 	 * @return an instance of {@link org.springframework.http.ResponseEntity} with an id of newly created organization
-	 * with a HTTP 200 or HTTP 204 status code. In case of resource (company) already exists a HTTP 409 Conflict status should be returned along with custom
+	 * with a HTTP 200 or HTTP 204 status code. In case of resource (company) already exists a HTTP 409 Conflict status
+     * should be returned along with custom
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
@@ -66,7 +67,8 @@ public class CompanyController extends BaseController {
 	 *
 	 * @param id The id of the company to delete
 	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
-	 * with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found HTTP 404 should be returned along with custom
+	 * with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found HTTP 404 should be returned
+     * along with custom
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
