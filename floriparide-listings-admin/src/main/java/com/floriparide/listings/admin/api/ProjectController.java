@@ -1,8 +1,8 @@
 package com.floriparide.listings.admin.api;
 
 import com.floriparide.listings.admin.api.request.PagingRequest;
-import com.floriparide.listings.admin.api.request.f.CreateEntityRequestCommon;
-import com.floriparide.listings.admin.api.request.f.UpdateEntityRequestCommon;
+import com.floriparide.listings.admin.api.request.impl.CreateEntityRequest;
+import com.floriparide.listings.admin.api.request.impl.UpdateEntityRequest;
 import com.floriparide.listings.admin.api.response.impl.ProjectListResponse;
 import com.floriparide.listings.dao.IProjectDao;
 import com.floriparide.listings.model.Project;
@@ -36,21 +36,9 @@ public class ProjectController extends BaseController implements CRUDController<
 	@Autowired
 	IProjectDao projectDao;
 
-	/**
-	 * Creates a project
-	 *
-	 * @param request     {@link com.floriparide.listings.admin.api.request.impl.CreateProjectRequest} request object
-	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
-	 *                    (headers, statuses, etc)
-	 * @return an instance of {@link org.springframework.http.ResponseEntity} with an id of newly created project
-	 * with a HTTP 200 or HTTP 204 status code. In case of resource (project) already exists a HTTP 409 Conflict status
-	 * should be returned along with custom
-	 * error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<Long> create(@RequestBody CreateEntityRequestCommon<ProjectElement> request,
+	public ResponseEntity<Long> create(@RequestBody CreateEntityRequest<ProjectElement> request,
 	                                   HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
@@ -61,15 +49,6 @@ public class ProjectController extends BaseController implements CRUDController<
 		return new ResponseEntity<Long>(id, HttpStatus.OK);
 	}
 
-	/**
-	 * Deletes a specific project
-	 *
-	 * @param id The id of the project to delete
-	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
-	 * with a HTTP 200 or HTTP 204 status code. In case if resource (project) was not found HTTP 404 should be returned
-	 * along with custom error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity delete(@RequestParam(value = "id", required = true) long id,
@@ -80,18 +59,9 @@ public class ProjectController extends BaseController implements CRUDController<
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	/**
-	 * Updates a specific project
-	 *
-	 * @param request {@link com.floriparide.listings.admin.api.request.impl.UpdateProjectRequest} project data to update
-	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
-	 * with a HTTP 200 or HTTP 204 status code. In case if resource (project) was not found HTTP 404 should be returned
-	 * along with custom error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity update(@RequestBody UpdateEntityRequestCommon<ProjectElement> request,
+	public ResponseEntity update(@RequestBody UpdateEntityRequest<ProjectElement> request,
 	                             HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
@@ -102,15 +72,6 @@ public class ProjectController extends BaseController implements CRUDController<
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	/**
-	 * Gets a specific project
-	 *
-	 * @param id The id of the project to get
-	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.ProjectResponse} wrapped with
-	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code. In case if resource
-	 * (project) was not found, HTTP 404 status code should be returned along with custom error response. todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity<ProjectElement> get(@RequestParam(value = "id", required = true) long id,

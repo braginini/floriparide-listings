@@ -1,4 +1,4 @@
-package com.floriparide.listings.admin.api.request.f;
+package com.floriparide.listings.admin.api.request.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.admin.api.request.IRequest;
@@ -12,12 +12,12 @@ import org.springframework.util.Assert;
 /**
  * @author Mikhail Bragin
  */
-public class CreateEntityRequestCommon<E extends Element> implements IRequest {
+public class CreateEntityRequest<E extends Element> implements IRequest {
 
 	@JsonProperty("")
 	protected E entity;
 
-	protected CreateEntityRequestCommon() {
+	protected CreateEntityRequest() {
 	}
 
 	public E getEntity() {

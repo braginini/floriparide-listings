@@ -1,8 +1,8 @@
 package com.floriparide.listings.admin.api;
 
 import com.floriparide.listings.admin.api.request.PagingRequest;
-import com.floriparide.listings.admin.api.request.f.CreateEntityRequestCommon;
-import com.floriparide.listings.admin.api.request.f.UpdateEntityRequestCommon;
+import com.floriparide.listings.admin.api.request.impl.CreateEntityRequest;
+import com.floriparide.listings.admin.api.request.impl.UpdateEntityRequest;
 import com.floriparide.listings.admin.api.response.impl.CompanyListResponse;
 import com.floriparide.listings.dao.ICompanyDao;
 import com.floriparide.listings.model.Company;
@@ -36,21 +36,9 @@ public class CompanyController extends BaseController implements CRUDController<
 	@Autowired
 	ICompanyDao companyDao;
 
-	/**
-	 * Creates a company
-	 *
-	 * @param request     {@link com.floriparide.listings.admin.api.request.impl.CreateCompanyRequest} request object
-	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
-	 *                    (headers, statuses, etc)
-	 * @return an instance of {@link org.springframework.http.ResponseEntity} with an id of newly created organization
-	 * with a HTTP 200 or HTTP 204 status code. In case of resource (company) already exists a HTTP 409 Conflict status
-	 * should be returned along with custom
-	 * error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<Long> create(@RequestBody CreateEntityRequestCommon<CompanyElement> request,
+	public ResponseEntity<Long> create(@RequestBody CreateEntityRequest<CompanyElement> request,
 	                                   HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
@@ -61,16 +49,6 @@ public class CompanyController extends BaseController implements CRUDController<
 		return new ResponseEntity<Long>(id, HttpStatus.OK);
 	}
 
-	/**
-	 * Deletes a specific company
-	 *
-	 * @param id The id of the company to delete
-	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
-	 * with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found HTTP 404 should be returned
-	 * along with custom
-	 * error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity delete(@RequestParam(value = "id", required = true) long id,
@@ -81,18 +59,9 @@ public class CompanyController extends BaseController implements CRUDController<
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	/**
-	 * Updates a specific company
-	 *
-	 * @param request {@link com.floriparide.listings.admin.api.request.impl.UpdateCompanyRequest} company data to update
-	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
-	 * with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found HTTP 404 should be returned along with custom
-	 * error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity update(@RequestBody UpdateEntityRequestCommon<CompanyElement> request,
+	public ResponseEntity update(@RequestBody UpdateEntityRequest<CompanyElement> request,
 	                             HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
@@ -103,15 +72,6 @@ public class CompanyController extends BaseController implements CRUDController<
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	/**
-	 * Gets a specific company
-	 *
-	 * @param id The id of the company to get
-	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.CompanyResponse} wrapped with
-	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found, HTTP 404 status code
-	 * should be returned along with custom error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity<CompanyElement> get(@RequestParam(value = "id", required = true) long id,

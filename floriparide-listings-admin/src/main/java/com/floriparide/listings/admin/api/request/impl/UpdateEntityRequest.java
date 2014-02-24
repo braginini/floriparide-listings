@@ -1,4 +1,4 @@
-package com.floriparide.listings.admin.api.request.f;
+package com.floriparide.listings.admin.api.request.impl;
 
 import com.floriparide.listings.web.json.BranchElement;
 import com.floriparide.listings.web.json.CompanyElement;
@@ -10,7 +10,7 @@ import org.springframework.util.Assert;
 /**
  * @author Mikhail Bragin
  */
-public class UpdateEntityRequestCommon<E extends Element> extends CreateEntityRequestCommon<E> {
+public class UpdateEntityRequest<E extends Element> extends CreateEntityRequest<E> {
 
 	@Override
 	public void validate() throws Exception {

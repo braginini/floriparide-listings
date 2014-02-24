@@ -1,8 +1,8 @@
 package com.floriparide.listings.admin.api;
 
 import com.floriparide.listings.admin.api.request.PagingRequest;
-import com.floriparide.listings.admin.api.request.f.CreateEntityRequestCommon;
-import com.floriparide.listings.admin.api.request.f.UpdateEntityRequestCommon;
+import com.floriparide.listings.admin.api.request.impl.CreateEntityRequest;
+import com.floriparide.listings.admin.api.request.impl.UpdateEntityRequest;
 import com.floriparide.listings.admin.api.response.ListResponse;
 import com.floriparide.listings.admin.api.response.impl.BranchListResponse;
 import com.floriparide.listings.dao.IBranchDao;
@@ -33,19 +33,9 @@ public class BranchController extends BaseController implements CRUDController<B
 	@Autowired
 	IBranchDao branchDao;
 
-	/**
-	 * Creates a branch
-	 *
-	 * @param request     {@link com.floriparide.listings.admin.api.request.impl.CreateBranchRequest} branch data to create
-	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
-	 *                    (headers, statuses, etc)
-	 * @return an instance of {@link org.springframework.http.ResponseEntity} with an id of newly created organization
-	 * with a HTTP 200 or HTTP 204 status code
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<Long> create(CreateEntityRequestCommon<BranchElement> request,
+	public ResponseEntity<Long> create(CreateEntityRequest<BranchElement> request,
 	                                   HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
@@ -53,15 +43,6 @@ public class BranchController extends BaseController implements CRUDController<B
 		return new ResponseEntity<Long>(id, HttpStatus.OK);
 	}
 
-	/**
-	 * Deletes a specific branch
-	 *
-	 * @param id The id of the branch to delete
-	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
-	 * with a HTTP 200 or HTTP 204 status code. In case if resource was not found, a HTTP 404 status should be returned along with custom
-	 * error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity delete(@RequestParam(value = "id", required = true) long id,
@@ -70,35 +51,14 @@ public class BranchController extends BaseController implements CRUDController<B
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	/**
-	 * Updates a specific branch
-	 *
-	 * @param request     {@link com.floriparide.listings.admin.api.request.impl.UpdateBranchRequest} branch data to update
-	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
-	 *                    (headers, statuses, etc)
-	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
-	 * with a HTTP 200 or HTTP 204 status code. In case if resource was not found, a HTTP 404 status should be returned along with custom
-	 * error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity update(UpdateEntityRequestCommon<BranchElement> request,
+	public ResponseEntity update(UpdateEntityRequest<BranchElement> request,
 	                             HttpServletRequest httpRequest) throws Exception {
 
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	/**
-	 * Gets a specific branch
-	 *
-	 * @param id The id of the branch to get
-	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.BranchResponse} wrapped with
-	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
-	 * In case of resource was not found, HTTP 404 status code
-	 * should be returned along with custom error response. //todo create ExceptionResponse
-	 * @throws Exception
-	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity<BranchElement> get(
