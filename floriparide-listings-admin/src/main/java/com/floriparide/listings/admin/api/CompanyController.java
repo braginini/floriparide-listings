@@ -1,10 +1,9 @@
 package com.floriparide.listings.admin.api;
 
 import com.floriparide.listings.admin.api.request.PagingRequest;
-import com.floriparide.listings.admin.api.request.impl.CreateCompanyRequest;
-import com.floriparide.listings.admin.api.request.impl.UpdateCompanyRequest;
+import com.floriparide.listings.admin.api.request.f.CreateEntityRequestCommon;
+import com.floriparide.listings.admin.api.request.f.UpdateEntityRequestCommon;
 import com.floriparide.listings.admin.api.response.impl.CompanyListResponse;
-import com.floriparide.listings.admin.api.response.impl.CompanyResponse;
 import com.floriparide.listings.dao.ICompanyDao;
 import com.floriparide.listings.model.Company;
 import com.floriparide.listings.web.json.CompanyElement;
@@ -32,7 +31,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/admin/v1/company")
-public class CompanyController extends BaseController {
+public class CompanyController extends BaseController implements CRUDController<CompanyElement> {
 
 	@Autowired
 	ICompanyDao companyDao;
@@ -45,14 +44,14 @@ public class CompanyController extends BaseController {
 	 *                    (headers, statuses, etc)
 	 * @return an instance of {@link org.springframework.http.ResponseEntity} with an id of newly created organization
 	 * with a HTTP 200 or HTTP 204 status code. In case of resource (company) already exists a HTTP 409 Conflict status
-     * should be returned along with custom
+	 * should be returned along with custom
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<Long> createCompany(@RequestBody CreateCompanyRequest request,
-	                                          HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity<Long> create(@RequestBody CreateEntityRequestCommon<CompanyElement> request,
+	                                   HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
 
@@ -68,15 +67,14 @@ public class CompanyController extends BaseController {
 	 * @param id The id of the company to delete
 	 * @return an instance of empty {@link org.springframework.http.ResponseEntity}
 	 * with a HTTP 200 or HTTP 204 status code. In case if resource (company) was not found HTTP 404 should be returned
-     * along with custom
+	 * along with custom
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity deleteCompany(@RequestParam(value = "id", required = true) long id,
-	                                    @RequestParam(value = "project_id", required = true) long projectId,
-	                                    HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity delete(@RequestParam(value = "id", required = true) long id,
+	                             HttpServletRequest httpRequest) throws Exception {
 
 		companyDao.delete(id);
 
@@ -94,8 +92,8 @@ public class CompanyController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity updateCompany(UpdateCompanyRequest request,
-	                                    HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity update(@RequestBody UpdateEntityRequestCommon<CompanyElement> request,
+	                             HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
 
@@ -116,16 +114,15 @@ public class CompanyController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<CompanyResponse> getCompany(@RequestParam(value = "id", required = true) long id,
-	                                                  @RequestParam(value = "project_id", required = true) long projectId,
-	                                                  HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity<CompanyElement> get(@RequestParam(value = "id", required = true) long id,
+	                                           HttpServletRequest httpRequest) throws Exception {
 
 		Company company = companyDao.get(id);
 
 		if (company == null)
-			return new ResponseEntity<CompanyResponse>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<CompanyElement>(HttpStatus.NOT_FOUND);
 
-		return new ResponseEntity<CompanyResponse>(new CompanyResponse(company), HttpStatus.OK);
+		return new ResponseEntity<CompanyElement>(new CompanyElement(company), HttpStatus.OK);
 	}
 
 	/**
@@ -138,9 +135,9 @@ public class CompanyController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<CompanyListResponse> listCompanies(PagingRequest request,
-	                                                         @RequestParam(value = "project_id", required = true) long projectId,
-	                                                         HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity<CompanyListResponse> list(PagingRequest request,
+	                                                @RequestParam(value = "project_id", required = true) long projectId,
+	                                                HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
 
@@ -153,7 +150,8 @@ public class CompanyController extends BaseController {
 			companies = companyDao.getCompanies(projectId, request.getOffset(), request.getLimit(),
 					request.getSortFieldModel(), request.getSortTypeModel());
 
-		return new ResponseEntity<CompanyListResponse>(new CompanyListResponse(totalCount, companies.size(), companies), HttpStatus.OK);
+		return new ResponseEntity<CompanyListResponse>(new CompanyListResponse(totalCount, companies.size(),
+				CompanyElement.companiesToElements(companies)), HttpStatus.OK);
 	}
 
 

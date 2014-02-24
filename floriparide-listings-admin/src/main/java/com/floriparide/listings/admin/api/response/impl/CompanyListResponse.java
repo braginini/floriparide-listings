@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class CompanyListResponse extends ListResponse<CompanyElement> {
 
-	public CompanyListResponse(Integer totalCount, Integer currentCount, @NotNull List<Company> companies) {
-		super(totalCount, currentCount, CompanyElement.companiesToElements(companies));
+	public CompanyListResponse(Integer totalCount, Integer currentCount, @NotNull List<CompanyElement> companies) {
+		super(totalCount, currentCount, companies);
 	}
 }
