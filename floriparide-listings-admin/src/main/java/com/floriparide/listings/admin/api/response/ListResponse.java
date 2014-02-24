@@ -1,13 +1,14 @@
 package com.floriparide.listings.admin.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.floriparide.listings.web.json.Element;
 
 import java.util.List;
 
 /**
  * @author Mikhail Bragin
  */
-public abstract class ListResponse<T> implements IResponse {
+public abstract class ListResponse<T extends Element> implements IResponse {
 
 	@JsonProperty("")
 	Integer totalCount;

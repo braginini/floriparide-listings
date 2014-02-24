@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * @author Mikhail Bragin
  */
-public class RubricElement {
+public class RubricElement implements Element<Rubric> {
 
 	@JsonProperty("")
 	Long id;
@@ -88,5 +88,10 @@ public class RubricElement {
 
 	public void setAttributesGroups(List<AttributesGroupElement> attributesGroups) {
 		this.attributesGroups = attributesGroups;
+	}
+
+	@Override
+	public Rubric getModel() {
+		return new Rubric();
 	}
 }

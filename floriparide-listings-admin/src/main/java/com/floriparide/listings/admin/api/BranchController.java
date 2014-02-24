@@ -1,11 +1,13 @@
 package com.floriparide.listings.admin.api;
 
-import com.floriparide.listings.admin.api.request.impl.CreateBranchRequest;
-import com.floriparide.listings.admin.api.request.impl.UpdateBranchRequest;
+import com.floriparide.listings.admin.api.request.PagingRequest;
+import com.floriparide.listings.admin.api.request.f.CreateEntityRequestCommon;
+import com.floriparide.listings.admin.api.request.f.UpdateEntityRequestCommon;
+import com.floriparide.listings.admin.api.response.ListResponse;
 import com.floriparide.listings.admin.api.response.impl.BranchListResponse;
-import com.floriparide.listings.admin.api.response.impl.BranchResponse;
 import com.floriparide.listings.dao.IBranchDao;
 import com.floriparide.listings.model.Branch;
+import com.floriparide.listings.web.json.BranchElement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,7 @@ import java.util.Arrays;
  */
 @Controller
 @RequestMapping("/admin/v1/branch")
-public class BranchController extends BaseController {
+public class BranchController extends BaseController implements CRUDController<BranchElement> {
 
 	@Autowired
 	IBranchDao branchDao;
@@ -43,8 +45,8 @@ public class BranchController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<Long> createBranch(CreateBranchRequest request,
-	                                         HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity<Long> create(CreateEntityRequestCommon<BranchElement> request,
+	                                   HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
 		long id = branchDao.create(request.getEntity().getModel());
@@ -62,9 +64,8 @@ public class BranchController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity deleteBranch(
-			@RequestParam(value = "id", required = true) long id,
-			HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity delete(@RequestParam(value = "id", required = true) long id,
+	                             HttpServletRequest httpRequest) throws Exception {
 
 		return new ResponseEntity(HttpStatus.OK);
 	}
@@ -82,8 +83,8 @@ public class BranchController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity updateBranch(UpdateBranchRequest request,
-	                                   HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity update(UpdateEntityRequestCommon<BranchElement> request,
+	                             HttpServletRequest httpRequest) throws Exception {
 
 		return new ResponseEntity(HttpStatus.OK);
 	}
@@ -100,30 +101,33 @@ public class BranchController extends BaseController {
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<BranchResponse> getBranch(
+	public ResponseEntity<BranchElement> get(
 			@RequestParam(value = "id", required = true) long id,
 			HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<BranchResponse>(new BranchResponse(new Branch()), HttpStatus.OK);
+		Branch branch = branchDao.get(id);
+
+		if (branch == null)
+			return new ResponseEntity<BranchElement>(HttpStatus.NOT_FOUND);
+
+		return new ResponseEntity<BranchElement>(new BranchElement(branch), HttpStatus.OK);
 	}
 
 	/**
 	 * Gets a list of branches
 	 *
 	 * @param start Start index of a branch list (inclusive)
-	 * @param end End index of a branch list (exclusive)
+	 * @param end   End index of a branch list (exclusive)
 	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.BranchListResponse} wrapped with
 	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<BranchListResponse> listBranches(
-			@RequestParam(value = "start", required = true) int start,
-			@RequestParam(value = "end", required = true) int end,
-			HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity<ListResponse<BranchElement>> list(PagingRequest request,
+	                                                        HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<BranchListResponse>(new BranchListResponse(0, 1, Arrays.asList(new Branch())), HttpStatus.OK);
+		return new ResponseEntity<ListResponse<BranchElement>>(new BranchListResponse(0, 1, Arrays.asList(new BranchElement())), HttpStatus.OK);
 	}
 
 }

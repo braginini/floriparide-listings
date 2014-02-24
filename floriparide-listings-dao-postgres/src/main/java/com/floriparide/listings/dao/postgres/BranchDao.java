@@ -22,6 +22,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -86,6 +88,7 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 
 	@Override
 	//TODO make transactional
+	@Transactional(propagation = Propagation.REQUIRED)
 	public long create(@NotNull Branch branch) throws Exception {
 
 		String query = "INSERT INTO " + table + " ("
