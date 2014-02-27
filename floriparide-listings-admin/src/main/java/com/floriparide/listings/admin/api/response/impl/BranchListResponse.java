@@ -12,6 +12,6 @@ import java.util.List;
 public class BranchListResponse extends ListResponse<BranchElement> {
 
 	public BranchListResponse(Integer totalCount, Integer currentCount, List<BranchElement> list) {
-		super(totalCount, currentCount, list);
+		super(totalCount, list);
 	}
 }

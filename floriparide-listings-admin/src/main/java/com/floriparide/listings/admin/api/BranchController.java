@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Defines API methods to manage company branches {@link com.floriparide.listings.model.Branch}
@@ -48,6 +49,8 @@ public class BranchController extends BaseController implements CRUDController<B
 	public ResponseEntity delete(@RequestParam(value = "id", required = true) long id,
 	                             HttpServletRequest httpRequest) throws Exception {
 
+		branchDao.delete(id);
+
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
@@ -56,14 +59,19 @@ public class BranchController extends BaseController implements CRUDController<B
 	public ResponseEntity update(UpdateEntityRequest<BranchElement> request,
 	                             HttpServletRequest httpRequest) throws Exception {
 
+		request.validate();
+
+		Branch branch = request.getEntity().getModel();
+
+		branchDao.update(branch);
+
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<BranchElement> get(
-			@RequestParam(value = "id", required = true) long id,
-			HttpServletRequest httpRequest) throws Exception {
+	public ResponseEntity<BranchElement> get(@RequestParam(value = "id", required = true) long id,
+	                                         HttpServletRequest httpRequest) throws Exception {
 
 		Branch branch = branchDao.get(id);
 
@@ -76,8 +84,6 @@ public class BranchController extends BaseController implements CRUDController<B
 	/**
 	 * Gets a list of branches
 	 *
-	 * @param start Start index of a branch list (inclusive)
-	 * @param end   End index of a branch list (exclusive)
 	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.BranchListResponse} wrapped with
 	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
@@ -85,9 +91,22 @@ public class BranchController extends BaseController implements CRUDController<B
 	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity<ListResponse<BranchElement>> list(PagingRequest request,
+	                                                        @RequestParam(value = "company_id", required = true) long companyId,
 	                                                        HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<ListResponse<BranchElement>>(new BranchListResponse(0, 1, Arrays.asList(new BranchElement())), HttpStatus.OK);
+		request.validate();
+
+		int totalCount = branchDao.size(companyId); //todo mb do it other way and in transaction?
+		List<Branch> branches;
+
+		if (request.getSortFieldModel() == null) //no sorting specified
+			branches = branchDao.getBranches(companyId);
+		else
+		branches = branchDao.getBranches(companyId, request.getOffset(), request.getLimit(),
+				request.getSortFieldModel(), request.getSortTypeModel());
+
+		return new ResponseEntity<ListResponse<BranchElement>>(new ListResponse<BranchElement>(0,
+				BranchElement.branchesToBranchElements(branches)), HttpStatus.OK);
 	}
 
 }

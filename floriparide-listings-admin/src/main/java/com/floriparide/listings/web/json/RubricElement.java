@@ -50,6 +50,15 @@ public class RubricElement implements Element<Rubric> {
 		return rubricElements;
 	}
 
+	public static List<Rubric> rubricsElementsToRubrics(List<RubricElement> rubricElements) {
+		List<Rubric> rubrics = new ArrayList<Rubric>(rubricElements.size());
+
+		for (RubricElement r : rubricElements)
+			rubrics.add(r.getModel());
+
+		return rubrics;
+	}
+
 	public Long getId() {
 		return id;
 	}

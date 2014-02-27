@@ -20,6 +20,8 @@ public class Schema {
 	public static final String FIELD_DESCRIPTION = "description";
 	public static final String FIELD_RUBRIC_ID = "rubric_id";
 	public static final String FIELD_BRANCH_ID = "branch_id";
+	public static final String FIELD_CREATED = "created";
+	public static final String FIELD_UPDATED = "updated";
 
 	//specific fields
 	//company
@@ -37,6 +39,7 @@ public class Schema {
 
 	//branch_attributes
 	public static final String TABLE_BRANCH_ATTRIBUTES_FIELD_ATTRIBUTE_ID = "attribute_id";
+	public static final String TABLE_BRANCH_ATTRIBUTES_FIELD_BRANCH_ID = "branch_id";
 	public static final String TABLE_BRANCH_ATTRIBUTES_FIELD_VALUE = "value";
 
 	//branch_payment_options

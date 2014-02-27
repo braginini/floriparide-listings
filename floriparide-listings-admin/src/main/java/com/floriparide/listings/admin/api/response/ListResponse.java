@@ -8,20 +8,16 @@ import java.util.List;
 /**
  * @author Mikhail Bragin
  */
-public abstract class ListResponse<T extends Element> implements IResponse {
+public class ListResponse<T extends Element> implements IResponse {
 
 	@JsonProperty("")
 	Integer totalCount;
 
 	@JsonProperty("")
-	Integer currentCount;
-
-	@JsonProperty("")
 	List<T> list;
 
-	protected ListResponse(Integer totalCount, Integer currentCount, List<T> list) {
+	public ListResponse(Integer totalCount, List<T> list) {
 		this.totalCount = totalCount;
-		this.currentCount = currentCount;
 		this.list = list;
 	}
 
@@ -31,14 +27,6 @@ public abstract class ListResponse<T extends Element> implements IResponse {
 
 	public void setTotalCount(Integer totalCount) {
 		this.totalCount = totalCount;
-	}
-
-	public Integer getCurrentCount() {
-		return currentCount;
-	}
-
-	public void setCurrentCount(Integer currentCount) {
-		this.currentCount = currentCount;
 	}
 
 	public List<T> getList() {

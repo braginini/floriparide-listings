@@ -3,6 +3,9 @@ package com.floriparide.listings.web.json;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.model.Branch;
 import com.floriparide.listings.model.PaymentOption;
+import com.floriparide.listings.model.Point;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +56,7 @@ public class BranchElement implements Element<Branch> {
 	String article;
 
 	@JsonProperty("payment_opts")
-	List<String> paymentOptions; //comma-separated values
+	List<String> paymentOptions;
 
 	public BranchElement() {
 	}
@@ -76,6 +79,15 @@ public class BranchElement implements Element<Branch> {
 		this.paymentOptions = new ArrayList<String>();
 		for (PaymentOption po : branch.getPaymentOptions())
 			paymentOptions.add(po.name());
+	}
+
+	public static List<BranchElement> branchesToBranchElements(List<Branch> branches) {
+		ArrayList<BranchElement> branchElements = new ArrayList<BranchElement>(branches.size());
+
+		for (Branch b : branches)
+			branchElements.add(new BranchElement(b));
+
+		return branchElements;
 	}
 
 	public String getName() {
@@ -197,6 +209,16 @@ public class BranchElement implements Element<Branch> {
 		branch.setName(name);
 		branch.setAddress(address);
 		branch.setArticle(article);
+		branch.setDescription(description);
+		branch.setAttributes(AttributeElement.attributesElementsToAttribute(attributes));
+		branch.setCompanyId(companyId);
+		branch.setContacts(ContactElement.contactsElementsToToContacts(contacts));
+		branch.setCurrency(currency);
+		branch.setOffice(office);
+		branch.setPaymentOptions(PaymentOption.split(paymentOptions));
+		branch.setPoint(new Point(lat, lon));
+		branch.setRubrics(RubricElement.rubricsElementsToRubrics(rubrics));
+		//todo schedule
 		return branch;
 	}
 }
