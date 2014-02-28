@@ -3,7 +3,7 @@ package com.floriparide.listings.admin.api;
 import com.floriparide.listings.admin.api.request.PagingRequest;
 import com.floriparide.listings.admin.api.request.impl.CreateEntityRequest;
 import com.floriparide.listings.admin.api.request.impl.UpdateEntityRequest;
-import com.floriparide.listings.admin.api.response.impl.CompanyListResponse;
+import com.floriparide.listings.admin.api.response.ListResponse;
 import com.floriparide.listings.dao.ICompanyDao;
 import com.floriparide.listings.model.Company;
 import com.floriparide.listings.web.json.CompanyElement;
@@ -89,13 +89,13 @@ public class CompanyController extends BaseController implements CRUDController<
 	 * Gets a list of companies
 	 *
 	 * @param request {@link com.floriparide.listings.admin.api.request.PagingRequest} with limit and offset
-	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.CompanyListResponse} wrapped with
-	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
+	 * @return an instance of {@link com.floriparide.listings.admin.api.response.ListResponse<CompanyElement>}
+     * wrapped with {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<CompanyListResponse> list(PagingRequest request,
+	public ResponseEntity<ListResponse<CompanyElement>> list(PagingRequest request,
 	                                                @RequestParam(value = "project_id", required = true) long projectId,
 	                                                HttpServletRequest httpRequest) throws Exception {
 
@@ -110,7 +110,7 @@ public class CompanyController extends BaseController implements CRUDController<
 			companies = companyDao.getCompanies(projectId, request.getOffset(), request.getLimit(),
 					request.getSortFieldModel(), request.getSortTypeModel());
 
-		return new ResponseEntity<CompanyListResponse>(new CompanyListResponse(totalCount, companies.size(),
+		return new ResponseEntity<ListResponse<CompanyElement>>(new ListResponse<CompanyElement>(totalCount,
 				CompanyElement.companiesToElements(companies)), HttpStatus.OK);
 	}
 

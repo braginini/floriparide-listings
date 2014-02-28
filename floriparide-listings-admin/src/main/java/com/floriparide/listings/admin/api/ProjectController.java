@@ -3,7 +3,7 @@ package com.floriparide.listings.admin.api;
 import com.floriparide.listings.admin.api.request.PagingRequest;
 import com.floriparide.listings.admin.api.request.impl.CreateEntityRequest;
 import com.floriparide.listings.admin.api.request.impl.UpdateEntityRequest;
-import com.floriparide.listings.admin.api.response.impl.ProjectListResponse;
+import com.floriparide.listings.admin.api.response.ListResponse;
 import com.floriparide.listings.dao.IProjectDao;
 import com.floriparide.listings.model.Project;
 import com.floriparide.listings.web.json.ProjectElement;
@@ -89,13 +89,13 @@ public class ProjectController extends BaseController implements CRUDController<
 	 * Gets a list of projects
 	 *
 	 * @param request {@link com.floriparide.listings.admin.api.request.PagingRequest} with limit and offset
-	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.ProjectListResponse} wrapped with
-	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
+	 * @return an instance of {@link com.floriparide.listings.admin.api.response.ListResponse<ProjectElement>}
+     * wrapped with {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity<ProjectListResponse> list(PagingRequest request,
+	public ResponseEntity<ListResponse<ProjectElement>> list(PagingRequest request,
 	                                                HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
@@ -109,8 +109,8 @@ public class ProjectController extends BaseController implements CRUDController<
 			projects = projectDao.getProjects(request.getOffset(), request.getLimit(),
 					request.getSortFieldModel(), request.getSortTypeModel());
 
-		return new ResponseEntity<ProjectListResponse>(new ProjectListResponse(totalCount, projects.size(), projects),
-				HttpStatus.OK);
+		return new ResponseEntity<ListResponse<ProjectElement>>(new ListResponse<ProjectElement>(totalCount,
+                ProjectElement.projectsToElements(projects)), HttpStatus.OK);
 	}
 
 

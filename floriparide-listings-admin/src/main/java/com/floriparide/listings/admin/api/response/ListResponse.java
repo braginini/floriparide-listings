@@ -2,26 +2,23 @@ package com.floriparide.listings.admin.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.web.json.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 /**
  * @author Mikhail Bragin
  */
-public abstract class ListResponse<T extends Element> implements IResponse {
+public class ListResponse<T extends Element> implements IResponse {
 
 	@JsonProperty("")
 	Integer totalCount;
 
 	@JsonProperty("")
-	Integer currentCount;
-
-	@JsonProperty("")
 	List<T> list;
 
-	protected ListResponse(Integer totalCount, Integer currentCount, List<T> list) {
+	public ListResponse(Integer totalCount, @NotNull List<T> list) {
 		this.totalCount = totalCount;
-		this.currentCount = currentCount;
 		this.list = list;
 	}
 
@@ -33,13 +30,7 @@ public abstract class ListResponse<T extends Element> implements IResponse {
 		this.totalCount = totalCount;
 	}
 
-	public Integer getCurrentCount() {
-		return currentCount;
-	}
-
-	public void setCurrentCount(Integer currentCount) {
-		this.currentCount = currentCount;
-	}
+	public Integer getCurrentCount() { return list.size(); }
 
 	public List<T> getList() {
 		return list;

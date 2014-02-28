@@ -4,7 +4,6 @@ import com.floriparide.listings.admin.api.request.PagingRequest;
 import com.floriparide.listings.admin.api.request.impl.CreateEntityRequest;
 import com.floriparide.listings.admin.api.request.impl.UpdateEntityRequest;
 import com.floriparide.listings.admin.api.response.ListResponse;
-import com.floriparide.listings.admin.api.response.impl.BranchListResponse;
 import com.floriparide.listings.dao.IBranchDao;
 import com.floriparide.listings.model.Branch;
 import com.floriparide.listings.web.json.BranchElement;
@@ -76,10 +75,9 @@ public class BranchController extends BaseController implements CRUDController<B
 	/**
 	 * Gets a list of branches
 	 *
-	 * @param start Start index of a branch list (inclusive)
-	 * @param end   End index of a branch list (exclusive)
-	 * @return an instance of {@link com.floriparide.listings.admin.api.response.impl.BranchListResponse} wrapped with
-	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
+	 * @return an instance of {@link com.floriparide.listings.admin.api.response.ListResponse<BranchElement>}
+     * wrapped with {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
+     *
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
@@ -87,7 +85,8 @@ public class BranchController extends BaseController implements CRUDController<B
 	public ResponseEntity<ListResponse<BranchElement>> list(PagingRequest request,
 	                                                        HttpServletRequest httpRequest) throws Exception {
 
-		return new ResponseEntity<ListResponse<BranchElement>>(new BranchListResponse(0, 1, Arrays.asList(new BranchElement())), HttpStatus.OK);
+		return new ResponseEntity<ListResponse<BranchElement>>(new ListResponse<BranchElement>(0,
+                Arrays.asList(new BranchElement())), HttpStatus.OK);
 	}
 
 }
