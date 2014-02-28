@@ -109,7 +109,7 @@ public class ProjectController extends BaseController implements CRUDController<
 			projects = projectDao.getProjects(request.getOffset(), request.getLimit(),
 					request.getSortFieldModel(), request.getSortTypeModel());
 
-		return new ResponseEntity<ProjectListResponse>(new ProjectListResponse(totalCount, projects.size(), projects),
+		return new ResponseEntity<ProjectListResponse>(new ProjectListResponse(totalCount, ProjectElement.projectsToElements(projects)),
 				HttpStatus.OK);
 	}
 

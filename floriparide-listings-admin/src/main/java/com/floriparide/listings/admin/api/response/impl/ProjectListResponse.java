@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ProjectListResponse extends ListResponse<ProjectElement> {
 
-    public ProjectListResponse(Integer totalCount, Integer currentCount, @NotNull List<Project> projects) {
-        super(totalCount, currentCount, ProjectElement.projectsToElements(projects));
+    public ProjectListResponse(Integer totalCount, @NotNull List<ProjectElement> projects) {
+        super(totalCount, projects);
     }
 }

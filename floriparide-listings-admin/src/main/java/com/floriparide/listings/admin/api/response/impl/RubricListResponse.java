@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class RubricListResponse extends ListResponse<RubricElement> {
 
-	public RubricListResponse(Integer totalCount, Integer currentCount, List<Rubric> list) {
-		super(totalCount, currentCount, RubricElement.rubricsToRubricElements(list));
+	public RubricListResponse(Integer totalCount, Integer currentCount, List<RubricElement> list) {
+		super(totalCount, list);
 	}
 }

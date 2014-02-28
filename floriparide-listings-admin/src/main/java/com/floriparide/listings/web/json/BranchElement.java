@@ -5,8 +5,6 @@ import com.floriparide.listings.model.Branch;
 import com.floriparide.listings.model.PaymentOption;
 import com.floriparide.listings.model.Point;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +88,14 @@ public class BranchElement implements Element<Branch> {
 		return branchElements;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -114,14 +120,6 @@ public class BranchElement implements Element<Branch> {
 		this.contacts = contacts;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public List<RubricElement> getRubrics() {
 		return rubrics;
 	}
@@ -130,12 +128,36 @@ public class BranchElement implements Element<Branch> {
 		this.rubrics = rubrics;
 	}
 
+	public List<AttributeElement> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(List<AttributeElement> attributes) {
+		this.attributes = attributes;
+	}
+
 	public Long getCompanyId() {
 		return companyId;
 	}
 
 	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
+	}
+
+	public Double getLat() {
+		return lat;
+	}
+
+	public void setLat(Double lat) {
+		this.lat = lat;
+	}
+
+	public Double getLon() {
+		return lon;
+	}
+
+	public void setLon(Double lon) {
+		this.lon = lon;
 	}
 
 	public String getAddress() {
@@ -168,30 +190,6 @@ public class BranchElement implements Element<Branch> {
 
 	public void setArticle(String article) {
 		this.article = article;
-	}
-
-	public List<AttributeElement> getAttributes() {
-		return attributes;
-	}
-
-	public void setAttributes(List<AttributeElement> attributes) {
-		this.attributes = attributes;
-	}
-
-	public Double getLat() {
-		return lat;
-	}
-
-	public void setLat(Double lat) {
-		this.lat = lat;
-	}
-
-	public Double getLon() {
-		return lon;
-	}
-
-	public void setLon(Double lon) {
-		this.lon = lon;
 	}
 
 	public List<String> getPaymentOptions() {
