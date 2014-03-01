@@ -1,5 +1,6 @@
 package com.floriparide.listings.web.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.model.Attribute;
 
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * @author Mikhail Bragin
  */
-public class AttributeElement {
+public class AttributeElement implements Element<Attribute> {
 
 	@JsonProperty("")
 	Long id;
@@ -22,6 +23,9 @@ public class AttributeElement {
 	@JsonProperty("")
 	String name;
 
+    @JsonProperty("")
+    List<String> possibleValues;
+
 	public AttributeElement() {
 	}
 
@@ -29,6 +33,7 @@ public class AttributeElement {
 		this.id = attribute.getId();
 		this.groupId = attribute.getGroupId();
 		this.name = attribute.getName();
+        this.possibleValues = attribute.getPossibleValues();
 	}
 
 	public static List<AttributeElement> attributesToAttributeElements(List<Attribute> attributes) {
@@ -39,6 +44,13 @@ public class AttributeElement {
 
 		return attributeElements;
 	}
+
+    @NotNull
+    @JsonIgnore
+    public Attribute getModel() {
+        Attribute attribute = new Attribute(id, groupId, name, possibleValues);
+        return attribute;
+    }
 
 	public Long getId() {
 		return id;
@@ -63,4 +75,8 @@ public class AttributeElement {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+    public List<String> getPossibleValues() { return possibleValues; }
+
+    public void setPossibleValues(List<String> possibleValues) { this.possibleValues = possibleValues; }
 }

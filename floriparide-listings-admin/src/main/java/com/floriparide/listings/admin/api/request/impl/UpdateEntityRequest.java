@@ -1,9 +1,7 @@
 package com.floriparide.listings.admin.api.request.impl;
 
-import com.floriparide.listings.web.json.BranchElement;
-import com.floriparide.listings.web.json.CompanyElement;
-import com.floriparide.listings.web.json.Element;
-import com.floriparide.listings.web.json.ProjectElement;
+import com.floriparide.listings.model.Attribute;
+import com.floriparide.listings.web.json.*;
 
 import org.springframework.util.Assert;
 
@@ -22,6 +20,9 @@ public class UpdateEntityRequest<E extends Element> extends CreateEntityRequest<
 
 		} else if (entity instanceof ProjectElement) {
 			Assert.notNull(((ProjectElement)entity).getId(), "Field id must not be null");
-		}
+		} else if (entity instanceof AttributeElement) {
+            Assert.notNull(((AttributeElement)entity).getId(), "Field id must not be null");
+            Assert.notNull(((AttributeElement)entity).getGroupId(), "Field group_id must not be null");
+        }
 	}
 }
