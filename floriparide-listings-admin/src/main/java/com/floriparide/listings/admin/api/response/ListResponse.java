@@ -2,6 +2,7 @@ package com.floriparide.listings.admin.api.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.web.json.Element;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class ListResponse<T extends Element> implements IResponse {
 	@JsonProperty("")
 	List<T> list;
 
-	public ListResponse(Integer totalCount, List<T> list) {
+	public ListResponse(Integer totalCount, @NotNull List<T> list) {
 		this.totalCount = totalCount;
 		this.list = list;
 	}
