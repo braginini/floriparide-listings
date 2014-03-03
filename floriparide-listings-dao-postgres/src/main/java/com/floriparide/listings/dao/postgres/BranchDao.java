@@ -503,7 +503,7 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 	private void addPaymentOptions(final long branchId, @NotNull final List<PaymentOption> paymentOptions) throws Exception {
 
 		String query = "INSERT INTO " + Schema.TABLE_BRANCH_PAYMENT_OPTIONS + " (" + Schema.FIELD_BRANCH_ID +
-				"," + Schema.TABLE_BRANCH_PAYMENT_OPTIONS_FIELD_PAYMENT_OPTION + ") VALUES (?, ?);";
+				"," + Schema.TABLE_BRANCH_PAYMENT_OPTIONS_FIELD_PAYMENT_OPTION + ") VALUES (?, ?::payment_option);";
 
 		getJdbcTemplate().batchUpdate(query, new BatchPreparedStatementSetter() {
 
@@ -511,7 +511,7 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				PaymentOption paymentOption = paymentOptions.get(i);
 				ps.setLong(1, branchId);
-				ps.setString(2, paymentOption.name());
+				ps.setString(2, paymentOption.name().toLowerCase());
 			}
 
 			@Override
