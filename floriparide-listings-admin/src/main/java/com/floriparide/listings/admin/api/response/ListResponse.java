@@ -30,8 +30,6 @@ public class ListResponse<T extends Element> implements IResponse {
 		this.totalCount = totalCount;
 	}
 
-	public Integer getCurrentCount() { return list.size(); }
-
 	public List<T> getList() {
 		return list;
 	}

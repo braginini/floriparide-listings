@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author Mikhail Bragin
  */
-public class AttributeElement {
+public class AttributeElement implements Element<Attribute> {
 
 	@JsonProperty("")
 	Long id;
@@ -21,6 +21,9 @@ public class AttributeElement {
 
 	@JsonProperty("")
 	String name;
+
+	@JsonProperty("possible_values")
+	List<Object> possibleValues;
 
 	public AttributeElement() {
 	}
@@ -38,6 +41,15 @@ public class AttributeElement {
 			attributeElements.add(new AttributeElement(a));
 
 		return attributeElements;
+	}
+
+	public static List<Attribute> attributesElementsToAttribute(List<AttributeElement> attributeElements) {
+		List<Attribute> attributes = new ArrayList<Attribute>(attributeElements.size());
+
+		for (AttributeElement a : attributeElements)
+			attributes.add(a.getModel());
+
+		return attributes;
 	}
 
 	public Long getId() {
@@ -62,5 +74,18 @@ public class AttributeElement {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public List<Object> getPossibleValues() {
+		return possibleValues;
+	}
+
+	public void setPossibleValues(List<Object> possibleValues) {
+		this.possibleValues = possibleValues;
+	}
+
+	@Override
+	public Attribute getModel() {
+		return new Attribute(id, groupId, name, possibleValues);
 	}
 }
