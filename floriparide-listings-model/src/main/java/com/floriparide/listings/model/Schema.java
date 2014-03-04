@@ -39,6 +39,7 @@ public class Schema {
 	public static final String TABLE_BRANCH_FIELD_OFFICE = "office";
 	public static final String TABLE_BRANCH_FIELD_CURRENCY = "currency"; //ISO 4217 format
 	public static final String TABLE_BRANCH_FIELD_ARTICLE = "article";
+	public static final String TABLE_BRANCH_FIELD_ADD_INFO = "additional_info";
 
 	//branch_attributes
 	public static final String TABLE_BRANCH_ATTRIBUTES_FIELD_ATTRIBUTE_ID = "attribute_id";
