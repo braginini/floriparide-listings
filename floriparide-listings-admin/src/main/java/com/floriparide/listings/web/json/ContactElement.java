@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Mikhail Bragin
  */
-public class ContactElement {
+public class ContactElement implements Element<Contact> {
 
 	@JsonProperty("")
 	Long id;
@@ -47,6 +47,15 @@ public class ContactElement {
 		return contactElements;
 	}
 
+	public static List<Contact> contactsElementsToToContacts(@NotNull List<ContactElement> contactElements) {
+		List<Contact> contacts = new ArrayList<Contact>(contactElements.size());
+		for (ContactElement c : contactElements) {
+			contacts.add(c.getModel());
+		}
+
+		return contacts;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -77,5 +86,10 @@ public class ContactElement {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	@Override
+	public Contact getModel() {
+		return new Contact(id, Contact.ContactType.valueOf(type), value, comment);
 	}
 }

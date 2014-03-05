@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -48,6 +49,17 @@ public class RubricElement implements Element<Rubric> {
 			rubricElements.add(new RubricElement(r));
 
 		return rubricElements;
+	}
+
+	public static List<Rubric> rubricsElementsToRubrics(List<RubricElement> rubricElements) {
+        if (rubricElements == null) return Collections.emptyList();
+
+		List<Rubric> rubrics = new ArrayList<Rubric>(rubricElements.size());
+
+		for (RubricElement r : rubricElements)
+			rubrics.add(r.getModel());
+
+		return rubrics;
 	}
 
 	public Long getId() {
@@ -92,6 +104,6 @@ public class RubricElement implements Element<Rubric> {
 
 	@Override
 	public Rubric getModel() {
-		return new Rubric();
+		return new Rubric(id, name, parentId, RubricElement.rubricsElementsToRubrics(children));
 	}
 }

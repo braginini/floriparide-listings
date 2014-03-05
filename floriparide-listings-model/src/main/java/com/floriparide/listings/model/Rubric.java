@@ -28,26 +28,23 @@ public class Rubric {
 	public Rubric() {
 	}
 
-	public Rubric(Long id, String name, Long parentId, List<Long> childrenIds) {
-		this(name, parentId, childrenIds);
-		this.id = id;
+	public Rubric(Long id, String name, Long parentId, List<Rubric> children) {
+		this(id, name, parentId, children, null);
 	}
 
-	public Rubric(String name, Long parentId, List<Long> childrenIds) {
-		this.name = name;
-		this.parentId = parentId;
-		this.childrenIds = childrenIds;
-	}
-
-	public Rubric(Long id, String name, Long parentId, List<Long> childrenIds, List<AttributesGroup> attributesGroups) {
+	public Rubric(Long id, String name, Long parentId, List<Rubric> children, List<AttributesGroup> attributesGroups) {
 		this.id = id;
 		this.name = name;
 		this.parentId = parentId;
-		this.childrenIds = childrenIds;
+		this.children = children;
 		this.attributesGroups = attributesGroups;
 	}
 
-	@Nullable
+    public Rubric(Long id, String name) {
+        this(id, name, null, null, null);
+    }
+
+    @Nullable
 	public Long getId() {
 		return id;
 	}

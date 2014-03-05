@@ -314,4 +314,12 @@
 
 	</changeSet>
 
+	<changeSet id="21" author="mbragin">
+		<addColumn tableName="branch_contacts">
+			<column name="id" type="bigserial">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>

@@ -1,0 +1,30 @@
+<RestClientRequest>
+  <option name="httpMethod" value="POST" />
+  <option name="urlBase" value="http://localhost:8080" />
+  <option name="urlPath" value="/admin/v1/branch/create/" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Accept" />
+        <option name="value" value="*/*" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Cache-Control" />
+        <option name="value" value="no-cache" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Content-type" />
+        <option name="value" value="application/json" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list />
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="true" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="{     &quot;entity&quot;: {         &quot;name&quot;: &quot;Branch1&quot;,         &quot;description&quot;: &quot;description&quot;,         &quot;company_id&quot;: &quot;2&quot;,         &quot;lat&quot;: &quot;23.2322323&quot;,         &quot;lon&quot;: &quot;23.2322323&quot;,         &quot;address&quot;: &quot;address&quot;,         &quot;office&quot;: &quot;office&quot;,         &quot;currency&quot;: &quot;BRL&quot;,         &quot;article&quot;: &quot;article&quot;,         &quot;payment_opts&quot;: [             &quot;VISA&quot;,             &quot;MASTERCARD&quot;         ],         &quot;contacts&quot;: [],         &quot;rubrics&quot;: [],         &quot;attributes&quot;: []     } }" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>

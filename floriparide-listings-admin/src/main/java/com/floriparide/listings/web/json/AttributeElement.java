@@ -23,7 +23,7 @@ public class AttributeElement implements Element<Attribute> {
 	@JsonProperty("")
 	String name;
 
-    @JsonProperty("")
+    @JsonProperty("possible_values")
     List<String> possibleValues;
 
 	public AttributeElement() {
@@ -43,6 +43,15 @@ public class AttributeElement implements Element<Attribute> {
 			attributeElements.add(new AttributeElement(a));
 
 		return attributeElements;
+	}
+
+	public static List<Attribute> attributesElementsToAttribute(List<AttributeElement> attributeElements) {
+		List<Attribute> attributes = new ArrayList<Attribute>(attributeElements.size());
+
+		for (AttributeElement a : attributeElements)
+			attributes.add(a.getModel());
+
+		return attributes;
 	}
 
     @NotNull
