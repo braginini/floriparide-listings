@@ -21,17 +21,29 @@ public class Attribute {
 
 	//list of possible values, can be null if no values are present for this attribute
 	@Nullable
-	List<Object> possibleValues;
+	List<String> possibleValues;
 
 	//the current value set while creating/editing branch
 	Object currentValue;
 
-	public Attribute(Long id, Long groupId, String name, List<Object> possibleValues) {
+	public Attribute(Long id, Long groupId, String name, List<String> possibleValues) {
 		this.id = id;
 		this.groupId = groupId;
 		this.name = name;
 		this.possibleValues = possibleValues;
 	}
+
+    public static String asCommaSeparated(List<String> list) {
+        if (list == null)
+            return null;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); ++i) {
+            if (i != 0)
+                sb.append(",");
+            sb.append(list.get(i));
+        }
+        return sb.toString();
+    }
 
 	public Long getId() {
 		return id;
@@ -45,7 +57,7 @@ public class Attribute {
 		return name;
 	}
 
-	public List<Object> getPossibleValues() {
+	public List<String> getPossibleValues() {
 		return possibleValues;
 	}
 

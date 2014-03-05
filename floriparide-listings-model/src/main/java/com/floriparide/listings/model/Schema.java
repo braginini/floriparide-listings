@@ -14,6 +14,7 @@ public class Schema {
 	public static final String TABLE_BRANCH_RUBRICS= "branch_rubrics";
 	public static final String TABLE_BRANCH_PAYMENT_OPTIONS= "branch_payment_options";
 	public static final String TABLE_BRANCH_CONTACTS= "branch_contacts";
+    public static final String TABLE_ATTRIBUTE = "attribute";
 
 	//common fields
 	public static final String FIELD_ID = "id";
@@ -25,6 +26,7 @@ public class Schema {
 	public static final String FIELD_UPDATED = "updated";
 	public static final String FIELD_VALUE = "value";
 	public static final String FIELD_COMMENT = "comment";
+
 
 	//specific fields
 	//company
@@ -51,4 +53,8 @@ public class Schema {
 
 	//table branch_contacts
 	public static final String TABLE_BRANCH_CONTACTS_FIELD_CONTACT = "contact";
+	
+    //attribute
+    public static final String TABLE_ATTRIBUTE_FIELD_GROUP_ID = "group_id";
+    public static final String TABLE_ATTRIBUTE_FIELD_POSSIBLE_VALUES = "possible_values";
 }

@@ -51,4 +51,9 @@
 		<constructor-arg index="1" ref="jdbcTemplate"/>
 	</bean>
 
+    <bean id="attributeDao" class="com.floriparide.listings.dao.postgres.AttributeDao">
+        <constructor-arg index="0" ref="namedParamsJdbcTemplate"/>
+        <constructor-arg index="1" ref="jdbcTemplate"/>
+    </bean>
+
 </beans>

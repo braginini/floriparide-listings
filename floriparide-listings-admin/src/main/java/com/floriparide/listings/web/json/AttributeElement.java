@@ -1,5 +1,6 @@
 package com.floriparide.listings.web.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.model.Attribute;
 
@@ -22,8 +23,8 @@ public class AttributeElement implements Element<Attribute> {
 	@JsonProperty("")
 	String name;
 
-	@JsonProperty("possible_values")
-	List<Object> possibleValues;
+    @JsonProperty("possible_values")
+    List<String> possibleValues;
 
 	public AttributeElement() {
 	}
@@ -32,6 +33,7 @@ public class AttributeElement implements Element<Attribute> {
 		this.id = attribute.getId();
 		this.groupId = attribute.getGroupId();
 		this.name = attribute.getName();
+        this.possibleValues = attribute.getPossibleValues();
 	}
 
 	public static List<AttributeElement> attributesToAttributeElements(List<Attribute> attributes) {
@@ -51,6 +53,13 @@ public class AttributeElement implements Element<Attribute> {
 
 		return attributes;
 	}
+
+    @NotNull
+    @JsonIgnore
+    public Attribute getModel() {
+        Attribute attribute = new Attribute(id, groupId, name, possibleValues);
+        return attribute;
+    }
 
 	public Long getId() {
 		return id;
@@ -76,16 +85,7 @@ public class AttributeElement implements Element<Attribute> {
 		this.name = name;
 	}
 
-	public List<Object> getPossibleValues() {
-		return possibleValues;
-	}
+    public List<String> getPossibleValues() { return possibleValues; }
 
-	public void setPossibleValues(List<Object> possibleValues) {
-		this.possibleValues = possibleValues;
-	}
-
-	@Override
-	public Attribute getModel() {
-		return new Attribute(id, groupId, name, possibleValues);
-	}
+    public void setPossibleValues(List<String> possibleValues) { this.possibleValues = possibleValues; }
 }
