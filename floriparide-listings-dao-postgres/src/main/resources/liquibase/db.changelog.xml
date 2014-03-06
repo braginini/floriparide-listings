@@ -461,7 +461,7 @@
 
 	<changeSet author="mbragin" id="31">
 		<dropTable tableName="branch_attributes"/>
-		<dropTable tableName="attributes"/>
+		<dropTable tableName="attribute"/>
 	</changeSet>
 
 </databaseChangeLog>
