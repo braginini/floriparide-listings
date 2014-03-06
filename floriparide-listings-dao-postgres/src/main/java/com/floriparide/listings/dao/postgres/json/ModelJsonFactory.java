@@ -88,7 +88,7 @@ public class ModelJsonFactory {
 				attributesGroup.add(agObj);
 			}
 
-			object.put(JSONSchema.BRANCH_DATA_ATTRIBUTES_GROUPS, attributesGroup);
+			object.put(JSONSchema.BRANCH_DATA_ATTRIBUTES, attributesGroup);
 		}
 
 		return object.toJSONString();
@@ -139,7 +139,7 @@ public class ModelJsonFactory {
 		}
 
 		List<Attribute> attributes = new ArrayList<>();
-		JSONArray ags = (JSONArray) object.get(JSONSchema.BRANCH_DATA_ATTRIBUTES_GROUPS);
+		JSONArray ags = (JSONArray) object.get(JSONSchema.BRANCH_DATA_ATTRIBUTES);
 		if (ags != null) {
 			Iterator<JSONObject> it = ags.iterator();
 			while (it.hasNext()) {
@@ -258,7 +258,7 @@ public class ModelJsonFactory {
 		public static final String BRANCH_DATA_CONTACTS_COMMENT = "comment";
 		public static final String BRANCH_DATA_PAYMENT_OPTIONS = "payment_options";
 		public static final String BRANCH_DATA_PAYMENT_OPTIONS_OPTION = "option";
-		public static final String BRANCH_DATA_ATTRIBUTES_GROUPS = "attributes_groups";
+		public static final String BRANCH_DATA_ATTRIBUTES = "attributes";
 
 		public static final String ATTRIBUTES_GROUP_DATA_INPUT_TYPE = "input_type";
 		public static final String ATTRIBUTES_GROUP_DATA_FILTER_TYPE = "filter_type";
