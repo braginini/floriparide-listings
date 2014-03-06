@@ -3,7 +3,7 @@
 <databaseChangeLog
 		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
 		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
 	<changeSet id="1" author="mbragin">
 		<createTable tableName="project">
@@ -258,11 +258,11 @@
 		               constraintName="pk_rubric_attributes_group"/>
 	</changeSet>
 
-    <changeSet id="18" author="andpar">
-        <addColumn tableName="project">
-            <column name="name" type="varchar"/>
-        </addColumn>
-    </changeSet>
+	<changeSet id="18" author="andpar">
+		<addColumn tableName="project">
+			<column name="name" type="varchar"/>
+		</addColumn>
+	</changeSet>
 
 	<changeSet id="18" author="mbragin">
 		<createTable tableName="branch_rubrics">
@@ -318,6 +318,143 @@
 		<addColumn tableName="branch_contacts">
 			<column name="id" type="bigserial">
 				<constraints primaryKey="true" nullable="false"/>
+			</column>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="22" author="mbragin">
+		<addColumn tableName="branch">
+			<column name="additional_info" type="json"/>
+		</addColumn>
+	</changeSet>
+
+	<!--constrains for json fields in branch table: lat, lon, contacts(check function+constraint),
+	payment_options(check function+constraint)-->
+	<changeSet id="23" author="mbragin">
+		<sql splitStatements="false">
+			ALTER TABLE branch ADD CONSTRAINT validate_point_lat CHECK
+			((((additional_info->>'geometry')::json->>'point')::json->>'lat')::double precision BETWEEN -90.0 AND 90.0);
+			ALTER TABLE branch ADD CONSTRAINT validate_point_lon CHECK
+			((((additional_info->>'geometry')::json->>'point')::json->>'lon')::double precision BETWEEN -180.0 AND
+			180.0);
+			CREATE OR REPLACE FUNCTION branch_contacts_check(JSON) RETURNS boolean AS
+			$BODY$
+			DECLARE
+			i json;
+			c contact_type;
+			BEGIN
+			FOR i IN SELECT * FROM json_array_elements($1->'contacts')
+			LOOP
+			c:= (i->>'contact')::contact_type;
+			END LOOP;
+			RETURN true;
+			EXCEPTION
+			WHEN SQLSTATE '22P02' THEN
+			RETURN false;
+			END;
+			$BODY$
+			language plpgsql;
+
+			ALTER TABLE branch ADD CONSTRAINT validate_branch_contacts CHECK (branch_contacts_check(additional_info));
+
+			CREATE OR REPLACE FUNCTION branch_payment_options_check(JSON) RETURNS boolean AS
+			$BODY$
+			DECLARE
+			i json;
+			c payment_option;
+			BEGIN
+			FOR i IN SELECT * FROM json_array_elements($1->'payment_options')
+			LOOP
+			c:= (i->>'option')::payment_option;
+			END LOOP;
+			RETURN true;
+			EXCEPTION
+			WHEN SQLSTATE '22P02' THEN
+			RETURN false;
+			END;
+			$BODY$
+			language plpgsql;
+
+			ALTER TABLE branch ADD CONSTRAINT validate_branch_payment_options CHECK
+			(branch_payment_options_check(additional_info));
+		</sql>
+	</changeSet>
+
+	<changeSet id="24" author="mbragin">
+		<dropColumn tableName="branch"
+		            columnName="description"/>
+		<dropColumn tableName="branch"
+		            columnName="address"/>
+		<dropColumn tableName="branch"
+		            columnName="article"/>
+		<dropColumn tableName="branch"
+		            columnName="lon"/>
+		<dropColumn tableName="branch"
+		            columnName="office"/>
+		<dropColumn tableName="branch"
+		            columnName="currency"/>
+		<dropColumn tableName="branch"
+		            columnName="lat"/>
+	</changeSet>
+
+	<changeSet author="mbragin" id="25">
+		<renameColumn columnDataType="json"
+		              newColumnName="data"
+		              oldColumnName="additional_info"
+		              tableName="branch"/>
+	</changeSet>
+
+	<changeSet author="mbragin" id="26">
+		<sql>ALTER TABLE branch DROP CONSTRAINT validate_branch_payment_options;
+			ALTER TABLE branch DROP CONSTRAINT validate_branch_contacts;
+			ALTER TABLE branch DROP CONSTRAINT validate_point_lat;
+			ALTER TABLE branch DROP CONSTRAINT validate_point_lon;
+
+			ALTER TABLE branch ADD CONSTRAINT validate_branch_contacts CHECK (branch_contacts_check(data));
+			ALTER TABLE branch ADD CONSTRAINT validate_branch_payment_options CHECK
+			(branch_payment_options_check(data));
+			ALTER TABLE branch ADD CONSTRAINT validate_point_lat CHECK
+			((((data->>'geometry')::json->>'point')::json->>'lat')::double precision BETWEEN -90.0 AND 90.0);
+			ALTER TABLE branch ADD CONSTRAINT validate_point_lon CHECK
+			((((data->>'geometry')::json->>'point')::json->>'lon')::double precision BETWEEN -180.0 AND
+			180.0);
+		</sql>
+	</changeSet>
+
+	<changeSet author="mbragin" id="27">
+		<dropTable tableName="branch_contacts"/>
+		<dropTable tableName="branch_payment_options"/>
+	</changeSet>
+
+	<changeSet id="28" author="mbragin">
+		<addColumn tableName="attributes_group">
+			<column name="names" type="json"/>
+			<column name="values" type="json"/>
+			<column name="meta" type="json"/>
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="29" author="mbragin">
+		<dropColumn tableName="attributes_group"
+		            columnName="name"/>
+		<dropColumn tableName="attributes_group"
+		            columnName="attributes_type"/>
+	</changeSet>
+
+	<changeSet id="30" author="mbragin">
+		<dropColumn tableName="attributes_group"
+		            columnName="names"/>
+		<dropColumn tableName="attributes_group"
+		            columnName="values"/>
+		<dropColumn tableName="attributes_group"
+		            columnName="meta"/>
+		<addColumn tableName="attributes_group">
+			<column name="data" type="json"/>
+			<column name="created" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="updated" type="bigint">
+				<constraints nullable="false"/>
 			</column>
 		</addColumn>
 	</changeSet>

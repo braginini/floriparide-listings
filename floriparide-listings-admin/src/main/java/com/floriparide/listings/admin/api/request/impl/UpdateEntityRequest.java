@@ -23,6 +23,8 @@ public class UpdateEntityRequest<E extends Element> extends CreateEntityRequest<
 		} else if (entity instanceof AttributeElement) {
             Assert.notNull(((AttributeElement)entity).getId(), "Field id must not be null");
             Assert.notNull(((AttributeElement)entity).getGroupId(), "Field group_id must not be null");
-        }
+        } else if (entity instanceof AttributesGroupElement) {
+			Assert.notNull(((AttributesGroupElement)entity).getId(), "Field id must not be null");
+		}
 	}
 }

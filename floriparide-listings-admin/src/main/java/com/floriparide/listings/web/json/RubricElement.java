@@ -43,6 +43,8 @@ public class RubricElement implements Element<Rubric> {
 	}
 
 	public static List<RubricElement> rubricsToRubricElements(List<Rubric> rubrics) {
+		if (rubrics == null) return Collections.emptyList();
+
 		List<RubricElement> rubricElements = new ArrayList<RubricElement>(rubrics.size());
 
 		for (Rubric r : rubrics)

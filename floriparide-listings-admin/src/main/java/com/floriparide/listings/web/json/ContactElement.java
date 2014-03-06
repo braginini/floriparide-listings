@@ -1,5 +1,6 @@
 package com.floriparide.listings.web.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.model.Contact;
 
@@ -89,6 +90,7 @@ public class ContactElement implements Element<Contact> {
 	}
 
 	@Override
+	@JsonIgnore
 	public Contact getModel() {
 		return new Contact(id, Contact.ContactType.valueOf(type), value, comment);
 	}

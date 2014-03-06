@@ -5,19 +5,21 @@ package com.floriparide.listings.model;
  */
 public class Point {
 
-	double lat;
-	double lon;
+	Double lat;
+	Double lon;
 
-	public Point(double lat, double lon) {
+	public Point(Double lat, Double lon) {
 		this.lat = lat;
 		this.lon = lon;
 	}
 
-	public double getLat() {
+
+
+	public Double getLat() {
 		return lat;
 	}
 
-	public double getLon() {
+	public Double getLon() {
 		return lon;
 	}
 }
