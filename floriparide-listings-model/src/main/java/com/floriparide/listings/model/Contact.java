@@ -1,5 +1,7 @@
 package com.floriparide.listings.model;
 
+import java.util.HashMap;
+
 /**
  * Created by Mikhail Bragin
  */
@@ -50,7 +52,30 @@ public class Contact {
 
 	public enum ContactType {
 
-		EMAIL, WEBSITE, PHONE, FAX, SKYPE, FACEBOOK
+		EMAIL("email"), WEBSITE("website"), PHONE("phone"), FAX("fax"), SKYPE("skype"), FACEBOOK("facebook"), TWITTER("twitter");
 
+		String type;
+
+		ContactType(String type) {
+			this.type = type;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public static final HashMap<String, ContactType> map = new HashMap<>();
+
+		static {
+			for (ContactType t : ContactType.values())
+				map.put(t.getType(), t);
+		}
+
+		public static ContactType lookup(String type) {
+			if (type == null)
+				return null;
+
+			return map.get(type.toLowerCase());
+		}
 	}
 }

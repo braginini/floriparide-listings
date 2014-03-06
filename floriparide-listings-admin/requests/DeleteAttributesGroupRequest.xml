@@ -1,0 +1,35 @@
+<RestClientRequest>
+  <option name="httpMethod" value="DELETE" />
+  <option name="urlBase" value="http://localhost:8080" />
+  <option name="urlPath" value="/admin/v1/attributesgroup/delete/" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Accept" />
+        <option name="value" value="*/*" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Cache-Control" />
+        <option name="value" value="no-cache" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Content-type" />
+        <option name="value" value="application/json" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="id" />
+        <option name="value" value="4" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="false" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="{ &quot;entity&quot;: { &quot;id&quot;:&quot;3&quot;, &quot;names&quot;: { &quot;en_Us&quot;: &quot;name&quot;, &quot;pt_Br&quot;: &quot;nome&quot; }, &quot;input_type&quot;: &quot;list&quot;, &quot;filter_type&quot;: &quot;checkbox&quot;, &quot;values&quot;: [ &quot;value5&quot;, &quot;value2&quot; ] } }" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>

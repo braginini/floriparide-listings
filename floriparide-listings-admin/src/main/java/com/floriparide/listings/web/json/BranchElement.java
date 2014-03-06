@@ -1,5 +1,6 @@
 package com.floriparide.listings.web.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.model.Branch;
 import com.floriparide.listings.model.PaymentOption;
@@ -201,6 +202,7 @@ public class BranchElement implements Element<Branch> {
 	}
 
 	@Override
+	@JsonIgnore
 	public Branch getModel() {
 		Branch branch = new Branch();
 		branch.setId(id);

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by Mikhail Bragin
  */
-public class Branch {
+public class Branch extends MetaModel {
 
 	Long id;
 
@@ -37,6 +37,10 @@ public class Branch {
 	String article;
 
 	List<Attribute> attributes;
+
+	Long created;
+
+	Long updated;
 
 	public Long getId() {
 		return id;

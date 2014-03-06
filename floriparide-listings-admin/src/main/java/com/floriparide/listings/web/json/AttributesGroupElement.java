@@ -1,5 +1,6 @@
 package com.floriparide.listings.web.json;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.model.AttributesGroup;
 
@@ -7,32 +8,37 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Mikhail Bragin
  */
-public class AttributesGroupElement {
+public class AttributesGroupElement implements Element<AttributesGroup> {
 
 	@JsonProperty("")
 	Long id;
 
 	@JsonProperty("")
-	String name;
+	Map<String, String> names;
+
+	@JsonProperty("input_type")
+	String inputType;
+
+	@JsonProperty("filter_type")
+	String filterType;
 
 	@JsonProperty("")
-	String type;
-
-	@JsonProperty("")
-	List<AttributeElement> attributes;
+	List<String> values;
 
 	public AttributesGroupElement() {
 	}
 
 	public AttributesGroupElement(@NotNull AttributesGroup attributesGroup) {
 		this.id = attributesGroup.getId();
-		this.name = attributesGroup.getName();
-		this.type = attributesGroup.getType().name();
-		this.attributes = AttributeElement.attributesToAttributeElements(attributesGroup.getAttributes());
+		this.names = attributesGroup.getNames();
+		this.inputType = attributesGroup.getInputType().getType();
+		this.filterType = attributesGroup.getFilterType().getType();
+		this.values = attributesGroup.getValues();
 	}
 
 	public static List<AttributesGroupElement> attributesGroupsToElements(@NotNull List<AttributesGroup> attributesGroups) {
@@ -52,28 +58,43 @@ public class AttributesGroupElement {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public Map<String, String> getNames() {
+		return names;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setNames(Map<String, String> names) {
+		this.names = names;
 	}
 
-	public String getType() {
-		return type;
+	public List<String> getValues() {
+		return values;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setValues(List<String> values) {
+		this.values = values;
 	}
 
-	public List<AttributeElement> getAttributes() {
-		return attributes;
+	public String getInputType() {
+		return inputType;
 	}
 
-	public void setAttributes(List<AttributeElement> attributes) {
-		this.attributes = attributes;
+	public void setInputType(String inputType) {
+		this.inputType = inputType;
+	}
+
+	public String getFilterType() {
+		return filterType;
+	}
+
+	public void setFilterType(String filterType) {
+		this.filterType = filterType;
+	}
+
+	@Override
+	@JsonIgnore
+	public AttributesGroup getModel() {
+		return new AttributesGroup(id, names, AttributesGroup.InputType.lookup(inputType),
+				AttributesGroup.FilterType.lookup(filterType), values);
 	}
 }
 
