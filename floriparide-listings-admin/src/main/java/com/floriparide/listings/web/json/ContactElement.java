@@ -35,12 +35,12 @@ public class ContactElement implements Element<Contact> {
 		this.id = contact.getId();
 		this.type = contact.getType().name();
 		this.value = contact.getValue();
-		this.comment = contact.getValue();
+		this.comment = contact.getComment();
 	}
 
 
 	public static List<ContactElement> contactsToContactElements(@NotNull List<Contact> contacts) {
-		List<ContactElement> contactElements = new ArrayList<ContactElement>(contacts.size());
+		List<ContactElement> contactElements = new ArrayList<>(contacts.size());
 		for (Contact c : contacts) {
 			contactElements.add(new ContactElement(c));
 		}

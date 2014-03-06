@@ -59,7 +59,7 @@ public class ModelJsonFactory {
 			for (Contact c : branch.getContacts()) {
 				JSONObject contact = new JSONObject();
 				contact.put(JSONSchema.BRANCH_DATA_CONTACTS_CONTACT, c.getType().name().toLowerCase());
-				contact.put(JSONSchema.BRANCH_DATA_CONTACTS_VALUE, c.getValue());
+				contact.put(JSONSchema.VALUE, c.getValue());
 				contact.put(JSONSchema.BRANCH_DATA_CONTACTS_COMMENT, c.getComment());
 				contacts.add(contact);
 			}
@@ -112,7 +112,7 @@ public class ModelJsonFactory {
 				JSONObject c = it.next();
 				contactList.add(new Contact(
 						Contact.ContactType.lookup((String) c.get(JSONSchema.BRANCH_DATA_CONTACTS_CONTACT)),
-						(String) c.get(JSONSchema.BRANCH_DATA_CONTACTS_VALUE),
+						(String) c.get(JSONSchema.VALUE),
 						(String) c.get(JSONSchema.BRANCH_DATA_CONTACTS_COMMENT)
 				)
 				);
