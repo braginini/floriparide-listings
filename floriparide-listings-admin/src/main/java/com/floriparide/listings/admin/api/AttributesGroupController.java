@@ -37,7 +37,7 @@ public class AttributesGroupController extends BaseController implements CRUDCon
 
 		Long id = attributesGroupDao.create(request.getEntity().getModel());
 
-		return new ResponseEntity<Long>(id, HttpStatus.OK);
+		return new ResponseEntity<>(id, HttpStatus.OK);
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import com.floriparide.listings.model.Attribute;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -42,6 +43,7 @@ public class AttributeElement implements Element<Attribute> {
 	}
 
 	public static List<AttributeElement> attributesToAttributeElements(List<Attribute> attributes) {
+		if (attributes == null) return Collections.emptyList();
 		List<AttributeElement> attributeElements = new ArrayList<AttributeElement>(attributes.size());
 
 		for (Attribute a : attributes)
@@ -51,7 +53,9 @@ public class AttributeElement implements Element<Attribute> {
 	}
 
 	public static List<Attribute> attributesElementsToAttribute(List<AttributeElement> attributeElements) {
-		List<Attribute> attributes = new ArrayList<Attribute>(attributeElements.size());
+		if (attributeElements == null) return Collections.emptyList();
+
+		List<Attribute> attributes = new ArrayList<>(attributeElements.size());
 
 		for (AttributeElement a : attributeElements)
 			attributes.add(a.getModel());

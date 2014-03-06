@@ -165,16 +165,6 @@ public class ModelJsonFactory {
 		if (attributesGroup.getFilterType() != null)
 			object.put(JSONSchema.ATTRIBUTES_GROUP_DATA_FILTER_TYPE, attributesGroup.getFilterType().getType());
 
-		/*if (attributesGroup.getAttributes() != null && !attributesGroup.getAttributes().isEmpty()) {
-			JSONArray array = new JSONArray();
-
-
-			for (String v : attributesGroup.getAttributes())
-				array.add(v);
-
-			object.put(JSONSchema.VALUES, array);
-		}*/
-
 		return object.toJSONString();
 	}
 

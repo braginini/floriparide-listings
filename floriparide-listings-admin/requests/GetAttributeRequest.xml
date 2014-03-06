@@ -1,7 +1,7 @@
 <RestClientRequest>
-  <option name="httpMethod" value="POST" />
+  <option name="httpMethod" value="GET" />
   <option name="urlBase" value="http://localhost:8080" />
-  <option name="urlPath" value="/admin/v1/attribute/create/" />
+  <option name="urlPath" value="/admin/v1/attribute/get/" />
   <option name="headers">
     <list>
       <KeyValuePair>
@@ -19,12 +19,17 @@
     </list>
   </option>
   <option name="parameters">
-    <list />
+    <list>
+      <KeyValuePair>
+        <option name="key" value="id" />
+        <option name="value" value="1" />
+      </KeyValuePair>
+    </list>
   </option>
   <option name="parametersEnabled" value="true" />
-  <option name="haveTextToSend" value="true" />
+  <option name="haveTextToSend" value="false" />
   <option name="haveFileToSend" value="false" />
   <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{     &quot;entity&quot;: {         &quot;names&quot;: {         &quot;en_Us&quot;: &quot;name&quot;,         &quot;pt_Br&quot;: &quot;nome&quot;     },     &quot;possible_values&quot;: [         &quot;value1&quot;,         &quot;value2&quot;     ],         &quot;groupId&quot;: &quot;5&quot;     } }" />
+  <option name="textToSend" value="" />
   <option name="filesToSend" value="" />
 </RestClientRequest>

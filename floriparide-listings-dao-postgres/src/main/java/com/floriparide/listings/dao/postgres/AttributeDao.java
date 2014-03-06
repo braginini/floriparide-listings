@@ -45,8 +45,8 @@ public class AttributeDao extends AbstractSpringJdbc implements IAttributeDao {
 				Schema.FIELD_CREATED + ", " +
 				Schema.FIELD_UPDATED + ", " +
 				Schema.TABLE_ATTRIBUTE_FIELD_GROUP_ID + ", " +
-				Schema.FIELD_DATA + ", " +
-				") VALUES (:created, :updated, :group_id, :data:json)";
+				Schema.FIELD_DATA +") " +
+				"VALUES (:created, :updated, :group_id, :data::json)";
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -58,9 +58,7 @@ public class AttributeDao extends AbstractSpringJdbc implements IAttributeDao {
 						.addValue("data", ModelJsonFactory.getAttributeJSONData(attribute)),
 				keyHolder);
 
-		Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
-
-		return id;
+		return (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
 	}
 
 	@Override
