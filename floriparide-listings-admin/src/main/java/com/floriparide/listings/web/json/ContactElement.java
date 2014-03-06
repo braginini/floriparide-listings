@@ -92,6 +92,6 @@ public class ContactElement implements Element<Contact> {
 	@Override
 	@JsonIgnore
 	public Contact getModel() {
-		return new Contact(id, Contact.ContactType.valueOf(type), value, comment);
+		return new Contact(id, Contact.ContactType.lookup(type), value, comment);
 	}
 }

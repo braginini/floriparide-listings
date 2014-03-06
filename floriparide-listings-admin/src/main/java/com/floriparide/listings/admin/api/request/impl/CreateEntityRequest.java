@@ -28,6 +28,8 @@ public class CreateEntityRequest<E extends Element> implements IRequest {
 
 	@Override
 	public void validate() throws Exception {
+		Assert.notNull(entity, "Field entity must not be null");
+
 		if (entity instanceof CompanyElement) {
 			Assert.notNull(((CompanyElement) entity).getName(), "Field name must not be null");
 			Assert.notNull(((CompanyElement) entity).getDescription(), "Field description must not be null");

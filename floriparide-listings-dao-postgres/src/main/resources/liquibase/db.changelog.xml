@@ -459,4 +459,9 @@
 		</addColumn>
 	</changeSet>
 
+	<changeSet author="mbragin" id="31">
+		<dropTable tableName="branch_attributes"/>
+		<dropTable tableName="attributes"/>
+	</changeSet>
+
 </databaseChangeLog>

@@ -77,6 +77,24 @@ public class ModelJsonFactory {
 			object.put(JSONSchema.BRANCH_DATA_PAYMENT_OPTIONS, options);
 		}
 
+		if (branch.getAttributes() != null && !branch.getAttributes().isEmpty()) {
+			JSONArray attributesGroup = new JSONArray();
+
+			for (AttributesGroup ag : branch.getAttributes()) {
+				JSONObject agObj = new JSONObject();
+				agObj.put(JSONSchema.ID, ag.getId());
+				JSONArray values = new JSONArray();
+				for (String s : ag.getValues()) {
+					values.add(s);
+				}
+
+				agObj.put(JSONSchema.VALUES, values);
+				attributesGroup.add(agObj);
+			}
+
+			object.put(JSONSchema.BRANCH_DATA_ATTRIBUTES_GROUPS, attributesGroup);
+		}
+
 		return object.toJSONString();
 	}
 
@@ -104,7 +122,6 @@ public class ModelJsonFactory {
 				);
 			}
 		}
-
 		branch.setContacts(contactList);
 
 		List<PaymentOption> paymentOptionList = new ArrayList<>();
@@ -124,6 +141,27 @@ public class ModelJsonFactory {
 			branch.setPoint(new Point((Double) point.get(JSONSchema.BRANCH_DATA_POINT_LAT),
 					(Double) point.get(JSONSchema.BRANCH_DATA_POINT_LON)));
 		}
+
+		List<AttributesGroup> attributesGroups = new ArrayList<>();
+		JSONArray ags = (JSONArray) object.get(JSONSchema.BRANCH_DATA_ATTRIBUTES_GROUPS);
+		if (ags != null) {
+			Iterator<JSONObject> it = ags.iterator();
+			while (it.hasNext()) {
+				JSONObject attribute = it.next();
+
+				JSONArray valuesArray = (JSONArray) attribute.get(JSONSchema.VALUES);
+				ArrayList<String> values = new ArrayList<>();
+				Iterator<String> vIt = valuesArray.iterator();
+
+				while (vIt.hasNext())
+					values.add(vIt.next());
+
+				attributesGroups.add(new AttributesGroup((Long) attribute.get(JSONSchema.ID),
+						values));
+			}
+		}
+
+		branch.setAttributes(attributesGroups);
 	}
 
 	public static String getAttributesGroupJSONData(AttributesGroup attributesGroup) {
@@ -138,7 +176,7 @@ public class ModelJsonFactory {
 		if (attributesGroup.getFilterType() != null)
 			object.put(JSONSchema.ATTRIBUTES_GROUP_DATA_FILTER_TYPE, attributesGroup.getFilterType().getType());
 
-		if (attributesGroup.getValues() != null && !attributesGroup.getValues().isEmpty()){
+		if (attributesGroup.getValues() != null && !attributesGroup.getValues().isEmpty()) {
 			JSONArray array = new JSONArray();
 
 
@@ -207,12 +245,14 @@ public class ModelJsonFactory {
 		public static final String BRANCH_DATA_CONTACTS_COMMENT = "comment";
 		public static final String BRANCH_DATA_PAYMENT_OPTIONS = "payment_options";
 		public static final String BRANCH_DATA_PAYMENT_OPTIONS_OPTION = "option";
+		public static final String BRANCH_DATA_ATTRIBUTES_GROUPS = "attributes_groups";
 
 		public static final String ATTRIBUTES_GROUP_DATA_INPUT_TYPE = "input_type";
 		public static final String ATTRIBUTES_GROUP_DATA_FILTER_TYPE = "filter_type";
 
 		public static final String NAMES = "names";
 		public static final String VALUES = "values";
+		public static final String ID = "id";
 
 		public static final String META_CREATED = "created";
 		public static final String META_UPDATED = "updated";

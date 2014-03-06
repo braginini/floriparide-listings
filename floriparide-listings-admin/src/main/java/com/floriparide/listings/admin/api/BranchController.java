@@ -57,7 +57,7 @@ public class BranchController extends BaseController implements CRUDController<B
 
 	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
 			headers = "Accept=application/json")
-	public ResponseEntity update(UpdateEntityRequest<BranchElement> request,
+	public ResponseEntity update(@RequestBody UpdateEntityRequest<BranchElement> request,
 	                             HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
@@ -77,9 +77,9 @@ public class BranchController extends BaseController implements CRUDController<B
 		Branch branch = branchDao.get(id);
 
 		if (branch == null)
-			return new ResponseEntity<BranchElement>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-		return new ResponseEntity<BranchElement>(new BranchElement(branch), HttpStatus.OK);
+		return new ResponseEntity<>(new BranchElement(branch), HttpStatus.OK);
 	}
 
 	/**

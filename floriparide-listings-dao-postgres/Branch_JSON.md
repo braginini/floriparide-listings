@@ -21,5 +21,14 @@
         {
             "option": "cash"
         }
+    ],
+    "attributes_groups": [
+        {
+            "id": "3",
+            "values": [
+                "value2",
+                "value3"
+            ]
+        }
     ]
 }

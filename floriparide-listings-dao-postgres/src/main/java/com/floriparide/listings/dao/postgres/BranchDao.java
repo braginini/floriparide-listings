@@ -100,7 +100,7 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 				"," + Schema.FIELD_CREATED +
 				"," + Schema.FIELD_UPDATED +
 				"," + Schema.FIELD_DATA +
-				") VALUES (:name, :company_id, :created, :updated, :additional_info::json)";
+				") VALUES (:name, :company_id, :created, :updated, :data::json)";
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -110,15 +110,12 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 						.addValue("created", System.currentTimeMillis())
 						.addValue("updated", System.currentTimeMillis())
 						.addValue("company_id", branch.getCompanyId())
-						.addValue("additional_info", ModelJsonFactory.getBranchJSONData(branch)),
+						.addValue("data", ModelJsonFactory.getBranchJSONData(branch)),
 				keyHolder);
 
 		Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
 
 		branch.setId(id);
-
-		if (branch.getAttributes() != null && !branch.getAttributes().isEmpty())
-			addAttributes(branch.getId(), branch.getAttributes());
 
 		if (branch.getRubrics() != null && !branch.getRubrics().isEmpty())
 			addRubrics(branch.getId(), branch.getRubrics());
@@ -139,20 +136,16 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 		String query = "UPDATE " + table + " SET " +
 				Schema.FIELD_NAME + " = :name" +
 				"," + Schema.TABLE_BRANCH_FIELD_COMPANY_ID + " = :company_id" +
-				"," + Schema.FIELD_CREATED + " = :created" +
 				"," + Schema.FIELD_UPDATED + " = :updated" +
-				"," + Schema.FIELD_DATA + " = :additional_info" +
-				") VALUES (:name, :company_id, :created, :updated. :additional_info::json)";
+				"," + Schema.FIELD_DATA + " = :data::json";
 
 		getNamedJdbcTemplate().update(query,
 				new MapSqlParameterSource()
 						.addValue("name", branch.getName())
-						.addValue("created", System.currentTimeMillis())
 						.addValue("updated", System.currentTimeMillis())
 						.addValue("company_id", branch.getCompanyId())
-						.addValue("additional_info", ModelJsonFactory.getBranchJSONData(branch)));
+						.addValue("data", ModelJsonFactory.getBranchJSONData(branch)));
 
-		updateAttributes(branch);
 		updateRubrics(branch);
 
 	}
@@ -203,81 +196,6 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 		});
 	}
 
-	//DuplicateKeyException is thrown when we already have a branch-attribute reference,
-	//so only thing needed is to get the full list of branch attributes and update their values
-	//and insert non existent references
-	private void updateAttributes(@NotNull Branch branch) throws Exception {
-		if (branch.getAttributes() != null && !branch.getAttributes().isEmpty()) {
-
-			try {
-				addAttributes(branch.getId(), branch.getAttributes());
-
-			} catch (DuplicateKeyException e) {
-				log.debug("Duplicate key detected while updating attributes. Don't worry I'll handle this");
-				List<Attribute> attributesFromDb = new ArrayList<>(); //todo reference attributeDao
-				List<Attribute> referencesToCreate = new ArrayList<>();
-				List<Attribute> referencesToUpdate = new ArrayList<>();
-
-				for (Attribute a : branch.getAttributes()) {
-					if (!attributesFromDb.contains(a))
-						referencesToCreate.add(a);
-					else
-						referencesToUpdate.add(a);
-
-					attributesFromDb.remove(a);
-				}
-
-				addAttributes(branch.getId(), referencesToCreate);
-				updateAttributes(branch.getId(), referencesToUpdate);
-				deleteAttributes(branch.getId(), attributesFromDb);
-
-			}
-		}
-	}
-
-	private void deleteAttributes(final long branchId, @NotNull final List<Attribute> toDelete) {
-
-		String query = "DELETE FROM " + Schema.TABLE_BRANCH_ATTRIBUTES + " WHERE " +
-				Schema.FIELD_BRANCH_ID + " = ? AND " + Schema.TABLE_BRANCH_ATTRIBUTES_FIELD_ATTRIBUTE_ID + " = ?";
-
-		getJdbcTemplate().batchUpdate(query, new BatchPreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				Attribute attribute = toDelete.get(i);
-				ps.setLong(1, branchId);
-				ps.setLong(2, attribute.getId());
-			}
-
-			@Override
-			public int getBatchSize() {
-				return toDelete.size();
-			}
-		});
-
-	}
-
-	private void updateAttributes(final long branchId, @NotNull final List<Attribute> toUpdate) {
-
-		String query = "UPDATE " + Schema.TABLE_BRANCH_ATTRIBUTES + " SET " + Schema.FIELD_VALUE +
-				" = ? WHERE " + Schema.TABLE_BRANCH_ATTRIBUTES_FIELD_BRANCH_ID + " = ? AND "
-				+ Schema.TABLE_BRANCH_ATTRIBUTES_FIELD_ATTRIBUTE_ID + " = ?";
-
-		getJdbcTemplate().batchUpdate(query, new BatchPreparedStatementSetter() {
-			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				Attribute attribute = toUpdate.get(i);
-				ps.setString(1, attribute.getCurrentValue().toString());
-				ps.setLong(2, branchId);
-				ps.setLong(3, attribute.getId());
-			}
-
-			@Override
-			public int getBatchSize() {
-				return toUpdate.size();
-			}
-		});
-	}
-
 	@Nullable
 	@Override
 	public Branch get(long branchId) throws Exception {
@@ -294,33 +212,6 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 		}
 
 		return null;
-	}
-
-	private void addAttribute(long branchId, @NotNull Attribute attribute) throws Exception {
-		addAttributes(branchId, Arrays.asList(attribute));
-	}
-
-	private void addAttributes(final long branchId, @NotNull final List<Attribute> attributes) throws Exception {
-
-		String query = "INSERT INTO " + Schema.TABLE_BRANCH_ATTRIBUTES + " (" + Schema.FIELD_BRANCH_ID +
-				"," + Schema.TABLE_BRANCH_ATTRIBUTES_FIELD_ATTRIBUTE_ID + "," + Schema.FIELD_VALUE +
-				") VALUES (?, ?, ?);";
-
-		getJdbcTemplate().batchUpdate(query, new BatchPreparedStatementSetter() {
-
-			@Override
-			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				Attribute attribute = attributes.get(i);
-				ps.setLong(1, branchId);
-				ps.setLong(2, attribute.getId());
-				ps.setString(3, attribute.getCurrentValue().toString());
-			}
-
-			@Override
-			public int getBatchSize() {
-				return attributes.size();
-			}
-		});
 	}
 
 	private void addRubric(long branchId, @NotNull Rubric rubric) throws Exception {

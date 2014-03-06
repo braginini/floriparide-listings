@@ -30,8 +30,8 @@ public class BranchElement implements Element<Branch> {
 	@JsonProperty("")
 	List<RubricElement> rubrics;
 
-	@JsonProperty("")
-	List<AttributeElement> attributes;
+	@JsonProperty("attributes_groups")
+	List<AttributesGroupValuesElement> attributes;
 
 	@JsonProperty("company_id")
 	Long companyId;
@@ -54,7 +54,7 @@ public class BranchElement implements Element<Branch> {
 	@JsonProperty("")
 	String article;
 
-	@JsonProperty("payment_opts")
+	@JsonProperty("payment_options")
 	List<String> paymentOptions;
 
 	public BranchElement() {
@@ -66,7 +66,7 @@ public class BranchElement implements Element<Branch> {
 		this.description = branch.getDescription();
 		this.contacts = ContactElement.contactsToContactElements(branch.getContacts());
 		this.rubrics = RubricElement.rubricsToRubricElements(branch.getRubrics());
-		this.attributes = AttributeElement.attributesToAttributeElements(branch.getAttributes());
+		this.attributes = AttributesGroupValuesElement.attributesGroupToAttributeGroupElements(branch.getAttributes());
 		this.companyId = branch.getCompanyId();
 		this.lat = branch.getPoint().getLat();
 		this.lon = branch.getPoint().getLon();
@@ -129,11 +129,11 @@ public class BranchElement implements Element<Branch> {
 		this.rubrics = rubrics;
 	}
 
-	public List<AttributeElement> getAttributes() {
+	public List<AttributesGroupValuesElement> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<AttributeElement> attributes) {
+	public void setAttributes(List<AttributesGroupValuesElement> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -210,7 +210,7 @@ public class BranchElement implements Element<Branch> {
 		branch.setAddress(address);
 		branch.setArticle(article);
 		branch.setDescription(description);
-		branch.setAttributes(AttributeElement.attributesElementsToAttribute(attributes));
+		branch.setAttributes(AttributesGroupValuesElement.attributesGroupElementsToAttributeGroup(attributes));
 		branch.setCompanyId(companyId);
 		branch.setContacts(ContactElement.contactsElementsToToContacts(contacts));
 		branch.setCurrency(currency);

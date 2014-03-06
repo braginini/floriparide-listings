@@ -72,10 +72,7 @@ public class Contact {
 		}
 
 		public static ContactType lookup(String type) {
-			if (type == null)
-				return null;
-
-			return map.get(type.toLowerCase());
+			return (type != null) ? map.get(type.toLowerCase()) : null;
 		}
 	}
 }

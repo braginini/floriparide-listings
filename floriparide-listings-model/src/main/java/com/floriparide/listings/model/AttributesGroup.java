@@ -22,6 +22,11 @@ public class AttributesGroup extends MetaModel {
 
 	List<String> values;
 
+	public AttributesGroup(Long id, List<String> values) {
+		this.id = id;
+		this.values = values;
+	}
+
 	public AttributesGroup(Long id, Map<String, String> names, InputType inputType, FilterType filterType, List<String> values) {
 		this.id = id;
 		this.names = names;

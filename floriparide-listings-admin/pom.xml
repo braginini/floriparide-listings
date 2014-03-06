@@ -26,7 +26,6 @@
 		<commons.dbcp.version>1.4</commons.dbcp.version>
 		<open.csv.version>2.3</open.csv.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.source.version>1.6</project.source.version>
 		<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 	</properties>
 
