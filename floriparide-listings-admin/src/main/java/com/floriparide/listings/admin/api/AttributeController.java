@@ -38,8 +38,6 @@ public class AttributeController extends BaseController implements CRUDControlle
     @Autowired
     IAttributeDao attributeDao;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
-            headers = "Accept=application/json")
     public ResponseEntity<Long> create(@RequestBody CreateEntityRequest<AttributeElement> request,
                                        HttpServletRequest httpRequest) throws Exception {
 
@@ -48,7 +46,7 @@ public class AttributeController extends BaseController implements CRUDControlle
         AttributeElement attributeElement = request.getEntity();
         long id = attributeDao.create(attributeElement.getModel());
 
-        return new ResponseEntity<Long>(id, HttpStatus.OK);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",

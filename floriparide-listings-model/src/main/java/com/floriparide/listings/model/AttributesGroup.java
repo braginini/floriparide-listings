@@ -10,29 +10,23 @@ import java.util.Map;
  *
  * @author Mikhail Bragin
  */
-public class AttributesGroup extends MetaModel {
+public class AttributesGroup extends MultiLangMetaModel {
 
 	Long id;
-
-	Map<String, String> names;
 
 	InputType inputType;
 
 	FilterType filterType;
 
-	List<String> values;
+	List<Attribute> attributes;
 
-	public AttributesGroup(Long id, List<String> values) {
-		this.id = id;
-		this.values = values;
-	}
-
-	public AttributesGroup(Long id, Map<String, String> names, InputType inputType, FilterType filterType, List<String> values) {
+	public AttributesGroup(Long id, Map<String, String> names, InputType inputType, FilterType filterType, List<Attribute> attributes) {
+		super(names);
 		this.id = id;
 		this.names = names;
 		this.inputType = inputType;
 		this.filterType = filterType;
-		this.values = values;
+		this.attributes = attributes;
 	}
 
 	public AttributesGroup() {
@@ -63,8 +57,8 @@ public class AttributesGroup extends MetaModel {
 		this.filterType = filterType;
 	}
 
-	public List<String> getValues() {
-		return (this.values != null) ? this.values : Collections.<String>emptyList();
+	public List<Attribute> getAttributes() {
+		return (this.attributes != null) ? this.attributes : Collections.<Attribute>emptyList();
 	}
 
 	public Map<String, String> getNames() {
@@ -75,8 +69,8 @@ public class AttributesGroup extends MetaModel {
 		this.names = names;
 	}
 
-	public void setValues(List<String> values) {
-		this.values = values;
+	public void setAttributes(List<Attribute> attributes) {
+		this.attributes = attributes;
 	}
 
 	/**

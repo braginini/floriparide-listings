@@ -3,6 +3,7 @@ package com.floriparide.listings.model;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Describes {@link com.floriparide.listings.model.Rubric} attributes.
@@ -10,40 +11,41 @@ import java.util.List;
  *
  * @author Mikhail Bragin
  */
-public class Attribute {
+public class Attribute extends MultiLangMetaModel {
 
 	Long id;
 
 	Long groupId;
-
-	//todo make names for each language? Esp, En, pt?
-	String name;
 
 	//list of possible values, can be null if no values are present for this attribute
 	@Nullable
 	List<String> possibleValues;
 
 	//the current value set while creating/editing branch
-	Object currentValue;
+	String currentValue;
 
-	public Attribute(Long id, Long groupId, String name, List<String> possibleValues) {
+	public Attribute(Long id, String currentValue) {
+		this.id = id;
+		this.currentValue = currentValue;
+	}
+
+	public Attribute(Long id, Long groupId, Map<String, String> names, List<String> possibleValues) {
+		super(names);
 		this.id = id;
 		this.groupId = groupId;
-		this.name = name;
 		this.possibleValues = possibleValues;
 	}
 
-    public static String asCommaSeparated(List<String> list) {
-        if (list == null)
-            return null;
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < list.size(); ++i) {
-            if (i != 0)
-                sb.append(",");
-            sb.append(list.get(i));
-        }
-        return sb.toString();
-    }
+	public Attribute(Long id, Long groupId,Map<String, String> names, List<String> possibleValues, String currentValue) {
+		super(names);
+		this.id = id;
+		this.groupId = groupId;
+		this.possibleValues = possibleValues;
+		this.currentValue = currentValue;
+	}
+
+	public Attribute() {
+	}
 
 	public Long getId() {
 		return id;
@@ -53,19 +55,27 @@ public class Attribute {
 		return groupId;
 	}
 
-	public String getName() {
-		return name;
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setGroupId(Long groupId) {
+		this.groupId = groupId;
+	}
+
+	public void setPossibleValues(@Nullable List<String> possibleValues) {
+		this.possibleValues = possibleValues;
 	}
 
 	public List<String> getPossibleValues() {
 		return possibleValues;
 	}
 
-	public Object getCurrentValue() {
+	public String getCurrentValue() {
 		return currentValue;
 	}
 
-	public void setCurrentValue(Object currentValue) {
+	public void setCurrentValue(String currentValue) {
 		this.currentValue = currentValue;
 	}
 

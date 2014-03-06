@@ -42,7 +42,7 @@ public class BranchController extends BaseController implements CRUDController<B
 
 		request.validate();
 		long id = branchDao.create(request.getEntity().getModel());
-		return new ResponseEntity<Long>(id, HttpStatus.OK);
+		return new ResponseEntity<>(id, HttpStatus.OK);
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",

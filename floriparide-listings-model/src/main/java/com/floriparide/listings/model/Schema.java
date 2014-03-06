@@ -38,26 +38,12 @@ public class Schema {
 
 	//branch
 	public static final String TABLE_BRANCH_FIELD_COMPANY_ID = "company_id";
-	public static final String TABLE_BRANCH_FIELD_LAT = "lat";
-	public static final String TABLE_BRANCH_FIELD_LON = "lon";
-	public static final String TABLE_BRANCH_FIELD_ADDRESS = "address";
-	public static final String TABLE_BRANCH_FIELD_OFFICE = "office";
-	public static final String TABLE_BRANCH_FIELD_CURRENCY = "currency"; //ISO 4217 format
-	public static final String TABLE_BRANCH_FIELD_ARTICLE = "article";
 
-	//branch_attributes
-	public static final String TABLE_BRANCH_ATTRIBUTES_FIELD_ATTRIBUTE_ID = "attribute_id";
-	public static final String TABLE_BRANCH_ATTRIBUTES_FIELD_BRANCH_ID = "branch_id";
+	//rubric
+	public static final String TABLE_RUBRIC_FIELD_PARENT_ID = "parent_id";
 
-
-	//branch_payment_options
-	public static final String TABLE_BRANCH_PAYMENT_OPTIONS_FIELD_PAYMENT_OPTION = "payment_option";
-
-	//table branch_contacts
-	public static final String TABLE_BRANCH_CONTACTS_FIELD_CONTACT = "contact";
-	
-    //attribute
-    public static final String TABLE_ATTRIBUTE_FIELD_GROUP_ID = "group_id";
-    public static final String TABLE_ATTRIBUTE_FIELD_POSSIBLE_VALUES = "possible_values";
+	//attribute
+	public static final String TABLE_ATTRIBUTE_FIELD_GROUP_ID = "group_id";
+	public static final String TABLE_ATTRIBUTE_FIELD_POSSIBLE_VALUES = "possible_values";
 
 }

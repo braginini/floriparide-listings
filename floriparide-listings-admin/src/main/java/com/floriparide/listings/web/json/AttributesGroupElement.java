@@ -28,7 +28,7 @@ public class AttributesGroupElement implements Element<AttributesGroup> {
 	String filterType;
 
 	@JsonProperty("")
-	List<String> values;
+	List<AttributeElement> attributes;
 
 	public AttributesGroupElement() {
 	}
@@ -38,7 +38,7 @@ public class AttributesGroupElement implements Element<AttributesGroup> {
 		this.names = attributesGroup.getNames();
 		this.inputType = attributesGroup.getInputType().getType();
 		this.filterType = attributesGroup.getFilterType().getType();
-		this.values = attributesGroup.getValues();
+		this.attributes = AttributeElement.attributesToAttributeElements(attributesGroup.getAttributes());
 	}
 
 	public static List<AttributesGroupElement> attributesGroupsToElements(@NotNull List<AttributesGroup> attributesGroups) {
@@ -66,12 +66,12 @@ public class AttributesGroupElement implements Element<AttributesGroup> {
 		this.names = names;
 	}
 
-	public List<String> getValues() {
-		return values;
+	public List<AttributeElement> getAttributes() {
+		return attributes;
 	}
 
-	public void setValues(List<String> values) {
-		this.values = values;
+	public void setAttributes(List<AttributeElement> attributes) {
+		this.attributes = attributes;
 	}
 
 	public String getInputType() {
@@ -94,7 +94,7 @@ public class AttributesGroupElement implements Element<AttributesGroup> {
 	@JsonIgnore
 	public AttributesGroup getModel() {
 		return new AttributesGroup(id, names, AttributesGroup.InputType.lookup(inputType),
-				AttributesGroup.FilterType.lookup(filterType), values);
+				AttributesGroup.FilterType.lookup(filterType), AttributeElement.attributesElementsToAttribute(attributes));
 	}
 }
 

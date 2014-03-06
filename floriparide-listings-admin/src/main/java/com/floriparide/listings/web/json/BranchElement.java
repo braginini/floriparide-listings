@@ -2,6 +2,7 @@ package com.floriparide.listings.web.json;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.floriparide.listings.model.Attribute;
 import com.floriparide.listings.model.Branch;
 import com.floriparide.listings.model.PaymentOption;
 import com.floriparide.listings.model.Point;
@@ -30,8 +31,8 @@ public class BranchElement implements Element<Branch> {
 	@JsonProperty("")
 	List<RubricElement> rubrics;
 
-	@JsonProperty("attributes_groups")
-	List<AttributesGroupValuesElement> attributes;
+	@JsonProperty("")
+	List<AttributeElement> attributes;
 
 	@JsonProperty("company_id")
 	Long companyId;
@@ -66,7 +67,7 @@ public class BranchElement implements Element<Branch> {
 		this.description = branch.getDescription();
 		this.contacts = ContactElement.contactsToContactElements(branch.getContacts());
 		this.rubrics = RubricElement.rubricsToRubricElements(branch.getRubrics());
-		this.attributes = AttributesGroupValuesElement.attributesGroupToAttributeGroupElements(branch.getAttributes());
+		this.attributes = AttributeElement.attributesToAttributeElements(branch.getAttributes());
 		this.companyId = branch.getCompanyId();
 		this.lat = branch.getPoint().getLat();
 		this.lon = branch.getPoint().getLon();
@@ -75,9 +76,9 @@ public class BranchElement implements Element<Branch> {
 		this.currency = branch.getCurrency();
 		this.article = branch.getArticle();
 
-		this.paymentOptions = new ArrayList<String>();
+		this.paymentOptions = new ArrayList<>();
 		for (PaymentOption po : branch.getPaymentOptions())
-			paymentOptions.add(po.name());
+			paymentOptions.add(po.getType());
 	}
 
 	public static List<BranchElement> branchesToBranchElements(List<Branch> branches) {
@@ -129,11 +130,11 @@ public class BranchElement implements Element<Branch> {
 		this.rubrics = rubrics;
 	}
 
-	public List<AttributesGroupValuesElement> getAttributes() {
+	public List<AttributeElement> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<AttributesGroupValuesElement> attributes) {
+	public void setAttributes(List<AttributeElement> attributes) {
 		this.attributes = attributes;
 	}
 
@@ -210,7 +211,7 @@ public class BranchElement implements Element<Branch> {
 		branch.setAddress(address);
 		branch.setArticle(article);
 		branch.setDescription(description);
-		branch.setAttributes(AttributesGroupValuesElement.attributesGroupElementsToAttributeGroup(attributes));
+		branch.setAttributes(AttributeElement.attributesElementsToAttribute(attributes));
 		branch.setCompanyId(companyId);
 		branch.setContacts(ContactElement.contactsElementsToToContacts(contacts));
 		branch.setCurrency(currency);

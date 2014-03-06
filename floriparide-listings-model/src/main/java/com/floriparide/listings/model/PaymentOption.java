@@ -31,17 +31,14 @@ public enum PaymentOption {
 	}
 
 	public static PaymentOption lookup(String type) {
-		if (type == null)
-			return null;
-
-		return map.get(type.toLowerCase());
+		return (type != null) ? map.get(type.toLowerCase()) : null;
 	}
 
 	public static List<PaymentOption> split(@NotNull List<String> paymentOptions) {
 		ArrayList<PaymentOption> result = new ArrayList<PaymentOption>(paymentOptions.size());
 
 		for (String s : paymentOptions)
-			result.add(PaymentOption.valueOf(s)); //todo validate
+			result.add(PaymentOption.lookup(s)); //todo validate
 
 		return result;
 	}

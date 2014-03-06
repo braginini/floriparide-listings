@@ -1,11 +1,12 @@
 package com.floriparide.listings.dao.postgres.json;
 
+import com.floriparide.listings.model.Attribute;
 import com.floriparide.listings.model.AttributesGroup;
 import com.floriparide.listings.model.Branch;
 import com.floriparide.listings.model.Contact;
-import com.floriparide.listings.model.MetaModel;
 import com.floriparide.listings.model.PaymentOption;
 import com.floriparide.listings.model.Point;
+import com.floriparide.listings.model.Rubric;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -80,15 +81,10 @@ public class ModelJsonFactory {
 		if (branch.getAttributes() != null && !branch.getAttributes().isEmpty()) {
 			JSONArray attributesGroup = new JSONArray();
 
-			for (AttributesGroup ag : branch.getAttributes()) {
+			for (Attribute a : branch.getAttributes()) {
 				JSONObject agObj = new JSONObject();
-				agObj.put(JSONSchema.ID, ag.getId());
-				JSONArray values = new JSONArray();
-				for (String s : ag.getValues()) {
-					values.add(s);
-				}
-
-				agObj.put(JSONSchema.VALUES, values);
+				agObj.put(JSONSchema.ID, a.getId());
+				agObj.put(JSONSchema.VALUE, a.getCurrentValue());
 				attributesGroup.add(agObj);
 			}
 
@@ -142,26 +138,19 @@ public class ModelJsonFactory {
 					(Double) point.get(JSONSchema.BRANCH_DATA_POINT_LON)));
 		}
 
-		List<AttributesGroup> attributesGroups = new ArrayList<>();
+		List<Attribute> attributes = new ArrayList<>();
 		JSONArray ags = (JSONArray) object.get(JSONSchema.BRANCH_DATA_ATTRIBUTES_GROUPS);
 		if (ags != null) {
 			Iterator<JSONObject> it = ags.iterator();
 			while (it.hasNext()) {
 				JSONObject attribute = it.next();
 
-				JSONArray valuesArray = (JSONArray) attribute.get(JSONSchema.VALUES);
-				ArrayList<String> values = new ArrayList<>();
-				Iterator<String> vIt = valuesArray.iterator();
-
-				while (vIt.hasNext())
-					values.add(vIt.next());
-
-				attributesGroups.add(new AttributesGroup((Long) attribute.get(JSONSchema.ID),
-						values));
+				attributes.add(new Attribute((Long) attribute.get(JSONSchema.ID),
+						(String) attribute.get(JSONSchema.VALUE)));
 			}
 		}
 
-		branch.setAttributes(attributesGroups);
+		branch.setAttributes(attributes);
 	}
 
 	public static String getAttributesGroupJSONData(AttributesGroup attributesGroup) {
@@ -176,15 +165,15 @@ public class ModelJsonFactory {
 		if (attributesGroup.getFilterType() != null)
 			object.put(JSONSchema.ATTRIBUTES_GROUP_DATA_FILTER_TYPE, attributesGroup.getFilterType().getType());
 
-		if (attributesGroup.getValues() != null && !attributesGroup.getValues().isEmpty()) {
+		/*if (attributesGroup.getAttributes() != null && !attributesGroup.getAttributes().isEmpty()) {
 			JSONArray array = new JSONArray();
 
 
-			for (String v : attributesGroup.getValues())
+			for (String v : attributesGroup.getAttributes())
 				array.add(v);
 
 			object.put(JSONSchema.VALUES, array);
-		}
+		}*/
 
 		return object.toJSONString();
 	}
@@ -202,7 +191,7 @@ public class ModelJsonFactory {
 		attributesGroup.setFilterType(AttributesGroup.FilterType.lookup(
 				(String) object.get(JSONSchema.ATTRIBUTES_GROUP_DATA_FILTER_TYPE)));
 
-		JSONArray array = (JSONArray) object.get(JSONSchema.VALUES);
+		/*JSONArray array = (JSONArray) object.get(JSONSchema.VALUES);
 		ArrayList<String> values = new ArrayList<>();
 		if (array != null && !array.isEmpty()) {
 			Iterator it = array.iterator();
@@ -212,12 +201,12 @@ public class ModelJsonFactory {
 			}
 		}
 
-		attributesGroup.setValues(values);
+		attributesGroup.setValues(values);*/
 
 	}
 
-	public static String getNamesJSON(Map<String, String> map) {
-		return new JSONObject(map).toJSONString();
+	public static String getRubricJSONData(Rubric entity) {
+		return null;
 	}
 
 	public static Map<String, String> getNamesFromJSON(String json) throws ParseException {
@@ -226,6 +215,30 @@ public class ModelJsonFactory {
 		JSONParser parser = new JSONParser();
 		return (Map<String, String>) parser.parse(json);
 
+	}
+
+	public static String getAttributeJSONData(Attribute attribute) {
+
+		JSONObject object = new JSONObject();
+
+		if (attribute.getNames() != null && !attribute.getNames().isEmpty())
+			object.put(JSONSchema.NAMES, attribute.getNames());
+
+		if (attribute.getPossibleValues() != null && !attribute.getPossibleValues().isEmpty())
+			object.put(JSONSchema.ATTRIBUTE_POSSIBLE_VALUES, attribute.getPossibleValues());
+
+		return object.toJSONString();
+	}
+
+	public static void populateAttributeDataFromJSON(Attribute attribute, String json) throws ParseException {
+		JSONParser parser = new JSONParser();
+		JSONObject object = (JSONObject) parser.parse(json);
+
+		JSONObject namesObj = (JSONObject) object.get(JSONSchema.NAMES);
+		if (namesObj != null)
+			attribute.setNames(getNamesFromJSON(namesObj.toJSONString()));
+
+		attribute.setPossibleValues((JSONArray) object.get(JSONSchema.ATTRIBUTE_POSSIBLE_VALUES));
 	}
 
 	public class JSONSchema {
@@ -250,8 +263,11 @@ public class ModelJsonFactory {
 		public static final String ATTRIBUTES_GROUP_DATA_INPUT_TYPE = "input_type";
 		public static final String ATTRIBUTES_GROUP_DATA_FILTER_TYPE = "filter_type";
 
+		public static final String ATTRIBUTE_POSSIBLE_VALUES = "possible_values";
+
 		public static final String NAMES = "names";
 		public static final String VALUES = "values";
+		public static final String VALUE = "value";
 		public static final String ID = "id";
 
 		public static final String META_CREATED = "created";

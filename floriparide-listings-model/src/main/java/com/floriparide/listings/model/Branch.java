@@ -36,11 +36,7 @@ public class Branch extends MetaModel {
 	//only for paid
 	String article;
 
-	List<AttributesGroup> attributes;
-
-	Long created;
-
-	Long updated;
+	List<Attribute> attributes;
 
 	public Long getId() {
 		return id;
@@ -146,11 +142,11 @@ public class Branch extends MetaModel {
 		this.article = article;
 	}
 
-	public List<AttributesGroup> getAttributes() {
+	public List<Attribute> getAttributes() {
 		return attributes;
 	}
 
-	public void setAttributes(List<AttributesGroup> attributes) {
+	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
 	}
 }

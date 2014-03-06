@@ -72,8 +72,8 @@ public class AttributesGroupController extends BaseController implements CRUDCon
 		AttributesGroup attributesGroup = attributesGroupDao.get(id);
 
 		if (attributesGroup == null)
-			return new ResponseEntity<AttributesGroupElement>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-		return new ResponseEntity<AttributesGroupElement>(new AttributesGroupElement(attributesGroup), HttpStatus.OK);
+		return new ResponseEntity<>(new AttributesGroupElement(attributesGroup), HttpStatus.OK);
 	}
 }

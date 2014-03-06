@@ -41,8 +41,6 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 
 	private static final Logger log = LoggerFactory.getLogger(BranchDao.class);
 
-	AttributeDao attributeDao;
-
 	public BranchDao(NamedParameterJdbcTemplate namedJdbcTemplate, JdbcTemplate jdbcTemplate) {
 		super(namedJdbcTemplate, jdbcTemplate);
 	}

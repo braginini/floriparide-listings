@@ -64,8 +64,6 @@ public class AttributesGroupDao extends AbstractSpringJdbc implements IAttribute
 	@Override
 	public void update(@NotNull AttributesGroup entity) throws Exception {
 
-		entity.setUpdated(System.currentTimeMillis());
-
 		String query = "UPDATE " + table + " SET " +
 				Schema.FIELD_UPDATED + " = :updated" +
 				"," + Schema.FIELD_DATA + " = :data::json";

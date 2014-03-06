@@ -40,7 +40,7 @@ public class CreateEntityRequest<E extends Element> implements IRequest {
 		} else if (entity instanceof ProjectElement) {
 			Assert.notNull(((ProjectElement)entity).getName(), "Field name must not be null");
 		} else if (entity instanceof AttributeElement) {
-            Assert.notNull(((AttributeElement)entity).getName(), "Field name must not be null");
+            Assert.notNull(((AttributeElement)entity).getNames(), "Field names must not be null");
             Assert.notNull(((AttributeElement)entity).getGroupId(), "Field group_id must not be null");
         }else if (entity instanceof AttributesGroupElement) {
 			Assert.notNull(((AttributesGroupElement)entity).getNames(), "Field names must not be null");

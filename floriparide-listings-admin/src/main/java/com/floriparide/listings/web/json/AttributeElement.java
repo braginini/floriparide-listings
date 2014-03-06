@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Mikhail Bragin
@@ -21,10 +22,13 @@ public class AttributeElement implements Element<Attribute> {
 	Long groupId;
 
 	@JsonProperty("")
-	String name;
+	Map<String, String> names;
 
     @JsonProperty("possible_values")
-    List<String> possibleValues;
+	List<String> possibleValues;
+
+	@JsonProperty("value")
+	String currentValue;
 
 	public AttributeElement() {
 	}
@@ -32,8 +36,9 @@ public class AttributeElement implements Element<Attribute> {
 	public AttributeElement(@NotNull Attribute attribute) {
 		this.id = attribute.getId();
 		this.groupId = attribute.getGroupId();
-		this.name = attribute.getName();
+		this.names = attribute.getNames();
         this.possibleValues = attribute.getPossibleValues();
+		this.currentValue = attribute.getCurrentValue();
 	}
 
 	public static List<AttributeElement> attributesToAttributeElements(List<Attribute> attributes) {
@@ -57,8 +62,7 @@ public class AttributeElement implements Element<Attribute> {
     @NotNull
     @JsonIgnore
     public Attribute getModel() {
-        Attribute attribute = new Attribute(id, groupId, name, possibleValues);
-        return attribute;
+        return new Attribute(id, groupId, names, possibleValues, currentValue);
     }
 
 	public Long getId() {
@@ -77,15 +81,27 @@ public class AttributeElement implements Element<Attribute> {
 		this.groupId = groupId;
 	}
 
-	public String getName() {
-		return name;
+	public Map<String, String> getNames() {
+		return names;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setNames(Map<String, String> names) {
+		this.names = names;
 	}
 
-    public List<String> getPossibleValues() { return possibleValues; }
+	public List<String> getPossibleValues() {
+		return possibleValues;
+	}
 
-    public void setPossibleValues(List<String> possibleValues) { this.possibleValues = possibleValues; }
+	public void setPossibleValues(List<String> possibleValues) {
+		this.possibleValues = possibleValues;
+	}
+
+	public String getCurrentValue() {
+		return currentValue;
+	}
+
+	public void setCurrentValue(String currentValue) {
+		this.currentValue = currentValue;
+	}
 }

@@ -6,6 +6,9 @@ import com.floriparide.listings.admin.api.request.impl.UpdateEntityRequest;
 import com.floriparide.listings.web.json.Element;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,7 +27,9 @@ public interface CRUDController<E extends Element> {
 	 * with a HTTP 200 or HTTP 204 status code
 	 * @throws Exception
 	 */
-	ResponseEntity<Long> create(CreateEntityRequest<E> request,
+	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
+			headers = "Accept=application/json")
+	ResponseEntity<Long> create(@RequestBody CreateEntityRequest<E> request,
 	                            HttpServletRequest httpRequest) throws Exception;
 
 	/**

@@ -51,12 +51,17 @@
 		<constructor-arg index="1" ref="jdbcTemplate"/>
 	</bean>
 
-    <bean id="attributeDao" class="com.floriparide.listings.dao.postgres.AttributeDao">
-        <constructor-arg index="0" ref="namedParamsJdbcTemplate"/>
-        <constructor-arg index="1" ref="jdbcTemplate"/>
-    </bean>
-
 	<bean id="attributesGroupDao" class="com.floriparide.listings.dao.postgres.AttributesGroupDao">
+		<constructor-arg index="0" ref="namedParamsJdbcTemplate"/>
+		<constructor-arg index="1" ref="jdbcTemplate"/>
+	</bean>
+
+	<bean id="rubricDao" class="com.floriparide.listings.dao.postgres.RubricDao">
+		<constructor-arg index="0" ref="namedParamsJdbcTemplate"/>
+		<constructor-arg index="1" ref="jdbcTemplate"/>
+	</bean>
+
+	<bean id="attributeDao" class="com.floriparide.listings.dao.postgres.AttributeDao">
 		<constructor-arg index="0" ref="namedParamsJdbcTemplate"/>
 		<constructor-arg index="1" ref="jdbcTemplate"/>
 	</bean>
