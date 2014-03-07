@@ -21,12 +21,6 @@ public class AttributesGroupElement implements Element<AttributesGroup> {
 	@JsonProperty("")
 	Map<String, String> names;
 
-	@JsonProperty("input_type")
-	String inputType;
-
-	@JsonProperty("filter_type")
-	String filterType;
-
 	@JsonProperty("")
 	List<AttributeElement> attributes;
 
@@ -36,8 +30,6 @@ public class AttributesGroupElement implements Element<AttributesGroup> {
 	public AttributesGroupElement(@NotNull AttributesGroup attributesGroup) {
 		this.id = attributesGroup.getId();
 		this.names = attributesGroup.getNames();
-		this.inputType = attributesGroup.getInputType().getType();
-		this.filterType = attributesGroup.getFilterType().getType();
 		this.attributes = AttributeElement.attributesToAttributeElements(attributesGroup.getAttributes());
 	}
 
@@ -74,27 +66,10 @@ public class AttributesGroupElement implements Element<AttributesGroup> {
 		this.attributes = attributes;
 	}
 
-	public String getInputType() {
-		return inputType;
-	}
-
-	public void setInputType(String inputType) {
-		this.inputType = inputType;
-	}
-
-	public String getFilterType() {
-		return filterType;
-	}
-
-	public void setFilterType(String filterType) {
-		this.filterType = filterType;
-	}
-
 	@Override
 	@JsonIgnore
 	public AttributesGroup getModel() {
-		return new AttributesGroup(id, names, AttributesGroup.InputType.lookup(inputType),
-				AttributesGroup.FilterType.lookup(filterType), AttributeElement.attributesElementsToAttribute(attributes));
+		return new AttributesGroup(id, names, AttributeElement.attributesElementsToAttribute(attributes));
 	}
 }
 

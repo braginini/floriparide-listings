@@ -49,7 +49,7 @@ public class ContactElement implements Element<Contact> {
 	}
 
 	public static List<Contact> contactsElementsToToContacts(@NotNull List<ContactElement> contactElements) {
-		List<Contact> contacts = new ArrayList<Contact>(contactElements.size());
+		List<Contact> contacts = new ArrayList<>(contactElements.size());
 		for (ContactElement c : contactElements) {
 			contacts.add(c.getModel());
 		}

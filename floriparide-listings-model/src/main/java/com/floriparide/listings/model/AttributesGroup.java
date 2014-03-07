@@ -14,18 +14,12 @@ public class AttributesGroup extends MultiLangMetaModel {
 
 	Long id;
 
-	InputType inputType;
-
-	FilterType filterType;
-
 	List<Attribute> attributes;
 
-	public AttributesGroup(Long id, Map<String, String> names, InputType inputType, FilterType filterType, List<Attribute> attributes) {
+	public AttributesGroup(Long id, Map<String, String> names, List<Attribute> attributes) {
 		super(names);
 		this.id = id;
 		this.names = names;
-		this.inputType = inputType;
-		this.filterType = filterType;
 		this.attributes = attributes;
 	}
 
@@ -39,22 +33,6 @@ public class AttributesGroup extends MultiLangMetaModel {
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public InputType getInputType() {
-		return inputType;
-	}
-
-	public void setInputType(InputType inputType) {
-		this.inputType = inputType;
-	}
-
-	public FilterType getFilterType() {
-		return filterType;
-	}
-
-	public void setFilterType(FilterType filterType) {
-		this.filterType = filterType;
 	}
 
 	public List<Attribute> getAttributes() {
@@ -73,57 +51,4 @@ public class AttributesGroup extends MultiLangMetaModel {
 		this.attributes = attributes;
 	}
 
-	/**
-	 * Describes {@link com.floriparide.listings.model.AttributesGroup} type
-	 *
-	 */
-	public enum InputType {
-		BOOLEAN("boolean"), NUMBER("number"), LIST("list");
-
-		String type;
-
-		InputType(String type) {
-			this.type = type;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		static final HashMap<String, InputType> map = new HashMap<>();
-
-		static {
-			for (InputType t : InputType.values())
-				map.put(t.getType(), t);
-		}
-
-		public static InputType lookup(String type) {
-			return (type != null) ? map.get(type.toLowerCase()) : null;
-		}
-	}
-
-	public enum FilterType {
-		SLIDER("slider"), CHECKBOX("checkbox"), LIST("list");
-
-		String type;
-
-		FilterType(String type) {
-			this.type = type;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		static final HashMap<String, FilterType> map = new HashMap<>();
-
-		static {
-			for (FilterType t : FilterType.values())
-				map.put(t.getType(), t);
-		}
-
-		public static FilterType lookup(String type) {
-			return (type != null) ? map.get(type.toLowerCase()) : null;
-		}
-	}
 }

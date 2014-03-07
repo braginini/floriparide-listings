@@ -25,6 +25,6 @@
   <option name="haveTextToSend" value="true" />
   <option name="haveFileToSend" value="false" />
   <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{     &quot;entity&quot;: {         &quot;names&quot;: {         &quot;en_Us&quot;: &quot;name&quot;,         &quot;pt_Br&quot;: &quot;nome&quot;     },     &quot;possible_values&quot;: [         &quot;value1&quot;,         &quot;value2&quot;     ],         &quot;groupId&quot;: &quot;5&quot;     } }" />
+  <option name="textToSend" value="{     &quot;entity&quot;: {         &quot;input_type&quot;: &quot;boolean&quot;,         &quot;filter_type&quot;: &quot;checkbox&quot;,         &quot;names&quot;: {             &quot;en_Us&quot;: &quot;name&quot;,             &quot;pt_Br&quot;: &quot;nome&quot;         },         &quot;possible_values&quot;: [             &quot;value1&quot;,             &quot;value2&quot;         ],         &quot;groupId&quot;: &quot;7&quot;     } }" />
   <option name="filesToSend" value="" />
 </RestClientRequest>

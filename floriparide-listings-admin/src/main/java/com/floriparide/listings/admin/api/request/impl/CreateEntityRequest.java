@@ -2,6 +2,7 @@ package com.floriparide.listings.admin.api.request.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.admin.api.request.IRequest;
+import com.floriparide.listings.model.Attribute;
 import com.floriparide.listings.model.AttributesGroup;
 import com.floriparide.listings.web.json.*;
 
@@ -42,15 +43,13 @@ public class CreateEntityRequest<E extends Element> implements IRequest {
 		} else if (entity instanceof AttributeElement) {
             Assert.notNull(((AttributeElement)entity).getNames(), "Field names must not be null");
             Assert.notNull(((AttributeElement)entity).getGroupId(), "Field group_id must not be null");
+			Assert.notNull(Attribute.InputType.lookup(((AttributeElement) entity).getInputType()),
+					"Unknown input_type " + ((AttributeElement) entity).getInputType());
+			Assert.notNull(Attribute.FilterType.lookup(((AttributeElement) entity).getFilterType()),
+					"Unknown filter_type " + ((AttributeElement) entity).getFilterType());
         }else if (entity instanceof AttributesGroupElement) {
 			Assert.notNull(((AttributesGroupElement)entity).getNames(), "Field names must not be null");
-			Assert.notNull(((AttributesGroupElement)entity).getInputType(), "Field input_type must not be null");
-			Assert.notNull(((AttributesGroupElement)entity).getFilterType(), "Field filter_type must not be null");
 
-			Assert.notNull(AttributesGroup.InputType.lookup(((AttributesGroupElement) entity).getInputType()),
-					"Unknown input_type " + ((AttributesGroupElement) entity).getInputType());
-			Assert.notNull(AttributesGroup.FilterType.lookup(((AttributesGroupElement) entity).getFilterType()),
-					"Unknown filter_type " + ((AttributesGroupElement) entity).getFilterType());
 		}
 
 	}

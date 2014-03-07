@@ -159,12 +159,6 @@ public class ModelJsonFactory {
 		if (attributesGroup.getNames() != null && !attributesGroup.getNames().isEmpty())
 			object.put(JSONSchema.NAMES, attributesGroup.getNames());
 
-		if (attributesGroup.getInputType() != null)
-			object.put(JSONSchema.ATTRIBUTES_GROUP_DATA_INPUT_TYPE, attributesGroup.getInputType().getType());
-
-		if (attributesGroup.getFilterType() != null)
-			object.put(JSONSchema.ATTRIBUTES_GROUP_DATA_FILTER_TYPE, attributesGroup.getFilterType().getType());
-
 		return object.toJSONString();
 	}
 
@@ -175,23 +169,6 @@ public class ModelJsonFactory {
 		JSONObject namesObj = (JSONObject) object.get(JSONSchema.NAMES);
 		if (namesObj != null)
 			attributesGroup.setNames(getNamesFromJSON(namesObj.toJSONString()));
-
-		attributesGroup.setInputType(AttributesGroup.InputType.lookup(
-				(String) object.get(JSONSchema.ATTRIBUTES_GROUP_DATA_INPUT_TYPE)));
-		attributesGroup.setFilterType(AttributesGroup.FilterType.lookup(
-				(String) object.get(JSONSchema.ATTRIBUTES_GROUP_DATA_FILTER_TYPE)));
-
-		/*JSONArray array = (JSONArray) object.get(JSONSchema.VALUES);
-		ArrayList<String> values = new ArrayList<>();
-		if (array != null && !array.isEmpty()) {
-			Iterator it = array.iterator();
-
-			while (it.hasNext()) {
-				values.add((String) it.next());
-			}
-		}
-
-		attributesGroup.setValues(values);*/
 
 	}
 
@@ -217,6 +194,12 @@ public class ModelJsonFactory {
 		if (attribute.getPossibleValues() != null && !attribute.getPossibleValues().isEmpty())
 			object.put(JSONSchema.ATTRIBUTE_POSSIBLE_VALUES, attribute.getPossibleValues());
 
+		if (attribute.getInputType() != null)
+			object.put(JSONSchema.ATTRIBUTES_GROUP_DATA_INPUT_TYPE, attribute.getInputType().getType());
+
+		if (attribute.getFilterType() != null)
+			object.put(JSONSchema.ATTRIBUTES_GROUP_DATA_FILTER_TYPE, attribute.getFilterType().getType());
+
 		return object.toJSONString();
 	}
 
@@ -229,6 +212,11 @@ public class ModelJsonFactory {
 			attribute.setNames(getNamesFromJSON(namesObj.toJSONString()));
 
 		attribute.setPossibleValues((JSONArray) object.get(JSONSchema.ATTRIBUTE_POSSIBLE_VALUES));
+
+		attribute.setInputType(Attribute.InputType.lookup(
+				(String) object.get(JSONSchema.ATTRIBUTES_GROUP_DATA_INPUT_TYPE)));
+		attribute.setFilterType(Attribute.FilterType.lookup(
+				(String) object.get(JSONSchema.ATTRIBUTES_GROUP_DATA_FILTER_TYPE)));
 	}
 
 	public class JSONSchema {

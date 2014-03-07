@@ -25,6 +25,6 @@
   <option name="haveTextToSend" value="true" />
   <option name="haveFileToSend" value="false" />
   <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{ &quot;entity&quot;: { &quot;names&quot;: { &quot;en_Us&quot;: &quot;name&quot;, &quot;pt_Br&quot;: &quot;nome&quot; }, &quot;input_type&quot;: &quot;input_type&quot;, &quot;filter_type&quot;: &quot;filter_type&quot;, &quot;values&quot;: [ &quot;value1&quot;, &quot;value2&quot; ] } }" />
+  <option name="textToSend" value="{     &quot;entity&quot;: {         &quot;names&quot;: {             &quot;en_Us&quot;: &quot;name&quot;,             &quot;pt_Br&quot;: &quot;nome&quot;         },         &quot;attributes&quot;: []     } }" />
   <option name="filesToSend" value="" />
 </RestClientRequest>
