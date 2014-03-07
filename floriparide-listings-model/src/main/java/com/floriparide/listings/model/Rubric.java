@@ -5,16 +5,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Mikhail Bragin
  */
-public class Rubric {
+public class Rubric extends MultiLangMetaModel {
 
 	@Nullable
 	Long id;
-
-	String name;
 
 	@Nullable
 	Long parentId;
@@ -28,21 +27,13 @@ public class Rubric {
 	public Rubric() {
 	}
 
-	public Rubric(Long id, String name, Long parentId, List<Rubric> children) {
-		this(id, name, parentId, children, null);
-	}
-
-	public Rubric(Long id, String name, Long parentId, List<Rubric> children, List<AttributesGroup> attributesGroups) {
+	public Rubric(Long id, Long parentId, List<Rubric> children, List<AttributesGroup> attributesGroups, Map<String, String> names) {
+		super(names);
 		this.id = id;
-		this.name = name;
 		this.parentId = parentId;
 		this.children = children;
 		this.attributesGroups = attributesGroups;
 	}
-
-    public Rubric(Long id, String name) {
-        this(id, name, null, null, null);
-    }
 
     @Nullable
 	public Long getId() {
@@ -51,14 +42,6 @@ public class Rubric {
 
 	public void setId(@Nullable Long id) {
 		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Nullable

@@ -14,10 +14,7 @@ import java.util.List;
  * @author Mikhail Bragin
  */
 //todo Schedule
-public class BranchElement implements Element<Branch> {
-
-	@JsonProperty("")
-	Long id;
+public class BranchElement extends Element<Branch> {
 
 	@JsonProperty("")
 	String name;
@@ -62,7 +59,7 @@ public class BranchElement implements Element<Branch> {
 	}
 
 	public BranchElement(Branch branch) {
-		this.id = branch.getId();
+		super(branch.getId());
 		this.name = branch.getName();
 		this.description = branch.getDescription();
 		this.contacts = ContactElement.contactsToContactElements(branch.getContacts());
@@ -88,14 +85,6 @@ public class BranchElement implements Element<Branch> {
 			branchElements.add(new BranchElement(b));
 
 		return branchElements;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getName() {

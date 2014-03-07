@@ -39,7 +39,8 @@ public class AttributesGroupDao extends AbstractSpringJdbc implements IAttribute
 				+ Schema.FIELD_CREATED +
 				"," + Schema.FIELD_UPDATED +
 				"," + Schema.FIELD_DATA +
-				") VALUES (:created, :updated, :data::json)";
+				") VALUES (:created, :updated, :data::json)"+
+				" WHERE " + Schema.FIELD_ID + " = :id";
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -47,6 +48,7 @@ public class AttributesGroupDao extends AbstractSpringJdbc implements IAttribute
 				new MapSqlParameterSource()
 						.addValue("created", System.currentTimeMillis())
 						.addValue("updated", System.currentTimeMillis())
+						.addValue("id", entity.getId())
 						.addValue("data", ModelJsonFactory.getAttributesGroupJSONData(entity)),
 				keyHolder);
 

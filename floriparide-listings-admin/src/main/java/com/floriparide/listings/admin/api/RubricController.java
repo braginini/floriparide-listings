@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,7 +27,7 @@ public class RubricController extends BaseController implements CRUDController<R
 	IRubricDao rubricDao;
 
 	@Override
-	public ResponseEntity<Long> create(CreateEntityRequest<RubricElement> request,
+	public ResponseEntity<Long> create(@RequestBody CreateEntityRequest<RubricElement> request,
 	                                   HttpServletRequest httpRequest) throws Exception {
 
 		request.validate();
@@ -37,13 +39,21 @@ public class RubricController extends BaseController implements CRUDController<R
 	}
 
 	@Override
-	public ResponseEntity delete(long id, HttpServletRequest httpRequest) throws Exception {
-		return null;
+	public ResponseEntity delete(@RequestParam(value = "id", required = true) long id, HttpServletRequest httpRequest) throws Exception {
+
+		rubricDao.delete(id);
+
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity update(UpdateEntityRequest<RubricElement> request, HttpServletRequest httpRequest) throws Exception {
-		return null;
+	public ResponseEntity update(@RequestBody UpdateEntityRequest<RubricElement> request, HttpServletRequest httpRequest) throws Exception {
+
+		request.validate();
+
+		rubricDao.update(request.getEntity().getModel());
+
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import com.floriparide.listings.model.Attribute;
 import com.floriparide.listings.model.AttributesGroup;
 import com.floriparide.listings.model.Branch;
 import com.floriparide.listings.model.Contact;
+import com.floriparide.listings.model.MultiLangMetaModel;
 import com.floriparide.listings.model.PaymentOption;
 import com.floriparide.listings.model.Point;
 import com.floriparide.listings.model.Rubric;
@@ -14,7 +15,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -165,23 +166,15 @@ public class ModelJsonFactory {
 	public static void populateAttributesGroupDataFromJSON(AttributesGroup attributesGroup, String json) throws ParseException {
 		JSONParser parser = new JSONParser();
 		JSONObject object = (JSONObject) parser.parse(json);
-
-		JSONObject namesObj = (JSONObject) object.get(JSONSchema.NAMES);
-		if (namesObj != null)
-			attributesGroup.setNames(getNamesFromJSON(namesObj.toJSONString()));
-
+		attributesGroup.setNames(getNamesFromJSON(object));
 	}
 
-	public static String getRubricJSONData(Rubric entity) {
-		return null;
-	}
+	public static String getRubricJSONData(Rubric rubric) {
+		JSONObject object = new JSONObject();
 
-	public static Map<String, String> getNamesFromJSON(String json) throws ParseException {
-		HashMap<String, String> map = new HashMap<>();
-
-		JSONParser parser = new JSONParser();
-		return (Map<String, String>) parser.parse(json);
-
+		if (rubric.getNames() != null && !rubric.getNames().isEmpty())
+			object.put(JSONSchema.NAMES, rubric.getNames());
+		return object.toJSONString();
 	}
 
 	public static String getAttributeJSONData(Attribute attribute) {
@@ -206,10 +199,7 @@ public class ModelJsonFactory {
 	public static void populateAttributeDataFromJSON(Attribute attribute, String json) throws ParseException {
 		JSONParser parser = new JSONParser();
 		JSONObject object = (JSONObject) parser.parse(json);
-
-		JSONObject namesObj = (JSONObject) object.get(JSONSchema.NAMES);
-		if (namesObj != null)
-			attribute.setNames(getNamesFromJSON(namesObj.toJSONString()));
+		attribute.setNames(getNamesFromJSON(object));
 
 		attribute.setPossibleValues((JSONArray) object.get(JSONSchema.ATTRIBUTE_POSSIBLE_VALUES));
 
@@ -217,6 +207,21 @@ public class ModelJsonFactory {
 				(String) object.get(JSONSchema.ATTRIBUTES_GROUP_DATA_INPUT_TYPE)));
 		attribute.setFilterType(Attribute.FilterType.lookup(
 				(String) object.get(JSONSchema.ATTRIBUTES_GROUP_DATA_FILTER_TYPE)));
+	}
+
+	public static void populateRubricDataFromJSON(Rubric rubric, String json) throws ParseException {
+		JSONParser parser = new JSONParser();
+		JSONObject object = (JSONObject) parser.parse(json);
+		rubric.setNames(getNamesFromJSON(object));
+	}
+
+	public static Map<String, String> getNamesFromJSON(JSONObject json) throws ParseException {
+		JSONObject namesObj = (JSONObject) json.get(JSONSchema.NAMES);
+		if (namesObj != null)
+			return namesObj;
+
+		return Collections.emptyMap();
+
 	}
 
 	public class JSONSchema {

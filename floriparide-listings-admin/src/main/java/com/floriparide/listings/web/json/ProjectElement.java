@@ -11,10 +11,7 @@ import java.util.List;
 /**
  * @author Andrey Parfenov
  */
-public class ProjectElement implements Element<Project> {
-
-    @JsonProperty("")
-    Long id;
+public class ProjectElement extends Element<Project> {
 
     @JsonProperty("")
     String name;
@@ -23,7 +20,7 @@ public class ProjectElement implements Element<Project> {
     }
 
     public ProjectElement(@NotNull Project p) {
-        this.id = p.getId();
+       super(p.getId());
         this.name = p.getName();
     }
 
@@ -44,14 +41,6 @@ public class ProjectElement implements Element<Project> {
         project.setName(this.name);
 
         return project;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {

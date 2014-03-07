@@ -75,12 +75,14 @@ public class AttributeDao extends AbstractSpringJdbc implements IAttributeDao {
 		String query = "UPDATE " + table + " SET " +
 				Schema.FIELD_UPDATED + " = :updated" + "," +
 				Schema.TABLE_ATTRIBUTE_FIELD_GROUP_ID + " = :group_id" + ","
-				+ Schema.FIELD_DATA + " = :data::json";
+				+ Schema.FIELD_DATA + " = :data::json"+
+				" WHERE " + Schema.FIELD_ID + " = :id";
 
 		getNamedJdbcTemplate().update(query,
 				new MapSqlParameterSource()
 						.addValue("updated", System.currentTimeMillis())
 						.addValue("group_id", entity.getGroupId())
+						.addValue("id", entity.getId())
 						.addValue("data", ModelJsonFactory.getAttributeJSONData(entity)));
 	}
 

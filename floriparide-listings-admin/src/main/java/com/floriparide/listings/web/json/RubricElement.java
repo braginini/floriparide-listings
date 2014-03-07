@@ -14,15 +14,9 @@ import java.util.List;
 /**
  * @author Mikhail Bragin
  */
-public class RubricElement implements Element<Rubric> {
+public class RubricElement extends MultiLangElement<Rubric> {
 
-	@JsonProperty("")
-	Long id;
-
-	@JsonProperty("")
-	String name;
-
-	@JsonProperty("")
+	@JsonProperty("parent_id")
 	Long parentId;
 
 	@JsonProperty("")
@@ -35,8 +29,8 @@ public class RubricElement implements Element<Rubric> {
 	}
 
 	public RubricElement(@NotNull Rubric rubric) {
+		super(rubric.getNames());
 		this.id = rubric.getId();
-		this.name = rubric.getName();
 		this.parentId = rubric.getParentId();
 		this.children = RubricElement.rubricsToRubricElements(rubric.getChildren());
 		this.attributesGroups = AttributesGroupElement.attributesGroupsToElements(rubric.getAttributesGroups());
@@ -62,22 +56,6 @@ public class RubricElement implements Element<Rubric> {
 			rubrics.add(r.getModel());
 
 		return rubrics;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Long getParentId() {
@@ -106,6 +84,7 @@ public class RubricElement implements Element<Rubric> {
 
 	@Override
 	public Rubric getModel() {
-		return new Rubric(id, name, parentId, RubricElement.rubricsElementsToRubrics(children));
+		return new Rubric(id, parentId, RubricElement.rubricsElementsToRubrics(children),
+				AttributesGroupElement.attributesGroupsElementToAttributeGroups(attributesGroups), names);
 	}
 }

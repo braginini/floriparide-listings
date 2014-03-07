@@ -135,13 +135,15 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 				Schema.FIELD_NAME + " = :name" +
 				"," + Schema.TABLE_BRANCH_FIELD_COMPANY_ID + " = :company_id" +
 				"," + Schema.FIELD_UPDATED + " = :updated" +
-				"," + Schema.FIELD_DATA + " = :data::json";
+				"," + Schema.FIELD_DATA + " = :data::json"+
+				" WHERE " + Schema.FIELD_ID + " = :id";
 
 		getNamedJdbcTemplate().update(query,
 				new MapSqlParameterSource()
 						.addValue("name", branch.getName())
 						.addValue("updated", System.currentTimeMillis())
 						.addValue("company_id", branch.getCompanyId())
+						.addValue("id", branch.getId())
 						.addValue("data", ModelJsonFactory.getBranchJSONData(branch)));
 
 		updateRubrics(branch);

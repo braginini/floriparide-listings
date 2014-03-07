@@ -1,0 +1,30 @@
+<RestClientRequest>
+  <option name="httpMethod" value="POST" />
+  <option name="urlBase" value="http://localhost:8080" />
+  <option name="urlPath" value="/admin/v1/rubric/update/" />
+  <option name="headers">
+    <list>
+      <KeyValuePair>
+        <option name="key" value="Accept" />
+        <option name="value" value="*/*" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Cache-Control" />
+        <option name="value" value="no-cache" />
+      </KeyValuePair>
+      <KeyValuePair>
+        <option name="key" value="Content-type" />
+        <option name="value" value="application/json" />
+      </KeyValuePair>
+    </list>
+  </option>
+  <option name="parameters">
+    <list />
+  </option>
+  <option name="parametersEnabled" value="true" />
+  <option name="haveTextToSend" value="true" />
+  <option name="haveFileToSend" value="false" />
+  <option name="isFileUpload" value="false" />
+  <option name="textToSend" value="{     &quot;entity&quot;: {        &quot;id&quot;:&quot;5&quot;,  &quot;parent_id&quot;: &quot;6&quot;,         &quot;names&quot;: {             &quot;en_Us&quot;: &quot;name&quot;,             &quot;pt_Br&quot;: &quot;nome&quot;         }     } }" />
+  <option name="filesToSend" value="" />
+</RestClientRequest>

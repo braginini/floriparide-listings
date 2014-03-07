@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,7 +30,7 @@ public interface CRUDController<E extends Element> {
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
 			headers = "Accept=application/json")
-	ResponseEntity<Long> create(@RequestBody CreateEntityRequest<E> request,
+	ResponseEntity<Long> create(CreateEntityRequest<E> request,
 	                            HttpServletRequest httpRequest) throws Exception;
 
 	/**
@@ -41,6 +42,8 @@ public interface CRUDController<E extends Element> {
 	 * a HTTP 404 status should be returned along with custom error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
+	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity delete(long id, HttpServletRequest httpRequest) throws Exception;
 
 	/**
@@ -54,6 +57,8 @@ public interface CRUDController<E extends Element> {
 	 * error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
+	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity update(UpdateEntityRequest<E> request,
 	                             HttpServletRequest httpRequest) throws Exception;
 
@@ -67,5 +72,7 @@ public interface CRUDController<E extends Element> {
 	 * should be returned along with custom error response. //todo create ExceptionResponse
 	 * @throws Exception
 	 */
+	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
+			headers = "Accept=application/json")
 	public ResponseEntity<E> get(long id, HttpServletRequest httpRequest) throws Exception;
 }

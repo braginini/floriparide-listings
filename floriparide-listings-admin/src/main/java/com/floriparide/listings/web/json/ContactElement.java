@@ -14,10 +14,7 @@ import java.util.List;
  *
  * @author Mikhail Bragin
  */
-public class ContactElement implements Element<Contact> {
-
-	@JsonProperty("")
-	Long id;
+public class ContactElement extends Element<Contact> {
 
 	@JsonProperty("")
 	String type;
@@ -32,7 +29,7 @@ public class ContactElement implements Element<Contact> {
 	}
 
 	public ContactElement(@NotNull Contact contact) {
-		this.id = contact.getId();
+		super(contact.getId());
 		this.type = contact.getType().name();
 		this.value = contact.getValue();
 		this.comment = contact.getComment();
@@ -55,14 +52,6 @@ public class ContactElement implements Element<Contact> {
 		}
 
 		return contacts;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	public String getType() {

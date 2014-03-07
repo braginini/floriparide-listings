@@ -7,16 +7,14 @@ import com.floriparide.listings.model.AttributesGroup;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author Mikhail Bragin
  */
-public class AttributesGroupElement implements Element<AttributesGroup> {
-
-	@JsonProperty("")
-	Long id;
+public class AttributesGroupElement extends MultiLangElement<AttributesGroup> {
 
 	@JsonProperty("")
 	Map<String, String> names;
@@ -33,8 +31,12 @@ public class AttributesGroupElement implements Element<AttributesGroup> {
 		this.attributes = AttributeElement.attributesToAttributeElements(attributesGroup.getAttributes());
 	}
 
-	public static List<AttributesGroupElement> attributesGroupsToElements(@NotNull List<AttributesGroup> attributesGroups) {
-		List<AttributesGroupElement> attributesGroupElements = new ArrayList<AttributesGroupElement>(attributesGroups.size());
+	public static List<AttributesGroupElement> attributesGroupsToElements(
+			@NotNull List<AttributesGroup> attributesGroups) {
+
+		if (attributesGroups == null) return Collections.emptyList();
+
+		List<AttributesGroupElement> attributesGroupElements = new ArrayList<>(attributesGroups.size());
 
 		for (AttributesGroup ag : attributesGroups)
 			attributesGroupElements.add(new AttributesGroupElement(ag));
@@ -42,20 +44,17 @@ public class AttributesGroupElement implements Element<AttributesGroup> {
 		return attributesGroupElements;
 	}
 
-	public Long getId() {
-		return id;
-	}
+	public static List<AttributesGroup> attributesGroupsElementToAttributeGroups(
+			@NotNull List<AttributesGroupElement> attributesGroupElements) {
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+		if (attributesGroupElements == null) return Collections.emptyList();
 
-	public Map<String, String> getNames() {
-		return names;
-	}
+		List<AttributesGroup> attributesGroups = new ArrayList<>(attributesGroupElements.size());
 
-	public void setNames(Map<String, String> names) {
-		this.names = names;
+		for (AttributesGroupElement ag : attributesGroupElements)
+			attributesGroups.add(ag.getModel());
+
+		return attributesGroups;
 	}
 
 	public List<AttributeElement> getAttributes() {

@@ -14,16 +14,10 @@ import java.util.Map;
 /**
  * @author Mikhail Bragin
  */
-public class AttributeElement implements Element<Attribute> {
-
-	@JsonProperty("")
-	Long id;
+public class AttributeElement extends MultiLangElement<Attribute> {
 
 	@JsonProperty("")
 	Long groupId;
-
-	@JsonProperty("")
-	Map<String, String> names;
 
 	@JsonProperty("possible_values")
 	List<String> possibleValues;
@@ -78,28 +72,12 @@ public class AttributeElement implements Element<Attribute> {
 				Attribute.InputType.lookup(inputType), Attribute.FilterType.lookup(filterType));
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
 	public Long getGroupId() {
 		return groupId;
 	}
 
 	public void setGroupId(Long groupId) {
 		this.groupId = groupId;
-	}
-
-	public Map<String, String> getNames() {
-		return names;
-	}
-
-	public void setNames(Map<String, String> names) {
-		this.names = names;
 	}
 
 	public List<String> getPossibleValues() {
