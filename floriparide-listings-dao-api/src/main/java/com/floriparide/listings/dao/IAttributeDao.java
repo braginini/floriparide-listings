@@ -44,4 +44,6 @@ public interface IAttributeDao extends IBaseEntityDao<Attribute> {
      */
     @NotNull
     public List<Attribute> getAttributes(int offset, int limit, @NotNull SortField sortField, @NotNull SortType sortType) throws Exception;
+
+	public void create(@NotNull List<Attribute> attributes) throws Exception;
 }

@@ -120,4 +120,27 @@ public class AttributeDao extends AbstractSpringJdbc implements IAttributeDao {
 	public List<Attribute> getAttributes(int offset, int limit, @NotNull SortField sortField, @NotNull SortType sortType) throws Exception {
 		return null;
 	}
+
+	@Override
+	public void create(@NotNull List<Attribute> attributes) throws Exception {
+
+		String query = "INSERT INTO " + table + " (" +
+				Schema.FIELD_CREATED + ", " +
+				Schema.FIELD_UPDATED + ", " +
+				Schema.TABLE_ATTRIBUTE_FIELD_GROUP_ID + ", " +
+				Schema.FIELD_DATA +") " +
+				"VALUES (:created, :updated, :group_id, :data::json)";
+
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+
+		getNamedJdbcTemplate().update(query,
+				new MapSqlParameterSource()
+						.addValue("created", System.currentTimeMillis())
+						.addValue("updated", System.currentTimeMillis())
+						.addValue("group_id", attribute.getGroupId())
+						.addValue("data", ModelJsonFactory.getAttributeJSONData(attribute)),
+				keyHolder);
+
+		return (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
+	}
 }

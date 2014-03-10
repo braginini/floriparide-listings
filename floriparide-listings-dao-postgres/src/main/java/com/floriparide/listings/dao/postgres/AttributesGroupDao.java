@@ -1,5 +1,6 @@
 package com.floriparide.listings.dao.postgres;
 
+import com.floriparide.listings.dao.IAttributeDao;
 import com.floriparide.listings.dao.IAttributesGroupDao;
 import com.floriparide.listings.dao.postgres.json.ModelJsonFactory;
 import com.floriparide.listings.dao.postgres.springjdbc.AbstractSpringJdbc;
@@ -26,8 +27,11 @@ public class AttributesGroupDao extends AbstractSpringJdbc implements IAttribute
 
 	private static final Logger log = LoggerFactory.getLogger(AttributesGroupDao.class);
 
-	protected AttributesGroupDao(NamedParameterJdbcTemplate namedJdbcTemplate, JdbcTemplate jdbcTemplate) {
+	IAttributeDao attributeDao;
+
+	protected AttributesGroupDao(NamedParameterJdbcTemplate namedJdbcTemplate, JdbcTemplate jdbcTemplate, IAttributeDao attributeDao) {
 		super(namedJdbcTemplate, jdbcTemplate);
+		this.attributeDao = attributeDao;
 	}
 
 	private static final String table = Schema.TABLE_ATTRIBUTES_GROUP;
@@ -52,7 +56,12 @@ public class AttributesGroupDao extends AbstractSpringJdbc implements IAttribute
 						.addValue("data", ModelJsonFactory.getAttributesGroupJSONData(entity)),
 				keyHolder);
 
-		return (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
+		Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
+		if (entity.getAttributes() != null && !entity.getAttributes().isEmpty()) {
+
+		}
+
+		return id;
 	}
 
 	@Override
