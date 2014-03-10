@@ -57,9 +57,6 @@ public class AttributesGroupDao extends AbstractSpringJdbc implements IAttribute
 				keyHolder);
 
 		Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
-		if (entity.getAttributes() != null && !entity.getAttributes().isEmpty()) {
-
-		}
 
 		return id;
 	}
