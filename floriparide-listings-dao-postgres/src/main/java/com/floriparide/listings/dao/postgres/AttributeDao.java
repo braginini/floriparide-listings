@@ -124,7 +124,7 @@ public class AttributeDao extends AbstractSpringJdbc implements IAttributeDao {
 	@Override
 	public void create(@NotNull List<Attribute> attributes) throws Exception {
 
-		String query = "INSERT INTO " + table + " (" +
+		/*String query = "INSERT INTO " + table + " (" +
 				Schema.FIELD_CREATED + ", " +
 				Schema.FIELD_UPDATED + ", " +
 				Schema.TABLE_ATTRIBUTE_FIELD_GROUP_ID + ", " +
@@ -141,6 +141,6 @@ public class AttributeDao extends AbstractSpringJdbc implements IAttributeDao {
 						.addValue("data", ModelJsonFactory.getAttributeJSONData(attribute)),
 				keyHolder);
 
-		return (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
+		return (Long) keyHolder.getKeys().get(Schema.FIELD_ID);*/
 	}
 }
