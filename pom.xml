@@ -13,6 +13,7 @@
 		<module>floriparide-listings-model</module>
 		<module>floriparide-listings-admin</module>
 		<module>floriparide-listings-admin-client</module>
+		<module>floriparide-listings-etl</module>
 	</modules>
 	<packaging>pom</packaging>
 	<name>FloripaRide Listings Root</name>

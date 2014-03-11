@@ -27,11 +27,8 @@ public class AttributesGroupDao extends AbstractSpringJdbc implements IAttribute
 
 	private static final Logger log = LoggerFactory.getLogger(AttributesGroupDao.class);
 
-	IAttributeDao attributeDao;
-
-	protected AttributesGroupDao(NamedParameterJdbcTemplate namedJdbcTemplate, JdbcTemplate jdbcTemplate, IAttributeDao attributeDao) {
+	protected AttributesGroupDao(NamedParameterJdbcTemplate namedJdbcTemplate, JdbcTemplate jdbcTemplate) {
 		super(namedJdbcTemplate, jdbcTemplate);
-		this.attributeDao = attributeDao;
 	}
 
 	private static final String table = Schema.TABLE_ATTRIBUTES_GROUP;
