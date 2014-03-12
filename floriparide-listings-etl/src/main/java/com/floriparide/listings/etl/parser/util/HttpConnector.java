@@ -3,12 +3,18 @@ package com.floriparide.listings.etl.parser.util;
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -33,10 +39,17 @@ public class HttpConnector {
 			nameValuePairs.add(new BasicNameValuePair(e.getKey(), e.getValue()));
 		}
 
+		HttpContext localContext = new BasicHttpContext();
+
+		CookieStore cookieStore = new BasicCookieStore();
+		BasicClientCookie cookie = new BasicClientCookie("PHPSESSID", "bth1fleofu92sk6mkb0fa9oc12");
+		cookieStore.addCookie(cookie);
+		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+
 		UrlEncodedFormEntity entity = new UrlEncodedFormEntity(nameValuePairs, Consts.UTF_8);
 		post.setEntity(entity);
 
-		CloseableHttpResponse response = httpClient.execute(post);
+		CloseableHttpResponse response = httpClient.execute(post, localContext);
 		System.out.println("Response Status line :" + response.getStatusLine());
 
 		try {

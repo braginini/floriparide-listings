@@ -1,18 +1,18 @@
 package com.floriparide.listings.etl.parser.impl.abrasel.thread;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.floriparide.listings.etl.parser.impl.abrasel.AbraselProfileListParser;
 import com.floriparide.listings.etl.parser.impl.abrasel.AbraselTask;
 import com.floriparide.listings.etl.parser.model.Task;
 import com.floriparide.listings.etl.parser.model.Worker;
 import com.floriparide.listings.etl.parser.util.HttpConnector;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,8 +27,7 @@ public class AbraselProfileListWorker implements Worker<AbraselTask> {
 
 	AbraselProfileWorker abraselProfileWorker;
 
-
-	final static int poolSize = 10;
+	final static int poolSize = 1;
 
 	public AbraselProfileListWorker(AbraselProfileWorker abraselProfileWorker) {
 		this.abraselProfileWorker = abraselProfileWorker;
@@ -46,45 +45,28 @@ public class AbraselProfileListWorker implements Worker<AbraselTask> {
 
 					log.info("Started with task", task.taskObject());
 
-					AbraselTask abraselTask = task.taskObject();
+					final AbraselTask abraselTask = task.taskObject();
 					String html = HttpConnector.getPageAsString(abraselTask.getUrl(), abraselTask.getFormData());
+					List<JsonNode> list = new AbraselProfileListParser().parse(html);
 
-					Document doc = Jsoup.parse(html);
-					Element resultEl = doc.getElementById("listagemlistGuiaBuscaFormEsquerda");
+					for (JsonNode n : list) {
+						final String id = n.get("estabId").textValue();
 
-					if (resultEl != null) {
-						Elements listItemEls = resultEl.getElementsByClass("lista-estab-item");
+						abraselProfileWorker.addTask(new Task<AbraselTask>() {
+							@Override
+							public AbraselTask taskObject() {
+								Map<String, String> formData = new HashMap<>();
+								formData.put("id", String.valueOf(id));
+								formData.put("classReference", "/view/DetalhamentoEstabelecimento.php");
+								formData.put("modo", "editar");
 
-						if (listItemEls != null) {
-
-							for (Element itemEl : listItemEls) {
-
-								Elements hrefEls = itemEl.getElementsByClass("estab");
-								if (hrefEls != null && !hrefEls.isEmpty()) {
-
-									Element hrefEl = hrefEls.get(0);
-									final String url = hrefEl.attr("href");
-
-									if (url != null) {
-										abraselProfileWorker.addTask(new Task<String>() {
-											@Override
-											public String taskObject() {
-												return url;
-											}
-										});
-									}
-
-								}
+								return new AbraselTask(abraselTask.getUrl(), formData);
 							}
-						}
-
-					} else {
-						log.info("No result list on page", abraselTask.toString());
+						});
 					}
 
-
-				} catch (IOException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+					log.error("Error while running list worker", e);
 				}
 
 			}

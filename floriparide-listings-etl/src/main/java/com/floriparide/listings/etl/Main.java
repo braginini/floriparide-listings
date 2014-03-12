@@ -1,5 +1,4 @@
 package com.floriparide.listings.etl;
-
 import com.floriparide.listings.etl.parser.impl.abrasel.thread.AbraselProfileListWorker;
 import com.floriparide.listings.etl.parser.impl.abrasel.thread.AbraselProfileWorker;
 import com.floriparide.listings.etl.parser.impl.abrasel.thread.ParseManager;

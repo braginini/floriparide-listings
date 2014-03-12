@@ -1,0 +1,7 @@
+http://guia.abrasel.com.br/guiaabrasel/guiaabrasel.php
+classReference=%2Fview%2FDetalhamentoEstabelecimento.php&modo=editar&id=29093
+
+
+http://guia.abrasel.com.br/guiaabrasel/guiaabrasel.php
+paginacao=2&lista=listGuiaBuscaFormEsquerda&offsetlistGuiaBuscaFormEsquerda=10&s=1&sest=24&classReference=%2Fview%2FGuiaBusca.php&acao=filtrar
+

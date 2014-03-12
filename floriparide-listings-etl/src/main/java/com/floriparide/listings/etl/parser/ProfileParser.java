@@ -5,7 +5,7 @@ import org.json.simple.JSONObject;
 /**
  * @author Mikhail Bragin
  */
-public interface ProfileParser {
+public interface ProfileParser<T> {
 
-	public JSONObject parse(String resource);
+	public T parse(String resource);
 }
