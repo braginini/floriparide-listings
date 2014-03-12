@@ -1,5 +1,6 @@
 package com.floriparide.listings.etl.parser.impl.abrasel.thread;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.floriparide.listings.etl.parser.impl.abrasel.AbraselProfileParser;
 import com.floriparide.listings.etl.parser.impl.abrasel.AbraselTask;
 import com.floriparide.listings.etl.parser.model.Task;
@@ -24,10 +25,13 @@ public class AbraselProfileWorker implements Worker<AbraselTask> {
 
 	ExecutorService executorService;
 
+	AbraselParseResultArchiveWorker archiveWorker;
+
 	final static int poolSize = 10;
 
-	public AbraselProfileWorker() {
+	public AbraselProfileWorker(AbraselParseResultArchiveWorker archiveWorker) {
 		this.executorService = Executors.newFixedThreadPool(poolSize);
+		this.archiveWorker = archiveWorker;
 	}
 
 	@Override
@@ -40,7 +44,14 @@ public class AbraselProfileWorker implements Worker<AbraselTask> {
 				try {
 					log.info("Started with task ", task.taskObject());
 					String profile = HttpConnector.getPageAsString(task.taskObject().getUrl(), task.taskObject().getFormData());
-					new AbraselProfileParser().parse(profile);
+					final JsonNode node = new AbraselProfileParser().parse(profile);
+
+					archiveWorker.addTask(new Task<JsonNode>() {
+						@Override
+						public JsonNode taskObject() {
+							return node;
+						}
+					});
 
 				} catch (IOException e) {
 					log.error("Error while running profile worker", e);
