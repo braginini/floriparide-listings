@@ -39,7 +39,6 @@ public class AbraselProfileListParser implements ProfileListParser<JsonNode> {
 		String part1 = parts[1];
 		part1 = part1.substring(1, part1.length() - 29);
 		part1 += "]";
-		System.out.println(part1);
 
 
 		JsonNode[] nodes = mapper.readValue(part1, JsonNode[].class);

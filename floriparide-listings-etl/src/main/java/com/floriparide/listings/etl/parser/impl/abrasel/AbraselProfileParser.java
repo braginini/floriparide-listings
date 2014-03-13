@@ -123,7 +123,7 @@ public class AbraselProfileParser implements ProfileParser<JsonNode> {
 
 			String website = contactsEl.getElementsByTag("a").get(0).attr("href");
 			if (website.equals("http://"))
-				website = null;
+				website = "";
 
 			ObjectNode websiteNode = factory.objectNode();
 			websiteNode.put("type", "website");
@@ -134,7 +134,6 @@ public class AbraselProfileParser implements ProfileParser<JsonNode> {
 		}
 		obj.put("contacts", contacts);
 
-		System.out.println(obj.toString());
 		return obj;
 	}
 

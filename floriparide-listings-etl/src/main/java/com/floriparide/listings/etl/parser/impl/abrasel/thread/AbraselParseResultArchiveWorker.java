@@ -42,7 +42,7 @@ public class AbraselParseResultArchiveWorker implements Worker<JsonNode> {
 	ScheduledExecutorService executorService;
 
 	final static int poolSize = 1;
-	final static int period = 5;
+	final static int period = 10;
 	AtomicInteger totalDone = new AtomicInteger();
 	AtomicInteger noWork = new AtomicInteger();
 	JsonNodeFactory factory;
