@@ -14,12 +14,24 @@ public class AttributesGroup extends MultiLangMetaModel {
 
 	Long id;
 
+	String stringId;
+
+	String description;
+
 	List<Attribute> attributes;
 
 	public AttributesGroup(Long id, Map<String, String> names, List<Attribute> attributes) {
 		super(names);
 		this.id = id;
 		this.names = names;
+		this.attributes = attributes;
+	}
+
+	public AttributesGroup(Long id, Map<String, String> names, String stringId, String description, List<Attribute> attributes) {
+		super(names);
+		this.id = id;
+		this.stringId = stringId;
+		this.description = description;
 		this.attributes = attributes;
 	}
 
@@ -51,4 +63,19 @@ public class AttributesGroup extends MultiLangMetaModel {
 		this.attributes = attributes;
 	}
 
+	public String getStringId() {
+		return stringId;
+	}
+
+	public void setStringId(String stringId) {
+		this.stringId = stringId;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
 }

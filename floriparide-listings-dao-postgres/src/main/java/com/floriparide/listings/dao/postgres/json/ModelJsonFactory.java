@@ -4,7 +4,6 @@ import com.floriparide.listings.model.Attribute;
 import com.floriparide.listings.model.AttributesGroup;
 import com.floriparide.listings.model.Branch;
 import com.floriparide.listings.model.Contact;
-import com.floriparide.listings.model.MultiLangMetaModel;
 import com.floriparide.listings.model.PaymentOption;
 import com.floriparide.listings.model.Point;
 import com.floriparide.listings.model.Rubric;
@@ -30,7 +29,7 @@ public class ModelJsonFactory {
 		JSONObject object = new JSONObject();
 
 		if (branch.getDescription() != null && !branch.getDescription().isEmpty())
-			object.put(JSONSchema.BRANCH_DATA_DESCRIPTION, branch.getDescription());
+			object.put(JSONSchema.DESCRIPTION, branch.getDescription());
 
 		if (branch.getArticle() != null && !branch.getArticle().isEmpty())
 			object.put(JSONSchema.BRANCH_DATA_ARTICLE, branch.getArticle());
@@ -99,7 +98,7 @@ public class ModelJsonFactory {
 		JSONParser parser = new JSONParser();
 		JSONObject object = (JSONObject) parser.parse(json);
 
-		branch.setDescription((String) object.get(JSONSchema.BRANCH_DATA_DESCRIPTION));
+		branch.setDescription((String) object.get(JSONSchema.DESCRIPTION));
 		branch.setArticle((String) object.get(JSONSchema.BRANCH_DATA_ARTICLE));
 		branch.setOffice((String) object.get(JSONSchema.BRANCH_DATA_OFFICE));
 		branch.setCurrency((String) object.get(JSONSchema.BRANCH_DATA_CURRENCY));
@@ -160,6 +159,9 @@ public class ModelJsonFactory {
 		if (attributesGroup.getNames() != null && !attributesGroup.getNames().isEmpty())
 			object.put(JSONSchema.NAMES, attributesGroup.getNames());
 
+		object.put(JSONSchema.DESCRIPTION, attributesGroup.getDescription());
+		object.put(JSONSchema.STRING_ID, attributesGroup.getStringId());
+
 		return object.toJSONString();
 	}
 
@@ -167,6 +169,8 @@ public class ModelJsonFactory {
 		JSONParser parser = new JSONParser();
 		JSONObject object = (JSONObject) parser.parse(json);
 		attributesGroup.setNames(getNamesFromJSON(object));
+		attributesGroup.setStringId(object.get(JSONSchema.STRING_ID).toString());
+		attributesGroup.setDescription(object.get(JSONSchema.DESCRIPTION).toString());
 	}
 
 	public static String getRubricJSONData(Rubric rubric) {
@@ -226,7 +230,9 @@ public class ModelJsonFactory {
 
 	public class JSONSchema {
 
-		public static final String BRANCH_DATA_DESCRIPTION = "description";
+		public static final String DESCRIPTION = "description";
+		public static final String STRING_ID = "string_id";
+
 		public static final String BRANCH_DATA_ARTICLE = "article";
 		public static final String BRANCH_DATA_ADDRESS = "address";
 		public static final String BRANCH_DATA_OFFICE = "office";

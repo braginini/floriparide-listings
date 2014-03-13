@@ -19,6 +19,12 @@ public class AttributesGroupElement extends MultiLangElement<AttributesGroup> {
 	@JsonProperty("")
 	Map<String, String> names;
 
+	@JsonProperty("string_id")
+	String stringId;
+
+	@JsonProperty("description")
+	String description;
+
 	@JsonProperty("")
 	List<AttributeElement> attributes;
 
@@ -29,6 +35,8 @@ public class AttributesGroupElement extends MultiLangElement<AttributesGroup> {
 		this.id = attributesGroup.getId();
 		this.names = attributesGroup.getNames();
 		this.attributes = AttributeElement.attributesToAttributeElements(attributesGroup.getAttributes());
+		this.stringId = attributesGroup.getStringId();
+		this.description = attributesGroup.getDescription();
 	}
 
 	public static List<AttributesGroupElement> attributesGroupsToElements(
@@ -68,7 +76,7 @@ public class AttributesGroupElement extends MultiLangElement<AttributesGroup> {
 	@Override
 	@JsonIgnore
 	public AttributesGroup getModel() {
-		return new AttributesGroup(id, names, AttributeElement.attributesElementsToAttribute(attributes));
+		return new AttributesGroup(id, names, stringId, description, AttributeElement.attributesElementsToAttribute(attributes));
 	}
 }
 
