@@ -9,12 +9,11 @@ import java.io.IOException;
 /**
  * @author Mikhail Bragin
  */
-public class Main {
+public class AbraselParserMain {
 
-	public static void main(String[] args) throws IOException {
-		AbraselProfileWorker profileWorker = new AbraselProfileWorker(new AbraselParseResultArchiveWorker());
-		AbraselProfileListWorker listWorker = new AbraselProfileListWorker(profileWorker);
-		ParseManager threadManager = new ParseManager(args[0], listWorker);
+	public static void main(String[] args) throws IOException, InterruptedException {
+
+		ParseManager threadManager = new ParseManager(args[0]);
 		threadManager.start();
 	}
 }

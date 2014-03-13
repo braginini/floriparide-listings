@@ -38,7 +38,7 @@ public class AbraselProfileParser implements ProfileParser<JsonNode> {
 
 		String name = doc.getElementById("titulo_central").text().split("-")[0];
 		if (name.charAt(name.length() - 1) == ' ')
-			name = name.substring(0, name.length());
+			name = name.substring(0, name.length() - 1);
 		obj.put("name", name);
 
 		Element descriptionEl = doc.getElementById("detalhamento");

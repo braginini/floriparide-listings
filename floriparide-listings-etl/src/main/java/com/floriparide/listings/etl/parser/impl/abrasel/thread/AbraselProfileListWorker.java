@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Mikhail Bragin
@@ -27,11 +31,22 @@ public class AbraselProfileListWorker implements Worker<AbraselTask> {
 
 	AbraselProfileWorker abraselProfileWorker;
 
-	final static int poolSize = 1;
+	final static int poolSize = 10;
+	final static int shutDownTimeout = 10000; //ms
+
+	boolean stopped = false;
+
+	AtomicInteger totalDone = new AtomicInteger();
+	AtomicLong lastDoneTs = new AtomicLong(System.currentTimeMillis());
 
 	public AbraselProfileListWorker(AbraselProfileWorker abraselProfileWorker) {
 		this.abraselProfileWorker = abraselProfileWorker;
-		this.executorService = Executors.newFixedThreadPool(poolSize);
+		this.executorService = Executors.newFixedThreadPool(poolSize, new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				return new Thread(r, "profile-list-worker");
+			}
+		});
 	}
 
 	@Override
@@ -65,6 +80,9 @@ public class AbraselProfileListWorker implements Worker<AbraselTask> {
 						});
 					}
 
+					totalDone.incrementAndGet();
+					lastDoneTs.set(System.currentTimeMillis());
+
 				} catch (Exception e) {
 					log.error("Error while running list worker", e);
 				}
@@ -72,5 +90,36 @@ public class AbraselProfileListWorker implements Worker<AbraselTask> {
 			}
 		});
 
+	}
+
+	@Override
+	public void shutdown() {
+		executorService.shutdown();
+
+		try {
+			while (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+				log.info("Waiting for threads to finish");
+			}
+		} catch (InterruptedException e) {
+			log.error("Error while shutting down", e);
+		}
+
+		stopped = true;
+		log.info("All threads have stopped, totalDone=" + totalDone.get());
+	}
+
+	@Override
+	public boolean shouldShutdown() {
+
+		//should be shut down if last processed task was more than timeout ms ago
+		if (System.currentTimeMillis() - lastDoneTs.get() > shutDownTimeout)
+			return true;
+
+		return false;
+	}
+
+	@Override
+	public boolean isStopped() {
+		return stopped;
 	}
 }

@@ -7,14 +7,15 @@ import com.floriparide.listings.etl.parser.model.Task;
 import com.floriparide.listings.etl.parser.model.Worker;
 import com.floriparide.listings.etl.parser.util.HttpConnector;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Mikhail Bragin
@@ -26,11 +27,23 @@ public class AbraselProfileWorker implements Worker<AbraselTask> {
 	ExecutorService executorService;
 
 	AbraselParseResultArchiveWorker archiveWorker;
+	AtomicLong lastDoneTs = new AtomicLong(System.currentTimeMillis());
+	AtomicLong totalDone = new AtomicLong();
 
-	final static int poolSize = 10;
+	boolean stopped = false;
+
+	final static int shutDownTimeout = 10000; //ms
+
+	final static int poolSize = 50;
 
 	public AbraselProfileWorker(AbraselParseResultArchiveWorker archiveWorker) {
-		this.executorService = Executors.newFixedThreadPool(poolSize);
+		this.executorService = Executors.newFixedThreadPool(poolSize, new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				return new Thread(r, "profile-worker");
+			}
+		});
+
 		this.archiveWorker = archiveWorker;
 	}
 
@@ -53,6 +66,9 @@ public class AbraselProfileWorker implements Worker<AbraselTask> {
 						}
 					});
 
+					totalDone.incrementAndGet();
+					lastDoneTs.set(System.currentTimeMillis());
+
 				} catch (IOException e) {
 					log.error("Error while running profile worker", e);
 				}
@@ -61,5 +77,36 @@ public class AbraselProfileWorker implements Worker<AbraselTask> {
 		});
 
 
+	}
+
+	@Override
+	public void shutdown() {
+		executorService.shutdown();
+
+		try {
+			while (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
+				log.info("Awaiting for threads to complete");
+			}
+		} catch (InterruptedException e) {
+			log.error("Error while shutting down", e);
+		}
+
+		stopped = true;
+		log.info("All threads have stopped, totalDone=" + totalDone.get());
+	}
+
+	@Override
+	public boolean shouldShutdown() {
+
+		//should be shut down if last processed task was more than timeout ms ago
+		if (System.currentTimeMillis() - lastDoneTs.get() > shutDownTimeout)
+			return true;
+
+		return false;
+	}
+
+	@Override
+	public boolean isStopped() {
+		return stopped;
 	}
 }
