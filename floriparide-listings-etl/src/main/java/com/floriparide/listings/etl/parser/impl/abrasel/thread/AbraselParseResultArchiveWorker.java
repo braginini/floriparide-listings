@@ -1,12 +1,27 @@
 package com.floriparide.listings.etl.parser.impl.abrasel.thread;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.floriparide.listings.etl.parser.model.Task;
 import com.floriparide.listings.etl.parser.model.Worker;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -27,15 +42,18 @@ public class AbraselParseResultArchiveWorker implements Worker<JsonNode> {
 	ScheduledExecutorService executorService;
 
 	final static int poolSize = 1;
-	final static int period = 20;
+	final static int period = 5;
 	AtomicInteger totalDone = new AtomicInteger();
 	AtomicInteger noWork = new AtomicInteger();
+	JsonNodeFactory factory;
+	String adminServiceUrl;
 
 	boolean stopped = false;
 
 	BlockingQueue<JsonNode> batch;
 
-	public AbraselParseResultArchiveWorker() {
+	public AbraselParseResultArchiveWorker(String adminServiceUrl) {
+		this.adminServiceUrl = adminServiceUrl;
 		this.executorService = new ScheduledThreadPoolExecutor(poolSize, new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {
@@ -44,6 +62,7 @@ public class AbraselParseResultArchiveWorker implements Worker<JsonNode> {
 		});
 
 		this.batch = new LinkedBlockingQueue<>();
+		this.factory = JsonNodeFactory.instance;
 		start();
 	}
 
@@ -88,17 +107,49 @@ public class AbraselParseResultArchiveWorker implements Worker<JsonNode> {
 					List<JsonNode> currentBatch = new ArrayList<>(batch.size());
 					batch.drainTo(currentBatch);
 
+					ArrayNode arrayNode = factory.arrayNode();
+
+					for (JsonNode n : currentBatch) {
+						ObjectNode objectNode = factory.objectNode();
+						objectNode.put("data", n.toString());
+						arrayNode.add(objectNode);
+					}
+
+					ObjectNode entitiesNode = factory.objectNode();
+					entitiesNode.put("entities", arrayNode);
+
+					System.out.println(entitiesNode.toString());
+
+					CloseableHttpClient httpClient = HttpClients.createDefault();
+					HttpPost post = new HttpPost(adminServiceUrl);
+					//post.addHeader("Content-Type", "application/json");
+					HttpResponse response;
+					StringEntity requestEntity;
+					try {
+						requestEntity = new StringEntity(entitiesNode.toString(), Charset.forName("UTF-8"));
+						requestEntity.setContentEncoding("UTF-8");
+						requestEntity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+						post.setEntity(requestEntity);
+
+						response = httpClient.execute(post);
+					} catch (UnsupportedEncodingException e) {
+						log.error("Error while creating request entity", e);
+					} catch (ClientProtocolException e) {
+						log.error("Error while sending request", e);
+					} catch (IOException e) {
+						log.error("Error while sending request", e);
+					}
+
+
 					totalDone.addAndGet(currentBatch.size());
-					System.out.println(currentBatch.size());
-					System.out.println(totalDone.get());
 				}
 			}, 0, period, TimeUnit.SECONDS);
 		}
 	}
 
 	public boolean shouldShutdown() {
-		//checks if the worker has no work for last 5 minutes
-		if (noWork.get() * period >= 10)
+		//checks if the worker has no work for last 2 minutes
+		if (noWork.get() * period >= 2 * 60)
 			return true;
 
 		return false;

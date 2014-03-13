@@ -32,7 +32,7 @@ public class AbraselProfileWorker implements Worker<AbraselTask> {
 
 	boolean stopped = false;
 
-	final static int shutDownTimeout = 10000; //ms
+	final static int shutDownTimeout = 100000; //ms
 
 	final static int poolSize = 50;
 

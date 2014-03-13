@@ -13,7 +13,7 @@ public class AbraselParserMain {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 
-		ParseManager threadManager = new ParseManager(args[0]);
+		ParseManager threadManager = new ParseManager(args[0], args[1]);
 		threadManager.start();
 	}
 }

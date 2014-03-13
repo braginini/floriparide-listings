@@ -14,6 +14,7 @@ public class Schema {
 	public static final String TABLE_BRANCH_RUBRICS= "branch_rubrics";
     public static final String TABLE_ATTRIBUTE = "attribute";
     public static final String TABLE_ATTRIBUTES_GROUP = "attributes_group";
+    public static final String TABLE_RAW_DATA_DATA = "raw_data.data";
 
 	//common fields
 	public static final String FIELD_ID = "id";

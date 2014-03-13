@@ -21,6 +21,8 @@ public class ParseManager {
 
 	String startUrl;
 
+	String adminServiceUrl;
+
 	AbraselProfileListWorker profileListWorker;
 	AbraselProfileWorker profileWorker;
 	AbraselParseResultArchiveWorker archiveWorker;
@@ -31,9 +33,10 @@ public class ParseManager {
 
 	private static final Logger log = LoggerFactory.getLogger(ParseManager.class);
 
-	public ParseManager(String startUrl) {
+	public ParseManager(String startUrl, String adminServiceUrl) {
+		this.adminServiceUrl = adminServiceUrl;
 		this.startUrl = startUrl;
-		this.archiveWorker = new AbraselParseResultArchiveWorker();
+		this.archiveWorker = new AbraselParseResultArchiveWorker(adminServiceUrl);
 		this.profileWorker = new AbraselProfileWorker(archiveWorker);
 		this.profileListWorker = new AbraselProfileListWorker(profileWorker);
 

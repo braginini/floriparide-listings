@@ -521,4 +521,27 @@
 		                         referencedColumnNames="id"/>
 	</changeSet>
 
+	<changeSet id="37" author="mbragin">
+		<createTable
+				catalogName="raw_data"
+				tableName="data">
+			<column name="id" type="bigserial">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="data" type="json"/>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="38" author="mbragin">
+		<dropTable tableName="data"/>
+		<createTable
+				schemaName="raw_data"
+				tableName="data">
+			<column name="id" type="bigserial">
+				<constraints primaryKey="true" nullable="false"/>
+			</column>
+			<column name="data" type="json"/>
+		</createTable>
+	</changeSet>
+
 </databaseChangeLog>
