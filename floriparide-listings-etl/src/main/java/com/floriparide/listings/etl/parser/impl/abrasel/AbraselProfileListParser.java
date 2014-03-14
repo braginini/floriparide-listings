@@ -3,6 +3,7 @@ package com.floriparide.listings.etl.parser.impl.abrasel;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.floriparide.listings.etl.parser.Parser;
 import com.floriparide.listings.etl.parser.ProfileListParser;
 
 import org.jsoup.Jsoup;
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * @author Mikhail Bragin
  */
-public class AbraselProfileListParser implements ProfileListParser<JsonNode> {
+public class AbraselProfileListParser implements Parser<List<JsonNode>> {
 
 	static ObjectMapper mapper;
 

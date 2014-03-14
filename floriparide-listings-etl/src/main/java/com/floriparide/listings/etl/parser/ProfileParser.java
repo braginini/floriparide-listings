@@ -1,7 +1,5 @@
 package com.floriparide.listings.etl.parser;
 
-import org.json.simple.JSONObject;
-
 /**
  * @author Mikhail Bragin
  */

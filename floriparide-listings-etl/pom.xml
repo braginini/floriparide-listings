@@ -33,6 +33,13 @@
 	</build>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>com.floriparide.listings</groupId>
+			<artifactId>model</artifactId>
+			<version>${com.floriparide.listings.model.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>

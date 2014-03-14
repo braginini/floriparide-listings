@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.floriparide.listings.etl.parser.Parser;
 import com.floriparide.listings.etl.parser.ProfileParser;
 
 import org.jsoup.Jsoup;
@@ -13,13 +14,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Mikhail Bragin
  */
-public class AbraselProfileParser implements ProfileParser<JsonNode> {
+public class AbraselProfileParser implements Parser<JsonNode> {
 
 	static ObjectMapper mapper;
 
@@ -84,6 +86,12 @@ public class AbraselProfileParser implements ProfileParser<JsonNode> {
 		Element workHoursEl = itemEls.get(5);
 		String workHours = getDetailsValueString(workHoursEl);
 		obj.put("hours", workHours);
+
+		try {
+			new AbraselWorkingHoursParser().parse(workHours);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		Element paymentEl = itemEls.get(6);
 		String payment = getDetailsValueString(paymentEl);
