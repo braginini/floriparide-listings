@@ -87,12 +87,6 @@ public class AbraselProfileParser implements Parser<JsonNode> {
 		String workHours = getDetailsValueString(workHoursEl);
 		obj.put("hours", workHours);
 
-		try {
-			new AbraselWorkingHoursParser().parse(workHours);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 		Element paymentEl = itemEls.get(6);
 		String payment = getDetailsValueString(paymentEl);
 		List<String> paymentList = splitMultipleValues(payment);
