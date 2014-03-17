@@ -117,8 +117,6 @@ public class ParseResultArchiveWorker implements Worker<JsonNode> {
 					ObjectNode entitiesNode = factory.objectNode();
 					entitiesNode.put("entities", arrayNode);
 
-					System.out.println(entitiesNode.toString());
-
 					CloseableHttpClient httpClient = HttpClients.createDefault();
 					HttpPost post = new HttpPost(adminServiceUrl);
 					//post.addHeader("Content-Type", "application/json");
