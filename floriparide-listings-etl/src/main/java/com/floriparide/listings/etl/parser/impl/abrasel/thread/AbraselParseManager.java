@@ -1,7 +1,10 @@
 package com.floriparide.listings.etl.parser.impl.abrasel.thread;
 
+import com.floriparide.listings.etl.AbstractParseManager;
+import com.floriparide.listings.etl.parser.impl.ParseResultArchiveWorker;
 import com.floriparide.listings.etl.parser.impl.abrasel.AbraselTask;
 import com.floriparide.listings.etl.parser.model.Task;
+import com.floriparide.listings.etl.parser.model.Worker;
 import com.floriparide.listings.etl.parser.util.HttpConnector;
 
 import org.slf4j.Logger;
@@ -17,64 +20,24 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Mikhail Bragin
  */
-public class ParseManager {
+public class AbraselParseManager extends AbstractParseManager {
 
 	String startUrl;
 
 	String adminServiceUrl;
 
-	AbraselProfileListWorker profileListWorker;
-	AbraselProfileWorker profileWorker;
-	AbraselParseResultArchiveWorker archiveWorker;
-
-	ScheduledExecutorService shutdownPool;
-
-	static int poolSize = 1;
-
-	private static final Logger log = LoggerFactory.getLogger(ParseManager.class);
-
-	public ParseManager(String startUrl, String adminServiceUrl) {
+	public AbraselParseManager(Worker profileListWorker, Worker profileWorker, Worker archiveWorker,
+	                           String startUrl, String adminServiceUrl) {
+		super(profileListWorker, profileWorker, archiveWorker);
 		this.adminServiceUrl = adminServiceUrl;
 		this.startUrl = startUrl;
-		this.archiveWorker = new AbraselParseResultArchiveWorker(adminServiceUrl);
-		this.profileWorker = new AbraselProfileWorker(archiveWorker);
-		this.profileListWorker = new AbraselProfileListWorker(profileWorker);
-
-		this.shutdownPool = new ScheduledThreadPoolExecutor(poolSize, new ThreadFactory() {
-			@Override
-			public Thread newThread(Runnable r) {
-				return new Thread(r, "shutdown-worker");
-			}
-		});
 	}
 
 	public void start() throws IOException, InterruptedException {
+		super.start();
 
 		for (int i = 0; i < getPageNumber(); i++)
 			profileListWorker.addTask(getAbraselListTask(i));
-
-		//shutdown threads if no work
-		shutdownPool.scheduleAtFixedRate(new Runnable() {
-			@Override
-			public void run() {
-
-				if (profileListWorker.shouldShutdown())
-					profileListWorker.shutdown();
-
-				if (profileWorker.shouldShutdown())
-					profileWorker.shutdown();
-
-				if (archiveWorker.shouldShutdown())
-					archiveWorker.shutdown();
-
-				if (profileListWorker.isStopped() && profileWorker.isStopped() && archiveWorker.isStopped()) {
-					shutdownPool.shutdown();
-					System.exit(1);
-				}
-
-			}
-		}, 20, 20, TimeUnit.SECONDS);
-
 	}
 
 	private Task<AbraselTask> getAbraselListTask(final int page) {

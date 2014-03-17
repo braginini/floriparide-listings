@@ -1,4 +1,4 @@
-package com.floriparide.listings.etl.parser.impl.abrasel.thread;
+package com.floriparide.listings.etl.parser.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -9,7 +9,6 @@ import com.floriparide.listings.etl.parser.model.Worker;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -35,9 +34,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author Mikhail Bragin
  */
-public class AbraselParseResultArchiveWorker implements Worker<JsonNode> {
+public class ParseResultArchiveWorker implements Worker<JsonNode> {
 
-	private static final Logger log = LoggerFactory.getLogger(AbraselParseResultArchiveWorker.class);
+	private static final Logger log = LoggerFactory.getLogger(ParseResultArchiveWorker.class);
 
 	ScheduledExecutorService executorService;
 
@@ -52,7 +51,7 @@ public class AbraselParseResultArchiveWorker implements Worker<JsonNode> {
 
 	BlockingQueue<JsonNode> batch;
 
-	public AbraselParseResultArchiveWorker(String adminServiceUrl) {
+	public ParseResultArchiveWorker(String adminServiceUrl) {
 		this.adminServiceUrl = adminServiceUrl;
 		this.executorService = new ScheduledThreadPoolExecutor(poolSize, new ThreadFactory() {
 			@Override

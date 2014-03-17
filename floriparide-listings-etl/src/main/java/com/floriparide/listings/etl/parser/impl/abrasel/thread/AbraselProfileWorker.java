@@ -1,6 +1,7 @@
 package com.floriparide.listings.etl.parser.impl.abrasel.thread;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.floriparide.listings.etl.parser.impl.ParseResultArchiveWorker;
 import com.floriparide.listings.etl.parser.impl.abrasel.AbraselProfileParser;
 import com.floriparide.listings.etl.parser.impl.abrasel.AbraselTask;
 import com.floriparide.listings.etl.parser.model.Task;
@@ -26,7 +27,7 @@ public class AbraselProfileWorker implements Worker<AbraselTask> {
 
 	ExecutorService executorService;
 
-	AbraselParseResultArchiveWorker archiveWorker;
+	ParseResultArchiveWorker archiveWorker;
 	AtomicLong lastDoneTs = new AtomicLong(System.currentTimeMillis());
 	AtomicLong totalDone = new AtomicLong();
 
@@ -36,7 +37,7 @@ public class AbraselProfileWorker implements Worker<AbraselTask> {
 
 	final static int poolSize = 50;
 
-	public AbraselProfileWorker(AbraselParseResultArchiveWorker archiveWorker) {
+	public AbraselProfileWorker(ParseResultArchiveWorker archiveWorker) {
 		this.executorService = Executors.newFixedThreadPool(poolSize, new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {
