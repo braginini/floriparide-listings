@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.floriparide.listings.etl.parser.model.ArchiveTask;
 import com.floriparide.listings.etl.parser.model.Task;
 import com.floriparide.listings.etl.parser.model.Worker;
 
@@ -34,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author Mikhail Bragin
  */
-public class ParseResultArchiveWorker implements Worker<JsonNode> {
+public class ParseResultArchiveWorker implements Worker<ArchiveTask> {
 
 	private static final Logger log = LoggerFactory.getLogger(ParseResultArchiveWorker.class);
 
@@ -49,7 +50,7 @@ public class ParseResultArchiveWorker implements Worker<JsonNode> {
 
 	boolean stopped = false;
 
-	BlockingQueue<JsonNode> batch;
+	BlockingQueue<ArchiveTask> batch;
 
 	public ParseResultArchiveWorker(String adminServiceUrl) {
 		this.adminServiceUrl = adminServiceUrl;
@@ -66,7 +67,7 @@ public class ParseResultArchiveWorker implements Worker<JsonNode> {
 	}
 
 	@Override
-	public void addTask(Task<JsonNode> task) {
+	public void addTask(Task<ArchiveTask> task) {
 		try {
 			batch.put(task.taskObject());
 		} catch (InterruptedException e) {
@@ -103,14 +104,15 @@ public class ParseResultArchiveWorker implements Worker<JsonNode> {
 
 					noWork.set(0);
 
-					List<JsonNode> currentBatch = new ArrayList<>(batch.size());
+					List<ArchiveTask> currentBatch = new ArrayList<>(batch.size());
 					batch.drainTo(currentBatch);
 
 					ArrayNode arrayNode = factory.arrayNode();
 
-					for (JsonNode n : currentBatch) {
+					for (ArchiveTask n : currentBatch) {
 						ObjectNode objectNode = factory.objectNode();
-						objectNode.put("data", n.toString());
+						objectNode.put("data", n.getNode().toString());
+						objectNode.put("source", n.getSource().getSource());
 						arrayNode.add(objectNode);
 					}
 

@@ -16,6 +16,9 @@ public class RawDataElement extends Element<RawData> {
 	@JsonProperty("")
 	String data;
 
+	@JsonProperty("")
+	String source;
+
 	public String getData() {
 		return data;
 	}
@@ -24,10 +27,18 @@ public class RawDataElement extends Element<RawData> {
 		this.data = data;
 	}
 
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
 	@JsonIgnore
 	@Override
 	public RawData getModel() {
-		return new RawData(id, data);
+		return new RawData(id, data, RawData.Source.lookup(source));
 	}
 
 	public static List<RawData> getRawDataModelsFromRawDataElements(List<RawDataElement> rawDataElements) {

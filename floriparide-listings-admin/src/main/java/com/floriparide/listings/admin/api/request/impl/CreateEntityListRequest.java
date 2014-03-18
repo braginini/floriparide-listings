@@ -3,6 +3,7 @@ package com.floriparide.listings.admin.api.request.impl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.admin.api.request.IRequest;
 import com.floriparide.listings.web.json.Element;
+import com.floriparide.listings.web.json.RawDataElement;
 
 import java.util.List;
 

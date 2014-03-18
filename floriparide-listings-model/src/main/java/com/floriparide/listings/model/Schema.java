@@ -47,4 +47,7 @@ public class Schema {
 	public static final String TABLE_ATTRIBUTE_FIELD_GROUP_ID = "group_id";
 	public static final String TABLE_ATTRIBUTE_FIELD_POSSIBLE_VALUES = "possible_values";
 
+	//raw_data.data
+	public static final String TABLE_RAW_DATA_DATA_FIELD_SOURCE = "source";
+
 }

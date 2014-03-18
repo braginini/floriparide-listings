@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.floriparide.listings.etl.parser.impl.ParseResultArchiveWorker;
+import com.floriparide.listings.etl.parser.model.ArchiveTask;
 import com.floriparide.listings.etl.parser.model.Task;
 import com.floriparide.listings.etl.parser.model.Worker;
+import com.floriparide.listings.model.RawData;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,10 +65,10 @@ public class FoursquareVenueProfileWorker implements Worker<CompactVenue> {
 							String json = objectMapper.writeValueAsString(venue);
 							final JsonNode node = objectMapper.readValue(json, JsonNode.class);
 
-							archiveWorker.addTask(new Task<JsonNode>() {
+							archiveWorker.addTask(new Task<ArchiveTask>() {
 								@Override
-								public JsonNode taskObject() {
-									return node;
+								public ArchiveTask taskObject() {
+									return new ArchiveTask(RawData.Source.FOURSQUARE, node);
 								}
 							});
 

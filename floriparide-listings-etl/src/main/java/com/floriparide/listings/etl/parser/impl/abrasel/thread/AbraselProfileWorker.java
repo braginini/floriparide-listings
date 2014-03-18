@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.floriparide.listings.etl.parser.Abstract3TaskWorker;
 import com.floriparide.listings.etl.parser.impl.abrasel.AbraselProfileParser;
 import com.floriparide.listings.etl.parser.impl.abrasel.AbraselTask;
+import com.floriparide.listings.etl.parser.model.ArchiveTask;
 import com.floriparide.listings.etl.parser.model.Task;
 import com.floriparide.listings.etl.parser.model.Worker;
 import com.floriparide.listings.etl.parser.util.HttpConnector;
+import com.floriparide.listings.model.RawData;
 
 import java.io.IOException;
 
@@ -38,10 +40,10 @@ public class AbraselProfileWorker extends Abstract3TaskWorker<AbraselTask> {
 					String profile = HttpConnector.getPageAsString(task.taskObject().getUrl(), task.taskObject().getFormData());
 					final JsonNode node = new AbraselProfileParser().parse(profile);
 
-					nextWorker.addTask(new Task<JsonNode>() {
+					nextWorker.addTask(new Task<ArchiveTask>() {
 						@Override
-						public JsonNode taskObject() {
-							return node;
+						public ArchiveTask taskObject() {
+							return new ArchiveTask(RawData.Source.ABRSEl, node);
 						}
 					});
 

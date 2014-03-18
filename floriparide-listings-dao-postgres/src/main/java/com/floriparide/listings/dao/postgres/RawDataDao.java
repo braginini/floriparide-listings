@@ -31,7 +31,9 @@ public class RawDataDao extends AbstractSpringJdbc implements IRawDataDao {
 	@Override
 	public void create(final @NotNull List<RawData> rawData) throws Exception {
 
-		String query = "INSERT INTO " + table + " (" + Schema.FIELD_DATA + ") VALUES (?::json)";
+		String query = "INSERT INTO " + table + " " +
+				"(" + Schema.TABLE_RAW_DATA_DATA_FIELD_SOURCE + ","
+				 + Schema.FIELD_DATA + ") VALUES (?::raw_data_source, ?::json)";
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		getJdbcTemplate().batchUpdate(query, new BatchPreparedStatementSetter() {
@@ -39,7 +41,8 @@ public class RawDataDao extends AbstractSpringJdbc implements IRawDataDao {
 			@Override
 			public void setValues(PreparedStatement stmt, int i) throws SQLException {
 				RawData data = rawData.get(i);
-				stmt.setString(1, data.getData());
+				stmt.setString(1, data.getSource().getSource());
+				stmt.setString(2, data.getData());
 			}
 
 			@Override

@@ -544,4 +544,11 @@
 		</createTable>
 	</changeSet>
 
+	<changeSet id="39" author="mbragin">
+		<sql>CREATE TYPE raw_data_source AS ENUM ('abrasel','4square', 'hagah')</sql>
+		<addColumn tableName="data" schemaName="raw_data">
+			<column name="source" type="raw_data_source"/>
+		</addColumn>
+	</changeSet>
+
 </databaseChangeLog>
