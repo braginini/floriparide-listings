@@ -28,8 +28,6 @@ public class AttributesGroupController extends BaseController implements CRUDCon
 	IAttributesGroupDao attributesGroupDao;
 
 	@Override
-	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity<Long> create(@RequestBody CreateEntityRequest<AttributesGroupElement> request,
 	                                   HttpServletRequest httpRequest) throws Exception {
 
@@ -41,8 +39,6 @@ public class AttributesGroupController extends BaseController implements CRUDCon
 	}
 
 	@Override
-	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity delete(@RequestParam(required = true, value = "id") long id,
 	                             HttpServletRequest httpRequest) throws Exception {
 
@@ -52,8 +48,6 @@ public class AttributesGroupController extends BaseController implements CRUDCon
 	}
 
 	@Override
-	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity update(@RequestBody UpdateEntityRequest<AttributesGroupElement> request,
 	                             HttpServletRequest httpRequest) throws Exception {
 		request.validate();
@@ -64,8 +58,6 @@ public class AttributesGroupController extends BaseController implements CRUDCon
 	}
 
 	@Override
-	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity<AttributesGroupElement> get(@RequestParam(required = true, value = "id") long id,
 	                                                  HttpServletRequest httpRequest) throws Exception {
 

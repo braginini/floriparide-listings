@@ -36,8 +36,6 @@ public class ProjectController extends BaseController implements CRUDController<
 	@Autowired
 	IProjectDao projectDao;
 
-	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity<Long> create(@RequestBody CreateEntityRequest<ProjectElement> request,
 	                                   HttpServletRequest httpRequest) throws Exception {
 
@@ -49,8 +47,6 @@ public class ProjectController extends BaseController implements CRUDController<
 		return new ResponseEntity<Long>(id, HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity delete(@RequestParam(value = "id", required = true) long id,
 	                             HttpServletRequest httpRequest) throws Exception {
 
@@ -59,8 +55,6 @@ public class ProjectController extends BaseController implements CRUDController<
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity update(@RequestBody UpdateEntityRequest<ProjectElement> request,
 	                             HttpServletRequest httpRequest) throws Exception {
 
@@ -72,17 +66,15 @@ public class ProjectController extends BaseController implements CRUDController<
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity<ProjectElement> get(@RequestParam(value = "id", required = true) long id,
 	                                          HttpServletRequest httpRequest) throws Exception {
 
 		Project project = projectDao.get(id);
 
 		if (project == null)
-			return new ResponseEntity<ProjectElement>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-		return new ResponseEntity<ProjectElement>(new ProjectElement(project), HttpStatus.OK);
+		return new ResponseEntity<>(new ProjectElement(project), HttpStatus.OK);
 	}
 
 	/**
@@ -93,8 +85,6 @@ public class ProjectController extends BaseController implements CRUDController<
      * wrapped with {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity<ListResponse<ProjectElement>> list(PagingRequest request,
 	                                                HttpServletRequest httpRequest) throws Exception {
 
@@ -109,7 +99,7 @@ public class ProjectController extends BaseController implements CRUDController<
 			projects = projectDao.getProjects(request.getOffset(), request.getLimit(),
 					request.getSortFieldModel(), request.getSortTypeModel());
 
-		return new ResponseEntity<ListResponse<ProjectElement>>(new ListResponse<ProjectElement>(totalCount,
+		return new ResponseEntity<>(new ListResponse<>(totalCount,
                 ProjectElement.projectsToElements(projects)), HttpStatus.OK);
 	}
 

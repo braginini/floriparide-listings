@@ -35,8 +35,6 @@ public class BranchController extends BaseController implements CRUDController<B
 	@Autowired
 	IBranchDao branchDao;
 
-	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity<Long> create(@RequestBody CreateEntityRequest<BranchElement> request,
 	                                   HttpServletRequest httpRequest) throws Exception {
 
@@ -45,8 +43,6 @@ public class BranchController extends BaseController implements CRUDController<B
 		return new ResponseEntity<>(id, HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity delete(@RequestParam(value = "id", required = true) long id,
 	                             HttpServletRequest httpRequest) throws Exception {
 
@@ -55,8 +51,6 @@ public class BranchController extends BaseController implements CRUDController<B
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity update(@RequestBody UpdateEntityRequest<BranchElement> request,
 	                             HttpServletRequest httpRequest) throws Exception {
 
@@ -69,8 +63,6 @@ public class BranchController extends BaseController implements CRUDController<B
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity<BranchElement> get(@RequestParam(value = "id", required = true) long id,
 	                                         HttpServletRequest httpRequest) throws Exception {
 
@@ -89,7 +81,7 @@ public class BranchController extends BaseController implements CRUDController<B
 	 * {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
+	@RequestMapping(method = RequestMethod.GET, consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity<ListResponse<BranchElement>> list(PagingRequest request,
 	                                                        @RequestParam(value = "company_id", required = true) long companyId,
@@ -106,7 +98,7 @@ public class BranchController extends BaseController implements CRUDController<B
 		branches = branchDao.getBranches(companyId, request.getOffset(), request.getLimit(),
 				request.getSortFieldModel(), request.getSortTypeModel());
 
-		return new ResponseEntity<ListResponse<BranchElement>>(new ListResponse<BranchElement>(0,
+		return new ResponseEntity<>(new ListResponse<>(0,
 				BranchElement.branchesToBranchElements(branches)), HttpStatus.OK);
 	}
 

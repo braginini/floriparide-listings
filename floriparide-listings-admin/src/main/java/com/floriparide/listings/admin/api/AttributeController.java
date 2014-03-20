@@ -74,9 +74,9 @@ public class AttributeController extends BaseController implements CRUDControlle
 		Attribute attribute = attributeDao.get(id);
 
 		if (attribute == null)
-			return new ResponseEntity<AttributeElement>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-		return new ResponseEntity<AttributeElement>(new AttributeElement(attribute), HttpStatus.OK);
+		return new ResponseEntity<>(new AttributeElement(attribute), HttpStatus.OK);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class AttributeController extends BaseController implements CRUDControlle
 	 * wrapped with {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
+	@RequestMapping(method = RequestMethod.GET, consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity<ListResponse<AttributeElement>> list(PagingRequest request,
 	                                                           HttpServletRequest httpRequest) throws Exception {
@@ -103,7 +103,7 @@ public class AttributeController extends BaseController implements CRUDControlle
 			attributes = attributeDao.getAttributes(request.getOffset(), request.getLimit(),
 					request.getSortFieldModel(), request.getSortTypeModel());
 
-		return new ResponseEntity<ListResponse<AttributeElement>>(new ListResponse<AttributeElement>(totalCount,
+		return new ResponseEntity<>(new ListResponse<AttributeElement>(totalCount,
 				AttributeElement.attributesToAttributeElements(attributes)), HttpStatus.OK);
 	}
 

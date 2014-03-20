@@ -36,8 +36,6 @@ public class CompanyController extends BaseController implements CRUDController<
 	@Autowired
 	ICompanyDao companyDao;
 
-	@RequestMapping(method = RequestMethod.POST, value = "/create", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity<Long> create(@RequestBody CreateEntityRequest<CompanyElement> request,
 	                                   HttpServletRequest httpRequest) throws Exception {
 
@@ -49,8 +47,6 @@ public class CompanyController extends BaseController implements CRUDController<
 		return new ResponseEntity<Long>(id, HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.DELETE, value = "/delete", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity delete(@RequestParam(value = "id", required = true) long id,
 	                             HttpServletRequest httpRequest) throws Exception {
 
@@ -59,8 +55,6 @@ public class CompanyController extends BaseController implements CRUDController<
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, value = "/update", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity update(@RequestBody UpdateEntityRequest<CompanyElement> request,
 	                             HttpServletRequest httpRequest) throws Exception {
 
@@ -72,17 +66,15 @@ public class CompanyController extends BaseController implements CRUDController<
 		return new ResponseEntity(HttpStatus.OK);
 	}
 
-	@RequestMapping(method = RequestMethod.GET, value = "/get", consumes = "application/json",
-			headers = "Accept=application/json")
 	public ResponseEntity<CompanyElement> get(@RequestParam(value = "id", required = true) long id,
 	                                           HttpServletRequest httpRequest) throws Exception {
 
 		Company company = companyDao.get(id);
 
 		if (company == null)
-			return new ResponseEntity<CompanyElement>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-		return new ResponseEntity<CompanyElement>(new CompanyElement(company), HttpStatus.OK);
+		return new ResponseEntity<>(new CompanyElement(company), HttpStatus.OK);
 	}
 
 	/**
@@ -93,7 +85,7 @@ public class CompanyController extends BaseController implements CRUDController<
      * wrapped with {@link org.springframework.http.ResponseEntity} with a HTTP 200 or HTTP 204 status code.
 	 * @throws Exception
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/list", consumes = "application/json",
+	@RequestMapping(method = RequestMethod.GET, consumes = "application/json",
 			headers = "Accept=application/json")
 	public ResponseEntity<ListResponse<CompanyElement>> list(PagingRequest request,
 	                                                @RequestParam(value = "project_id", required = true) long projectId,
@@ -110,7 +102,7 @@ public class CompanyController extends BaseController implements CRUDController<
 			companies = companyDao.getCompanies(projectId, request.getOffset(), request.getLimit(),
 					request.getSortFieldModel(), request.getSortTypeModel());
 
-		return new ResponseEntity<ListResponse<CompanyElement>>(new ListResponse<CompanyElement>(totalCount,
+		return new ResponseEntity<>(new ListResponse<>(totalCount,
 				CompanyElement.companiesToElements(companies)), HttpStatus.OK);
 	}
 
