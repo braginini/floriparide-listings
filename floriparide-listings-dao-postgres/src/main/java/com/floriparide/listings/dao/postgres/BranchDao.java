@@ -4,13 +4,11 @@ import com.floriparide.listings.dao.IBranchDao;
 import com.floriparide.listings.dao.postgres.json.ModelJsonFactory;
 import com.floriparide.listings.dao.postgres.springjdbc.AbstractSpringJdbc;
 import com.floriparide.listings.dao.postgres.springjdbc.mapper.BranchRowMapper;
-import com.floriparide.listings.model.Attribute;
 import com.floriparide.listings.model.Branch;
 import com.floriparide.listings.model.Rubric;
 import com.floriparide.listings.model.Schema;
 import com.floriparide.listings.model.sort.SortField;
 import com.floriparide.listings.model.sort.SortType;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -48,9 +46,13 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 	@NotNull
 	@Override
 	public List<Branch> getBranches(long companyId, int offset, int limit) throws Exception {
+            String query = "SELECT * FROM " + table + " WHERE " + Schema.TABLE_BRANCH_FIELD_COMPANY_ID + " = :company_id LIMIT :limit OFFSET :offset";
 
-
-		return null;
+            return getNamedJdbcTemplate().query(query,
+                    new MapSqlParameterSource("company_id", companyId)
+                        .addValue("limit", limit)
+                        .addValue("offset", offset),
+                    new BranchRowMapper());
 	}
 
 	@NotNull
@@ -62,7 +64,11 @@ public class BranchDao extends AbstractSpringJdbc implements IBranchDao {
 	@NotNull
 	@Override
 	public List<Branch> getBranches(long companyId) throws Exception {
-		return null;
+        String query = "SELECT * FROM " + table + " WHERE " + Schema.TABLE_BRANCH_FIELD_COMPANY_ID + " = :company_id";
+
+        return getNamedJdbcTemplate().query(query,
+                new MapSqlParameterSource("id", companyId),
+                new BranchRowMapper());
 	}
 
 	@Override
