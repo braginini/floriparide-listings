@@ -2,7 +2,7 @@ App = {
     Config: {
         debug: true,
         endpoints: {
-            api: 'http://dev:8080/api'
+            api: 'http://localhost:8080/api'
         }
     }
 };

@@ -1,3 +1,4 @@
+/src/main/java/resources/*.properties
 /.idea/
 /target/
 *.iml
