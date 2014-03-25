@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.floriparide.listings.etl.parser.Parser;
-import com.floriparide.listings.etl.parser.ProfileListParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
