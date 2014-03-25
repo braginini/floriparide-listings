@@ -6,10 +6,10 @@ import java.util.List;
 
 /**
  * Describes {@link com.floriparide.listings.model.Branch} working time
- * <p/>
- * Each field represents a week day with working time intervals, e.g. {@link this#monday} can have keys
+ * <p>
+ * Each field represents a week day with working time intervals, e.g. {@link Schedule#monday} can have keys
  * working_hours-0, working_hours-1, working_hours-2, ... with corresponding intervals of type {@link com.floriparide.listings.model.Interval}
- * <p/>
+ * </p>
  * If the company does not work during the week day corresponding field can be {@code null}
  *
  * @author Mikhail Bragin

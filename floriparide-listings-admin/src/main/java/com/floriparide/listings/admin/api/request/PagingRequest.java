@@ -23,6 +23,10 @@ public class PagingRequest implements IRequest {
 
 	String sortType;  //asc/desc
 
+
+    static int defaultOffset = 0;
+    static int defaultLimit = 25;
+
 	public PagingRequest() {
 	}
 
@@ -72,8 +76,15 @@ public class PagingRequest implements IRequest {
 
 	@Override
 	public void validate() throws Exception {
-		Assert.notNull(offset, "Field offset must not be null");
-		Assert.notNull(limit, "Field limit must not be null");
+//		Assert.notNull(offset, "Field offset must not be null");
+//		Assert.notNull(limit, "Field limit must not be null");
+
+        if (offset == null)
+            offset = defaultOffset;
+
+        if (limit == null)
+            limit = defaultLimit;
+
 		Assert.isTrue(offset >= 0, "Field offset must be non-negative");
 		Assert.isTrue(limit >= 0, "Field limit must be non-negative");
 

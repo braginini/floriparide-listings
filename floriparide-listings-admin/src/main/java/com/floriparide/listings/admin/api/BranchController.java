@@ -93,7 +93,7 @@ public class BranchController extends BaseController implements CRUDController<B
 		List<Branch> branches;
 
 		if (request.getSortFieldModel() == null) //no sorting specified
-			branches = branchDao.getBranches(companyId);
+			branches = branchDao.getBranches(companyId, request.getOffset(), request.getLimit());
 		else
 		branches = branchDao.getBranches(companyId, request.getOffset(), request.getLimit(),
 				request.getSortFieldModel(), request.getSortTypeModel());

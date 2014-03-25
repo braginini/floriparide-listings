@@ -1,0 +1,96 @@
+@keyframes nodeInserted {
+    from {
+        outline-color: #fff;
+    }
+    to {
+        outline-color: #000;
+    }
+}
+
+@-moz-keyframes nodeInserted {
+    from {
+        outline-color: #fff;
+    }
+    to {
+        outline-color: #000;
+    }
+}
+
+@-webkit-keyframes nodeInserted {
+    from {
+        outline-color: #fff;
+    }
+    to {
+        outline-color: #000;
+    }
+}
+
+@-ms-keyframes nodeInserted {
+    from {
+        outline-color: #fff;
+    }
+    to {
+        outline-color: #000;
+    }
+}
+
+@-o-keyframes nodeInserted {
+    from {
+        outline-color: #fff;
+    }
+    to {
+        outline-color: #000;
+    }
+}
+
+a {
+    animation-duration: 0.001s;
+    -o-animation-duration: 0.001s;
+    -ms-animation-duration: 0.001s;
+    -moz-animation-duration: 0.001s;
+    -webkit-animation-duration: 0.001s;
+    animation-name: nodeInserted;
+    -o-animation-name: nodeInserted;
+    -ms-animation-name: nodeInserted;
+    -moz-animation-name: nodeInserted;
+    -webkit-animation-name: nodeInserted;
+}
+
+.main-menu a {
+    color: #1D1D1B;
+    text-decoration: none !important;
+    text-shadow: 0 1px 0 #F9F9F9;
+}
+
+.main-menu a:hover, .main-menu a:focus {
+    text-decoration: none;
+    outline: none;
+}
+
+.main-menu, .main-menu .x-grid-cell {
+    /*background: none repeat scroll 0 0 #F4F4F4;*/
+    background: none repeat scroll 0 0 #E5E5E5;
+}
+
+.main-menu .x-grid-row-focused .x-grid-td, .main-menu .x-grid-row-selected .x-grid-td a{
+    /*background-color: #C1DDF1;*/
+    background-color: #428BCA;
+    color: #FFFFFF;
+    text-shadow: none;
+    border-radius: 5px;
+}
+
+.main-menu .x-grid-row-selected .x-grid-td a{
+
+}
+
+.app-icon-bank{
+    background-image:url(../images/bank.png) ! important;
+}
+.app-icon-city{
+    background-image:url(../images/city.png) ! important;
+}
+.app-icon-shop{
+    background-image:url(../images/shop.png) ! important;
+}
+

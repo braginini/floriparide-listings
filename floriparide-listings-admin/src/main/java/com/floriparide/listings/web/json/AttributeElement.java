@@ -3,13 +3,11 @@ package com.floriparide.listings.web.json;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.model.Attribute;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Mikhail Bragin
@@ -40,8 +38,14 @@ public class AttributeElement extends MultiLangElement<Attribute> {
 		this.names = attribute.getNames();
 		this.possibleValues = attribute.getPossibleValues();
 		this.currentValue = attribute.getCurrentValue();
-		this.filterType = attribute.getFilterType().getType();
-		this.inputType = attribute.getInputType().getType();
+
+        Attribute.FilterType filterType = attribute.getFilterType();
+        if (filterType != null)
+		    this.filterType = filterType.getType();
+
+        Attribute.InputType inputType = attribute.getInputType();
+        if (inputType != null)
+		    this.inputType = inputType.getType();
 	}
 
 	public static List<AttributeElement> attributesToAttributeElements(List<Attribute> attributes) {
