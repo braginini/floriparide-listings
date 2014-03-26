@@ -49,8 +49,11 @@ Ext.application({
 
         links = Ext.DomQuery.select('a');
         for(i=0; i<links.length;i++) {
-            links[i].wrapped = true;
-            Ext.fly(links[i]).on('click', linkRedirect);
+            var link = links[i];
+            link.wrapped = true;
+            if (link.getAttribute('href')) {
+                Ext.fly(link).on('click', linkRedirect);
+            }
         }
 
         Ext.getDoc().on('animationstart', function(e, link) {
@@ -154,6 +157,7 @@ Ext.application({
             this.stores[name] = new Ext.data.Store({
                 paramsAsHash: true,
                 model: this.getModel(name),
+                autoSync: true,
                 remoteSort: true,
                 pageSize: 100
             });

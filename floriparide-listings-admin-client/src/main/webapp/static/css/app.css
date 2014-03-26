@@ -56,6 +56,25 @@ a {
     -webkit-animation-name: nodeInserted;
 }
 
+.x-toolbar-default {
+    background: none repeat scroll 0 0 #F5F5F5;
+}
+
+.x-btn-icon-el.fa {
+    font-size: 16px;
+}
+
+a.x-btn, a.x-btn-over, a.x-btn-focus {
+    color: #1D1D1B;
+    text-decoration: none !important;
+    outline: none !important;
+}
+
+a.x-btn:hover, a.x-btn:focus {
+    text-decoration: none;
+    outline: none;
+}
+
 .main-menu a {
     color: #1D1D1B;
     text-decoration: none !important;
@@ -82,6 +101,48 @@ a {
 
 .main-menu .x-grid-row-selected .x-grid-td a{
 
+}
+
+.cls-grouping {
+    /*padding: 5px 0 2px 0;*/
+    text-align: center
+}
+
+.cls-grouping a:first-child {
+    /*margin: 0;*/
+    border-radius: 5px 0 0 5px;
+}
+
+.cls-grouping a:last-child {
+    border-radius: 0 5px 5px 0;
+    border-right: 1px solid #1D1D1B;
+}
+
+.cls-grouping a {
+    border-radius: 0;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+
+    border-right: none;
+    border-color: #1D1D1B;
+
+    /*text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.35)*/
+}
+
+.cls-grouping .x-btn-inner {
+    color: #000000;
+    font-weight: normal;
+}
+
+.grid-button:first-child {
+    margin-left: 0px;
+}
+
+.grid-button {
+    width: 80px;
+    margin-left: -8px;
 }
 
 .app-icon-bank{

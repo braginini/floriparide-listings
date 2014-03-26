@@ -10,6 +10,8 @@
                 '/assets/extjs-ux/history.js',
                 '/assets/extjs-ux/routable.js',
                 '/assets/extjs-ux/router.js',
+                '/assets/extjs-ux/reader.js',
+                '/assets/extjs-ux/field.js',
                 '/app/App.js',
                 '/app/widget/ModelGrid.js',
                 '/app/widget/ModelForm.js',

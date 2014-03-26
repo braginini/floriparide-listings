@@ -31,9 +31,15 @@ Ext.define('App.admin.Bootstrap', {
 
     getController: function(name) {
         if (!this._controllers[name]) {
+            var gridCfg = {};
+            var model = Ext.ClassManager.getByAlias('model.' + name);
+            if (model.getFields().length < 4) {
+                gridCfg.cellClicksToEdit = 2;
+            }
             var controller = new App.core.controller.ModelController({
                 model: name,
-                routeBasePath: '/' + name
+                routeBasePath: '/' + name,
+                gridCfg: gridCfg
             });
             this._controllers[name] = controller;
         }

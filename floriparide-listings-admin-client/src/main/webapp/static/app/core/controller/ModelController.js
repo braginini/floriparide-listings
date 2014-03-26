@@ -18,6 +18,7 @@ Ext.define('App.core.controller.ModelController', {
 
     constructor: function(config) {
         this.mixins.routable.constructor.call(this, config);
+        Ext.apply(this, config);
         this.initConfig(config);
 
         if (Ext.isString(this.model)) {
@@ -49,6 +50,7 @@ Ext.define('App.core.controller.ModelController', {
             }
             this.edit(r);
         }, this);
+        this.route('/new', this.create, this);
     },
 
     show: function() {
@@ -58,6 +60,16 @@ Ext.define('App.core.controller.ModelController', {
     edit: function(r) {
         var form = this.getForm();
         form.setTitle('Edit '+this.model.prototype.title+': '+ r.internalId);
+        form.getForm().loadRecord(r);
+        App.app.show(form);
+    },
+
+    create: function() {
+        var new_obj = {};
+        new_obj[this.model.prototype.idProperty] = null;
+        var r = this.model.create(new_obj);
+        var form = this.getForm();
+        form.setTitle('New '+this.model.prototype.title);
         form.getForm().loadRecord(r);
         App.app.show(form);
     },
@@ -72,6 +84,12 @@ Ext.define('App.core.controller.ModelController', {
             this.grid.mon(this.grid, 'editaction', function(r) {
                 this.redirect('/edit/'+ r.internalId, {record: r.data});
             }, this);
+
+            this.grid.mon(this.grid, 'createaction', function(r) {
+                this.redirect('/new');
+            }, this);
+
+            this.grid.mon(this.grid, 'deleteaction', this.removeRecords, this);
         }
         return this.grid;
     },
@@ -102,9 +120,23 @@ Ext.define('App.core.controller.ModelController', {
         return this.form;
     },
 
+    removeRecords: function(rs) {
+        if(rs.length) {
+            Ext.Msg.confirm('Внимание!','Вы точно хотите удалить выбранные записи?',function(button) {
+                if (button === 'yes') {
+                    this.store.remove(rs);
+                    this.store.sync();
+                } else {
+                    // do something when No was clicked.
+                }
+            },this);
+        }
+    },
+
     onSubmit: function(){
         var form = this.form.getForm();
         var r = form._record;
+        var phantom = r.phantom;
 
         var errors = {isValid:true};
         form.getFields().each(function(f){
@@ -116,25 +148,21 @@ Ext.define('App.core.controller.ModelController', {
         });
 
         if (errors.isValid){
-            if(!r){
-                r = this.store.createModel({});
-                this.store.insert(0,r);
-            } else if (!this.store.getById(r.internalId)){
-                this.store.add(r);
-            }
-
             form.updateRecord(r);
-
-            var count = this.store.getNewRecords().length + this.store.getUpdatedRecords().length;
-            if(count) {
-                this.store.sync({
-                    success: function() {
-                        //win.close();
+            r.save({
+                scope: this,
+                callback: function(r, op, success) {
+                    if (success) {
+                        r.commit();
+                        form.loadRecord(Ext.isArray(r) ? r[0] : r);
+                        if (phantom && !this.store.getById(r.getId())){
+                            this.store.add(r);
+                        }
+                        this.redirect('/');
                     }
-                });
-            } else {
-                //win.close();
-            }
+                }
+            });
+
             return true;
         } else {
             form.markInvalid(errors);

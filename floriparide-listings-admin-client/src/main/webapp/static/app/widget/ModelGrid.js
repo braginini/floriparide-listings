@@ -3,9 +3,27 @@ Ext.define('App.widget.ModelGrid', {
     winCfg:null,
     readOnly: false,
     storeAutoLoad: true,
+    selModel: {
+        mode: 'MULTI'
+    },
+    selType: 'cellmodel',
+    cellClicksToEdit: false,
+
+    createText: 'Add',
+    editText: 'Edit',
+    removeText: 'Remove',
 
     initComponent:function () {
-        this.addEvents('editaction');
+        this.addEvents('editaction','createaction','deleteaction');
+
+        this.plugins = this.plugins || [];
+
+        if (!this.readOnly && this.cellClicksToEdit !== false) {
+            this.plugins.push(Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit: this.cellClicksToEdit
+            }));
+        }
+
         if(!this.columns) {
             this.columns = [];
             if(this.model) {
@@ -13,9 +31,11 @@ Ext.define('App.widget.ModelGrid', {
                 for(var i=0;i<fields.length;i++) {
                     var f = fields[i];
                     if(!f.hidden) {
+                        var editor = f.getEditor({fieldLabel: null});
                         this.columns.push(Ext.apply({
                             dataIndex: f.name,
-                            header: f.title || f.name,
+                            header: f.label,
+                            editor: editor && editor.xtype !== 'hidden' ? editor : null,
                             flex: 1
                         }, f.columnCfg || {}));
                     }
@@ -24,11 +44,11 @@ Ext.define('App.widget.ModelGrid', {
         }
 
         if(!this.readOnly) {
-            this.columns.push({header:'Actions', xtype:'fa_actioncolumn', width:80,
+            this.columns.push({header:'actions', xtype:'fa_actioncolumn', width:80,
                 items:[
                     {
                         iconCls:'fa fa-pencil-square-o',
-                        tooltip:'Edit',
+                        tooltip: this.editText,
                         scope:this,
                         handler:function (grid, rowIndex) {
                             var r = grid.store.getAt(rowIndex);
@@ -36,10 +56,10 @@ Ext.define('App.widget.ModelGrid', {
                         }
                     },{
                         iconCls:'fa fa-trash-o',
-                        tooltip:'Remove',
+                        tooltip: this.removeText,
                         scope: this,
                         handler:function (grid, rowIndex, colIndex, itm, e, rec) {
-                            this.removeRecords([rec]);
+                            this.fireEvent('deleteaction', [rec]);
                         }
                     }
                 ]
@@ -56,20 +76,33 @@ Ext.define('App.widget.ModelGrid', {
         }
 
         if(!this.readOnly) {
-            this.tbar = [{
-                text: 'Добавить',
-                iconCls: 'fa fa-plus-square-o',
-                handler: this.addRecord,
-                scope: this
-            },{
-                text: 'Удалить',
-                iconCls: 'fa fa-trash-o',
-                handler: function() {
-                    var rs = this.getSelectionModel().getSelection();
-                    this.removeRecords(rs);
+            this.tbar = new Ext.toolbar.Toolbar({
+                cls: 'cls-grouping',
+                layout:{
+                    type:'hbox'
                 },
-                scope: this
-            }];
+                defaults: {
+                   cls: 'grid-button'
+                },
+                items:[{
+                    text: this.createText,
+                    iconCls: 'fa fa-file-o',
+                    handler: function() {
+                        this.fireEvent('createaction');
+                    },
+                    scope: this
+                },{
+                    text: this.removeText,
+                    iconCls: 'fa fa-trash-o',
+                    handler: function() {
+                        var rs = this.getSelectionModel().getSelection();
+                        if (rs.length) {
+                            this.fireEvent('deleteaction', rs);
+                        }
+                    },
+                    scope: this
+                }]
+            });
         }
 
         this.bbar = {
@@ -81,7 +114,7 @@ Ext.define('App.widget.ModelGrid', {
 
         this.callParent();
 
-        if(!this.readOnly) {
+        if(!this.readOnly && this.cellClicksToEdit === false) {
             this.mon(this,'celldblclick',function(view, td, cellIndex, record){
                 this.fireEvent('editaction', record);
             },this);
@@ -89,26 +122,6 @@ Ext.define('App.widget.ModelGrid', {
 
         if(this.storeAutoLoad)
             this.store.reload();
-    },
-
-    addRecord: function(){
-        var win = this.getFormWindow(null,{
-            title: 'Новая запись'
-        });
-        win.show();
-    },
-
-    removeRecords: function(rs) {
-        if(rs.length) {
-            Ext.Msg.confirm('Внимание!','Вы точно хотите удалить выбранные записи?',function(button) {
-                if (button === 'yes') {
-                    this.store.remove(rs);
-                    this.store.sync();
-                } else {
-                    // do something when No was clicked.
-                }
-            },this);
-        }
     }
 
 });

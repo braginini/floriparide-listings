@@ -3,60 +3,50 @@ Ext.define('App.model.BaseModel', {
     alias: 'model.branch',
     idProperty: 'id',
 
-    inheritableStatics: {
-        load: function(id, config) {
-            config = Ext.apply({}, config);
-            config = Ext.applyIf(config, {
-                action: 'read',
-                id    : id
-            });
-
-            var operation  = new Ext.data.Operation(config),
-                scope      = config.scope || this,
-                callback;
-
-            callback = function(operation) {
-                var record = null,
-                    success = operation.wasSuccessful();
-
-                if (success) {
-                    record = operation.getResultSet();
-                    record = this.create(record);
-                    record.internalId = record.data.id;
-
-                    if (!record.hasId()) {
-                        record.setId(id);
-                    }
-                    Ext.callback(config.success, scope, [record, operation]);
-                } else {
-                    Ext.callback(config.failure, scope, [record, operation]);
-                }
-                Ext.callback(config.callback, scope, [record, operation, success]);
-            };
-
-            this.getProxy().read(operation, callback, this);
-        }
-    },
-
     onClassExtended: function(cls, data, hooks) {
         var me = this;
         var onBeforeClassCreated = hooks.onBeforeCreated;
 
         hooks.onBeforeCreated = function(cls, data) {
             if (!data.proxy && data.url) {
-                data.proxy = {
+                data.proxy = Ext.create('Ext.data.proxy.Rest',{
                     type: 'rest',
                     url: '/api/admin/v1' + data.url,
+                    batchActions: true,
+                    headers: {
+                        'Accept': 'text/json,application/json',
+                        'Content-type': 'application/json'
+                    },
                     reader: {
                         type: 'json',
                         idProperty: 'id',
                         root: 'list',
                         totalProperty: 'totalCount'
+                    },
+
+                    buildUrl: function(request) {
+                        var operation = request.operation;
+                        var records   = operation.records || [];
+                        if (operation.action === 'create') {
+                            this.appendId = false;
+                        } else if (request.operation.action === 'destroy' && records.length > 1) {
+                            this.appendId = false;
+                            request.params['id'] = Ext.Array.map(records, function(r) {return r.getId();});
+                        }
+                        var url = Ext.data.proxy.Rest.prototype.buildUrl.apply(this, arguments);
+                        this.appendId = true;
+
+                        return url;
                     }
-                };
+                });
                 delete data.url;
             }
             onBeforeClassCreated.call(me, cls, data, hooks);
+
+            var fields = data.fields.items;
+            for (var i=0; i< fields.length; i++) {
+                fields[i].model = cls;
+            }
         };
     }
 });
