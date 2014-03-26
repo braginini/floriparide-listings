@@ -8,5 +8,5 @@ package com.floriparide.listings.admin.api.request;
  */
 public interface IRequest {
 
-	void validate() throws Exception;
+    void validate() throws Exception;
 }

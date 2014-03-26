@@ -4,6 +4,8 @@ import com.floriparide.listings.model.sort.SortField;
 import com.floriparide.listings.model.sort.SortModel;
 import com.floriparide.listings.model.sort.SortingDictionary;
 
+import javax.persistence.Table;
+
 /**
  * This class describes city and metro area.
  *

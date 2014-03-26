@@ -5,20 +5,20 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 abstract public class AbstractSpringJdbc {
 
-	private NamedParameterJdbcTemplate namedJdbcTemplate;
+    private NamedParameterJdbcTemplate namedJdbcTemplate;
 
-	private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
-	protected AbstractSpringJdbc(NamedParameterJdbcTemplate namedJdbcTemplate, JdbcTemplate jdbcTemplate) {
-		this.namedJdbcTemplate = namedJdbcTemplate;
-		this.jdbcTemplate = jdbcTemplate;
-	}
+    protected AbstractSpringJdbc(NamedParameterJdbcTemplate namedJdbcTemplate, JdbcTemplate jdbcTemplate) {
+        this.namedJdbcTemplate = namedJdbcTemplate;
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
-	protected NamedParameterJdbcTemplate getNamedJdbcTemplate() {
-		return namedJdbcTemplate;
-	}
+    protected NamedParameterJdbcTemplate getNamedJdbcTemplate() {
+        return namedJdbcTemplate;
+    }
 
-	protected JdbcTemplate getJdbcTemplate() {
-		return jdbcTemplate;
-	}
+    protected JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
 }

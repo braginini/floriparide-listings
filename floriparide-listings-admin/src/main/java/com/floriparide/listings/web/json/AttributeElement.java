@@ -14,105 +14,105 @@ import java.util.List;
  */
 public class AttributeElement extends MultiLangElement<Attribute> {
 
-	@JsonProperty("")
-	Long groupId;
+    @JsonProperty("")
+    Long groupId;
 
-	@JsonProperty("possible_values")
-	List<String> possibleValues;
+    @JsonProperty("possible_values")
+    List<String> possibleValues;
 
-	@JsonProperty("value")
-	String currentValue;
+    @JsonProperty("value")
+    String currentValue;
 
-	@JsonProperty("input_type")
-	String inputType;
+    @JsonProperty("input_type")
+    String inputType;
 
-	@JsonProperty("filter_type")
-	String filterType;
+    @JsonProperty("filter_type")
+    String filterType;
 
-	public AttributeElement() {
-	}
+    public AttributeElement() {
+    }
 
-	public AttributeElement(@NotNull Attribute attribute) {
-		this.id = attribute.getId();
-		this.groupId = attribute.getGroupId();
-		this.names = attribute.getNames();
-		this.possibleValues = attribute.getPossibleValues();
-		this.currentValue = attribute.getCurrentValue();
+    public AttributeElement(@NotNull Attribute attribute) {
+        this.id = attribute.getId();
+        this.groupId = attribute.getGroupId();
+        this.names = attribute.getNames();
+        this.possibleValues = attribute.getPossibleValues();
+        this.currentValue = attribute.getCurrentValue();
 
         Attribute.FilterType filterType = attribute.getFilterType();
         if (filterType != null)
-		    this.filterType = filterType.getType();
+            this.filterType = filterType.getType();
 
         Attribute.InputType inputType = attribute.getInputType();
         if (inputType != null)
-		    this.inputType = inputType.getType();
-	}
+            this.inputType = inputType.getType();
+    }
 
-	public static List<AttributeElement> attributesToAttributeElements(List<Attribute> attributes) {
-		if (attributes == null) return Collections.emptyList();
-		List<AttributeElement> attributeElements = new ArrayList<AttributeElement>(attributes.size());
+    public static List<AttributeElement> attributesToAttributeElements(List<Attribute> attributes) {
+        if (attributes == null) return Collections.emptyList();
+        List<AttributeElement> attributeElements = new ArrayList<AttributeElement>(attributes.size());
 
-		for (Attribute a : attributes)
-			attributeElements.add(new AttributeElement(a));
+        for (Attribute a : attributes)
+            attributeElements.add(new AttributeElement(a));
 
-		return attributeElements;
-	}
+        return attributeElements;
+    }
 
-	public static List<Attribute> attributesElementsToAttribute(List<AttributeElement> attributeElements) {
-		if (attributeElements == null) return Collections.emptyList();
+    public static List<Attribute> attributesElementsToAttribute(List<AttributeElement> attributeElements) {
+        if (attributeElements == null) return Collections.emptyList();
 
-		List<Attribute> attributes = new ArrayList<>(attributeElements.size());
+        List<Attribute> attributes = new ArrayList<>(attributeElements.size());
 
-		for (AttributeElement a : attributeElements)
-			attributes.add(a.getModel());
+        for (AttributeElement a : attributeElements)
+            attributes.add(a.getModel());
 
-		return attributes;
-	}
+        return attributes;
+    }
 
-	@NotNull
-	@JsonIgnore
-	public Attribute getModel() {
-		return new Attribute(id, groupId, names, possibleValues, currentValue,
-				Attribute.InputType.lookup(inputType), Attribute.FilterType.lookup(filterType));
-	}
+    @NotNull
+    @JsonIgnore
+    public Attribute getModel() {
+        return new Attribute(id, groupId, names, possibleValues, currentValue,
+                Attribute.InputType.lookup(inputType), Attribute.FilterType.lookup(filterType));
+    }
 
-	public Long getGroupId() {
-		return groupId;
-	}
+    public Long getGroupId() {
+        return groupId;
+    }
 
-	public void setGroupId(Long groupId) {
-		this.groupId = groupId;
-	}
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
 
-	public List<String> getPossibleValues() {
-		return possibleValues;
-	}
+    public List<String> getPossibleValues() {
+        return possibleValues;
+    }
 
-	public void setPossibleValues(List<String> possibleValues) {
-		this.possibleValues = possibleValues;
-	}
+    public void setPossibleValues(List<String> possibleValues) {
+        this.possibleValues = possibleValues;
+    }
 
-	public String getCurrentValue() {
-		return currentValue;
-	}
+    public String getCurrentValue() {
+        return currentValue;
+    }
 
-	public void setCurrentValue(String currentValue) {
-		this.currentValue = currentValue;
-	}
+    public void setCurrentValue(String currentValue) {
+        this.currentValue = currentValue;
+    }
 
-	public String getInputType() {
-		return inputType;
-	}
+    public String getInputType() {
+        return inputType;
+    }
 
-	public void setInputType(String inputType) {
-		this.inputType = inputType;
-	}
+    public void setInputType(String inputType) {
+        this.inputType = inputType;
+    }
 
-	public String getFilterType() {
-		return filterType;
-	}
+    public String getFilterType() {
+        return filterType;
+    }
 
-	public void setFilterType(String filterType) {
-		this.filterType = filterType;
-	}
+    public void setFilterType(String filterType) {
+        this.filterType = filterType;
+    }
 }

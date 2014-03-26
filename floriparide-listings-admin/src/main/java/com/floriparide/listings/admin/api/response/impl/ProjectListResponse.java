@@ -1,7 +1,6 @@
 package com.floriparide.listings.admin.api.response.impl;
 
 import com.floriparide.listings.admin.api.response.ListResponse;
-import com.floriparide.listings.model.Project;
 import com.floriparide.listings.web.json.ProjectElement;
 import org.jetbrains.annotations.NotNull;
 

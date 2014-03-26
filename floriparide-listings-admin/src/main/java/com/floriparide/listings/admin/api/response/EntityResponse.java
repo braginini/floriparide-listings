@@ -7,18 +7,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public abstract class EntityResponse<T> implements IResponse {
 
-	@JsonProperty("")
-	T entity;
+    @JsonProperty("")
+    T entity;
 
-	public EntityResponse(T entity) {
-		this.entity = entity;
-	}
+    public EntityResponse(T entity) {
+        this.entity = entity;
+    }
 
-	public T getEntity() {
-		return entity;
-	}
+    public T getEntity() {
+        return entity;
+    }
 
-	public void setEntity(T entity) {
-		this.entity = entity;
-	}
+    public void setEntity(T entity) {
+        this.entity = entity;
+    }
 }

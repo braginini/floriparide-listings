@@ -3,7 +3,6 @@ package com.floriparide.listings.web.json;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.model.AttributesGroup;
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -16,68 +15,68 @@ import java.util.Map;
  */
 public class AttributesGroupElement extends MultiLangElement<AttributesGroup> {
 
-	@JsonProperty("")
-	Map<String, String> names;
+    @JsonProperty("")
+    Map<String, String> names;
 
-	@JsonProperty("string_id")
-	String stringId;
+    @JsonProperty("string_id")
+    String stringId;
 
-	@JsonProperty("description")
-	String description;
+    @JsonProperty("description")
+    String description;
 
-	@JsonProperty("")
-	List<AttributeElement> attributes;
+    @JsonProperty("")
+    List<AttributeElement> attributes;
 
-	public AttributesGroupElement() {
-	}
+    public AttributesGroupElement() {
+    }
 
-	public AttributesGroupElement(@NotNull AttributesGroup attributesGroup) {
-		this.id = attributesGroup.getId();
-		this.names = attributesGroup.getNames();
-		this.attributes = AttributeElement.attributesToAttributeElements(attributesGroup.getAttributes());
-		this.stringId = attributesGroup.getStringId();
-		this.description = attributesGroup.getDescription();
-	}
+    public AttributesGroupElement(@NotNull AttributesGroup attributesGroup) {
+        this.id = attributesGroup.getId();
+        this.names = attributesGroup.getNames();
+        this.attributes = AttributeElement.attributesToAttributeElements(attributesGroup.getAttributes());
+        this.stringId = attributesGroup.getStringId();
+        this.description = attributesGroup.getDescription();
+    }
 
-	public static List<AttributesGroupElement> attributesGroupsToElements(
-			@NotNull List<AttributesGroup> attributesGroups) {
+    public static List<AttributesGroupElement> attributesGroupsToElements(
+            @NotNull List<AttributesGroup> attributesGroups) {
 
-		if (attributesGroups == null) return Collections.emptyList();
+        if (attributesGroups == null) return Collections.emptyList();
 
-		List<AttributesGroupElement> attributesGroupElements = new ArrayList<>(attributesGroups.size());
+        List<AttributesGroupElement> attributesGroupElements = new ArrayList<>(attributesGroups.size());
 
-		for (AttributesGroup ag : attributesGroups)
-			attributesGroupElements.add(new AttributesGroupElement(ag));
+        for (AttributesGroup ag : attributesGroups)
+            attributesGroupElements.add(new AttributesGroupElement(ag));
 
-		return attributesGroupElements;
-	}
+        return attributesGroupElements;
+    }
 
-	public static List<AttributesGroup> attributesGroupsElementToAttributeGroups(
-			@NotNull List<AttributesGroupElement> attributesGroupElements) {
+    public static List<AttributesGroup> attributesGroupsElementToAttributeGroups(
+            @NotNull List<AttributesGroupElement> attributesGroupElements) {
 
-		if (attributesGroupElements == null) return Collections.emptyList();
+        if (attributesGroupElements == null) return Collections.emptyList();
 
-		List<AttributesGroup> attributesGroups = new ArrayList<>(attributesGroupElements.size());
+        List<AttributesGroup> attributesGroups = new ArrayList<>(attributesGroupElements.size());
 
-		for (AttributesGroupElement ag : attributesGroupElements)
-			attributesGroups.add(ag.getModel());
+        for (AttributesGroupElement ag : attributesGroupElements)
+            attributesGroups.add(ag.getModel());
 
-		return attributesGroups;
-	}
+        return attributesGroups;
+    }
 
-	public List<AttributeElement> getAttributes() {
-		return attributes;
-	}
+    public List<AttributeElement> getAttributes() {
+        return attributes;
+    }
 
-	public void setAttributes(List<AttributeElement> attributes) {
-		this.attributes = attributes;
-	}
+    public void setAttributes(List<AttributeElement> attributes) {
+        this.attributes = attributes;
+    }
 
-	@Override
-	@JsonIgnore
-	public AttributesGroup getModel() {
-		return new AttributesGroup(id, names, stringId, description, AttributeElement.attributesElementsToAttribute(attributes));
-	}
+    @Override
+    @JsonIgnore
+    public AttributesGroup getModel() {
+        return new AttributesGroup(id, names, stringId, description, AttributeElement.attributesElementsToAttribute(attributes));
+    }
 }
 
 

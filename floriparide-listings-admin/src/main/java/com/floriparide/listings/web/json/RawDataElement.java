@@ -13,43 +13,43 @@ import java.util.List;
  */
 public class RawDataElement extends Element<RawData> {
 
-	@JsonProperty("")
-	String data;
+    @JsonProperty("")
+    String data;
 
-	@JsonProperty("")
-	String source;
+    @JsonProperty("")
+    String source;
 
-	public String getData() {
-		return data;
-	}
+    public String getData() {
+        return data;
+    }
 
-	public void setData(String data) {
-		this.data = data;
-	}
+    public void setData(String data) {
+        this.data = data;
+    }
 
-	public String getSource() {
-		return source;
-	}
+    public String getSource() {
+        return source;
+    }
 
-	public void setSource(String source) {
-		this.source = source;
-	}
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-	@JsonIgnore
-	@Override
-	public RawData getModel() {
-		return new RawData(id, data, RawData.Source.lookup(source));
-	}
+    @JsonIgnore
+    @Override
+    public RawData getModel() {
+        return new RawData(id, data, RawData.Source.lookup(source));
+    }
 
-	public static List<RawData> getRawDataModelsFromRawDataElements(List<RawDataElement> rawDataElements) {
-		if (rawDataElements == null || rawDataElements.isEmpty())
-			return Collections.emptyList();
+    public static List<RawData> getRawDataModelsFromRawDataElements(List<RawDataElement> rawDataElements) {
+        if (rawDataElements == null || rawDataElements.isEmpty())
+            return Collections.emptyList();
 
-		ArrayList<RawData> rawDataModels = new ArrayList<>(rawDataElements.size());
+        ArrayList<RawData> rawDataModels = new ArrayList<>(rawDataElements.size());
 
-		for (RawDataElement e : rawDataElements)
-			rawDataModels.add(e.getModel());
+        for (RawDataElement e : rawDataElements)
+            rawDataModels.add(e.getModel());
 
-		return rawDataModels;
-	}
+        return rawDataModels;
+    }
 }

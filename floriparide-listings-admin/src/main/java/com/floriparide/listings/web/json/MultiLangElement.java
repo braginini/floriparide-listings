@@ -9,26 +9,26 @@ import java.util.Map;
  */
 public abstract class MultiLangElement<T> extends Element<T> {
 
-	@JsonProperty("")
-	Map<String, String> names;
+    @JsonProperty("")
+    Map<String, String> names;
 
-	protected MultiLangElement() {
-	}
+    protected MultiLangElement() {
+    }
 
-	protected MultiLangElement(Long id, Map<String, String> names) {
-		super(id);
-		this.names = names;
-	}
+    protected MultiLangElement(Long id, Map<String, String> names) {
+        super(id);
+        this.names = names;
+    }
 
-	protected MultiLangElement(Map<String, String> names) {
-		this.names = names;
-	}
+    protected MultiLangElement(Map<String, String> names) {
+        this.names = names;
+    }
 
-	public Map<String, String> getNames() {
-		return names;
-	}
+    public Map<String, String> getNames() {
+        return names;
+    }
 
-	public void setNames(Map<String, String> names) {
-		this.names = names;
-	}
+    public void setNames(Map<String, String> names) {
+        this.names = names;
+    }
 }

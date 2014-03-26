@@ -22,8 +22,8 @@ public interface IAttributeDao extends IBaseEntityDao<Attribute> {
     /**
      * Gets a part of a list of the attributes {@link com.floriparide.listings.model.Attribute}
      *
-     * @param offset    row offset to return from
-     * @param limit     number of rows to return
+     * @param offset row offset to return from
+     * @param limit  number of rows to return
      * @return a list of attributes {@link com.floriparide.listings.model.Attribute}
      * @throws java.io.IOException if I/O error occurred
      */
@@ -45,5 +45,5 @@ public interface IAttributeDao extends IBaseEntityDao<Attribute> {
     @NotNull
     public List<Attribute> getAttributes(int offset, int limit, @NotNull SortField sortField, @NotNull SortType sortType) throws Exception;
 
-	public void create(@NotNull List<Attribute> attributes) throws Exception;
+    public void create(@NotNull List<Attribute> attributes) throws Exception;
 }

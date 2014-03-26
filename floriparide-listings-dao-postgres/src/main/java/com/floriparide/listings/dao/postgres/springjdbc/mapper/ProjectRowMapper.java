@@ -2,7 +2,6 @@ package com.floriparide.listings.dao.postgres.springjdbc.mapper;
 
 import com.floriparide.listings.model.Project;
 import com.floriparide.listings.model.Schema;
-
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.RowMapper;
 

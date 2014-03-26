@@ -11,30 +11,30 @@ import java.util.List;
  */
 public class ListResponse<T extends Element> implements IResponse {
 
-	@JsonProperty("")
-	Integer totalCount;
+    @JsonProperty("")
+    Integer totalCount;
 
-	@JsonProperty("")
-	List<T> list;
+    @JsonProperty("")
+    List<T> list;
 
-	public ListResponse(Integer totalCount, @NotNull List<T> list) {
-		this.totalCount = totalCount;
-		this.list = list;
-	}
+    public ListResponse(Integer totalCount, @NotNull List<T> list) {
+        this.totalCount = totalCount;
+        this.list = list;
+    }
 
-	public Integer getTotalCount() {
-		return totalCount;
-	}
+    public Integer getTotalCount() {
+        return totalCount;
+    }
 
-	public void setTotalCount(Integer totalCount) {
-		this.totalCount = totalCount;
-	}
+    public void setTotalCount(Integer totalCount) {
+        this.totalCount = totalCount;
+    }
 
-	public List<T> getList() {
-		return list;
-	}
+    public List<T> getList() {
+        return list;
+    }
 
-	public void setList(List<T> list) {
-		this.list = list;
-	}
+    public void setList(List<T> list) {
+        this.list = list;
+    }
 }

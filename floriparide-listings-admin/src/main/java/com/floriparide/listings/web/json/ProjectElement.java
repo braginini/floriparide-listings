@@ -20,7 +20,7 @@ public class ProjectElement extends Element<Project> {
     }
 
     public ProjectElement(@NotNull Project p) {
-       super(p.getId());
+        super(p.getId());
         this.name = p.getName();
     }
 
