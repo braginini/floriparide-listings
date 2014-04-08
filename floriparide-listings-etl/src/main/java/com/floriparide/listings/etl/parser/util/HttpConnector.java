@@ -56,7 +56,7 @@ public class HttpConnector {
 			HttpEntity resultEntity = response.getEntity();
 
 
-			Document doc = Jsoup.parse(resultEntity.getContent(), "UTF-8", url);
+			Document doc = Jsoup.parse(resultEntity.getContent(), null, url);
 
 			return doc.toString();
 
