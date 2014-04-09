@@ -2,6 +2,7 @@ package com.floriparide.listings.etl.parser.util;
 
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -50,7 +51,10 @@ public class HttpConnector {
 		post.setEntity(entity);
 
 		CloseableHttpResponse response = httpClient.execute(post, localContext);
-		System.out.println("Response Status line :" + response.getStatusLine());
+		if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+			System.out.println("Response Status line :" + response.getStatusLine() + " " + url);
+			return null;
+		}
 
 		try {
 			HttpEntity resultEntity = response.getEntity();

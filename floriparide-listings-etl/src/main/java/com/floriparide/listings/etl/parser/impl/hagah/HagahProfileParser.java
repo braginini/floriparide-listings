@@ -13,10 +13,13 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -95,10 +98,10 @@ public class HagahProfileParser implements Parser<JsonNode> {
 					String phone = "";
 					for (String s : split) {
 						if (isCode) {
-							phone+=s;
+							phone += s;
 							isCode = false;
 						} else {
-							phone+=s;
+							phone += s;
 							isCode = true;
 							phone = phone.replace("-", "");
 							phones.add(phone);
@@ -128,12 +131,14 @@ public class HagahProfileParser implements Parser<JsonNode> {
 
 
 		String principalText = getSingleElementByClass("textoPrincipal", doc);
-		principalText = principalText.replace("\"", "");
-		obj.put("promo", principalText);
+		if (principalText != null) {
+			principalText = principalText.replace("\"", "");
+			obj.put("promo", principalText);
+		}
 
 		String description = null;
 		Elements articleEls = doc.getElementsByTag("article");
-		for (Element e: articleEls) {
+		for (Element e : articleEls) {
 			for (Element p : e.getElementsByTag("p")) {
 				description = p.text();
 				break;
@@ -159,8 +164,9 @@ public class HagahProfileParser implements Parser<JsonNode> {
 		obj.put("facilities", facilitiesNode);
 
 		List<String> cards = new ArrayList<>();
+		List<String> addPaymentOptions = new ArrayList<>();
 		Elements cardsEls = doc.getElementsByClass("cartao");
-		if (characteristicsElements != null && !characteristicsElements.isEmpty()) {
+		if (cardsEls != null && !cardsEls.isEmpty()) {
 			for (Element ciEl : cardsEls) {
 				String cardTypeString = ciEl.getElementsByTag("h3").get(0).text();
 				CardType cardType = CardType.lookup(cardTypeString); //todo think if need this
@@ -169,6 +175,8 @@ public class HagahProfileParser implements Parser<JsonNode> {
 						for (Element cardEl : li.children()) {
 							if (!cardEl.attr("title").isEmpty())
 								cards.add(cardEl.attr("title"));
+							else
+								addPaymentOptions.add(cardEl.text());
 						}
 					}
 				}
@@ -176,7 +184,9 @@ public class HagahProfileParser implements Parser<JsonNode> {
 		}
 
 		ArrayNode paymentNode = createArrayNodeFromList(cards, factory);
+		ArrayNode additionalPaymentNode = createArrayNodeFromList(addPaymentOptions, factory);
 		obj.put("payment_options", paymentNode);
+		obj.put("add_payment_options", additionalPaymentNode);
 
 		String openedFrom = null;
 		String updated = null;
@@ -192,8 +202,13 @@ public class HagahProfileParser implements Parser<JsonNode> {
 				openedFrom = infoEl.getElementsByTag("span").get(0).text();
 			} else if (infoEl.getElementsByTag("script") != null &&
 					!infoEl.getElementsByTag("script").isEmpty()) {
-				//Element el = infoEl.getElementsByClass("atualizadoTempo").get(0);
-				//updated = el.text().split(": ")[1];
+				Element el = infoEl.select("script").first();
+				Pattern p = Pattern.compile("(?is)data = \'(.+?)\'"); // Regex for the value of the key
+				Matcher m = p.matcher(el.html());
+				while (m.find()) {
+					updated = m.group(1);
+					break;
+				}
 			} else if (infoEl.getElementsContainingText("Capacidade:") != null &&
 					!infoEl.getElementsContainingText("Capacidade:").isEmpty()) {
 				capacity = Integer.valueOf(infoEl.getElementsByTag("span").get(0).text().split(" Lugares.")[0]);
@@ -203,6 +218,7 @@ public class HagahProfileParser implements Parser<JsonNode> {
 		obj.put("hours", hours);
 		obj.put("updated", updated);  //todo updated
 		obj.put("capacity", capacity);
+		obj.put("since", openedFrom);
 
 		//todo add contacts object!!!!!!!!!!!!!!!!!!! and add website and address and telephone
 		return obj;

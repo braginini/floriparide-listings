@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Parses category page and returns a list of  category urls
+ * Parses category page and returns a list of category urls
  * @author Mikhail Bragin
  */
 public class HagahCategoryParser implements Parser<List<String>> {
