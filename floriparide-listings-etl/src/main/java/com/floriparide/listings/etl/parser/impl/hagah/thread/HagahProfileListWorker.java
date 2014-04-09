@@ -16,6 +16,8 @@ import java.util.List;
  */
 public class HagahProfileListWorker extends Abstract3TaskWorker<String> {
 
+	public static final String WORKER_NAME = "profile-list-worker";
+
 	public HagahProfileListWorker(Worker nextWorker) {
 		super(nextWorker);
 	}
@@ -28,6 +30,11 @@ public class HagahProfileListWorker extends Abstract3TaskWorker<String> {
 	@Override
 	protected int getPoolSize() {
 		return 10;
+	}
+
+	@Override
+	protected String getWorkersName() {
+		return WORKER_NAME;
 	}
 
 	@Override
@@ -53,7 +60,10 @@ public class HagahProfileListWorker extends Abstract3TaskWorker<String> {
 					} else {
 						returnTask(task);
 					}
+					Thread.sleep(2000);
 				} catch (IOException e) {
+					log.error("Error while running list worker", e);
+				} catch (InterruptedException e) {
 					log.error("Error while running list worker", e);
 				}
 			}

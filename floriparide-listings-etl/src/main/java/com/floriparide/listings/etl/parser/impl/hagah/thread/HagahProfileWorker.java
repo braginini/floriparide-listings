@@ -17,6 +17,8 @@ import java.util.HashMap;
  */
 public class HagahProfileWorker extends Abstract3TaskWorker<String> {
 
+	public static final String WORKER_NAME = "profile-worker";
+
 	public HagahProfileWorker(Worker nextWorker) {
 		super(nextWorker);
 	}
@@ -26,6 +28,10 @@ public class HagahProfileWorker extends Abstract3TaskWorker<String> {
 		return 100000;
 	}
 
+	@Override
+	protected String getWorkersName() {
+		return WORKER_NAME;
+	}
 
 	@Override
 	public void addTask(final Task<String> task) {
@@ -49,9 +55,11 @@ public class HagahProfileWorker extends Abstract3TaskWorker<String> {
 					} else {
 						returnTask(task);
 					}
+					Thread.sleep(2000);
 				} catch (IOException e) {
 					e.printStackTrace();
-				} finally {
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 		});

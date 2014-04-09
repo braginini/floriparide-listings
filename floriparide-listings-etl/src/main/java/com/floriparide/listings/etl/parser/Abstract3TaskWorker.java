@@ -37,7 +37,7 @@ public abstract class Abstract3TaskWorker<T> implements Worker<T> {
 		this.executorService = Executors.newFixedThreadPool(getPoolSize(), new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {
-				return new Thread(r, "profile-list-worker");
+				return new Thread(r, getWorkersName());
 			}
 		});
 	}
@@ -81,5 +81,9 @@ public abstract class Abstract3TaskWorker<T> implements Worker<T> {
 
 	protected int getPoolSize() {
 		return poolSize;
+	}
+
+	protected String getWorkersName() {
+		return "worker";
 	}
 }
