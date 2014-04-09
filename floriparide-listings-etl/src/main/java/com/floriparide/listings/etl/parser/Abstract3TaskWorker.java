@@ -1,5 +1,6 @@
 package com.floriparide.listings.etl.parser;
 
+import com.floriparide.listings.etl.parser.model.Task;
 import com.floriparide.listings.etl.parser.model.Worker;
 
 import org.slf4j.Logger;
@@ -33,7 +34,7 @@ public abstract class Abstract3TaskWorker<T> implements Worker<T> {
 
 	public Abstract3TaskWorker(Worker nextWorker) {
 		this.nextWorker = nextWorker;
-		this.executorService = Executors.newFixedThreadPool(poolSize, new ThreadFactory() {
+		this.executorService = Executors.newFixedThreadPool(getPoolSize(), new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {
 				return new Thread(r, "profile-list-worker");
@@ -72,4 +73,13 @@ public abstract class Abstract3TaskWorker<T> implements Worker<T> {
 	}
 
 	protected abstract long getShutDownTimeout();
+
+	protected void returnTask(Task task) {
+		log.warn("Resource was null, adding as a new task " + task.taskObject());
+		addTask(task);
+	}
+
+	protected int getPoolSize() {
+		return poolSize;
+	}
 }

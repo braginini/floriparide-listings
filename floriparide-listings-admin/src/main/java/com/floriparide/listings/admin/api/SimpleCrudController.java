@@ -1,24 +1,20 @@
 package com.floriparide.listings.admin.api;
 
-import com.floriparide.listings.admin.api.request.PagingRequest;
-import com.floriparide.listings.admin.api.response.ListResponse;
 import com.floriparide.listings.dao.IBaseEntityDao;
-import com.floriparide.listings.data.Query;
 import com.floriparide.listings.web.json.Element;
-import com.floriparide.listings.web.json.ProjectElement;
+
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * @author Andrei Tupitcyn
  */
 public class SimpleCrudController<E extends Element, M, D extends IBaseEntityDao<M>>
-        extends BaseController implements ICrudController<E> {
+        extends BaseController implements ICRUDController<E> {
 
     protected D dao;
 

@@ -1,4 +1,4 @@
-package com.floriparide.listings.etl;
+package com.floriparide.listings.etl.parser;
 
 import com.floriparide.listings.etl.parser.model.Worker;
 

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author Mikhail Bragin
  */
-public interface ICrudController<E extends Element> {
+public interface ICRUDController<E extends Element> {
 
     /**
      * Creates an entity of type {@code E}

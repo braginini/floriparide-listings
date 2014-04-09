@@ -1,6 +1,6 @@
 package com.floriparide.listings.etl.parser.impl.abrasel.thread;
 
-import com.floriparide.listings.etl.AbstractParseManager;
+import com.floriparide.listings.etl.parser.AbstractParseManager;
 import com.floriparide.listings.etl.parser.impl.ParseResultArchiveWorker;
 import com.floriparide.listings.etl.parser.impl.abrasel.AbraselTask;
 import com.floriparide.listings.etl.parser.model.Task;

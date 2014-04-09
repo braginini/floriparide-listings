@@ -37,8 +37,6 @@ public class AbraselProfileListWorker extends Abstract3TaskWorker<AbraselTask> {
 
 				try {
 
-					log.info("Started with task", task.taskObject());
-
 					final AbraselTask abraselTask = task.taskObject();
 					String html = HttpConnector.getPageAsString(abraselTask.getUrl(), abraselTask.getFormData());
 					List<JsonNode> list = new AbraselProfileListParser().parse(html);

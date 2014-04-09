@@ -1,6 +1,6 @@
 package com.floriparide.listings.etl.parser.impl.foursquare;
 
-import com.floriparide.listings.etl.AbstractParseManager;
+import com.floriparide.listings.etl.parser.AbstractParseManager;
 import com.floriparide.listings.etl.parser.model.Task;
 import com.floriparide.listings.etl.parser.model.Worker;
 

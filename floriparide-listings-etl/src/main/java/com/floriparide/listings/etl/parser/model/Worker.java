@@ -6,7 +6,7 @@ package com.floriparide.listings.etl.parser.model;
  */
 public interface Worker<T> {
 
-	public void addTask(Task<T> task);
+	public void addTask(final Task<T> task);
 
 	public void shutdown();
 
