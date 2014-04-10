@@ -61,9 +61,11 @@ public class HagahProfileWorker extends Abstract3TaskWorker<String> {
 					Thread.sleep(2000);
 
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.error("Error while running profile worker " + task.taskObject(), e);
+					returnTask(task);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					log.error("Error while running profile worker " + task.taskObject(), e);
+					returnTask(task);
 				}
 			}
 		});

@@ -64,9 +64,11 @@ public class HagahProfileListWorker extends Abstract3TaskWorker<String> {
 					lastDoneTs.set(System.currentTimeMillis());
 					Thread.sleep(2000);
 				} catch (IOException e) {
-					log.error("Error while running list worker", e);
+					log.error("Error while running list worker " + task.taskObject(), e);
+					returnTask(task);
 				} catch (InterruptedException e) {
-					log.error("Error while running list worker", e);
+					log.error("Error while running list worker " + task.taskObject(), e);
+					returnTask(task);
 				}
 			}
 		});

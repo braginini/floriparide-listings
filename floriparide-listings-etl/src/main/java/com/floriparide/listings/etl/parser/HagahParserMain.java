@@ -6,7 +6,6 @@ import com.floriparide.listings.etl.parser.impl.hagah.thread.HagahProfileListWor
 import com.floriparide.listings.etl.parser.impl.hagah.thread.HagahProfileWorker;
 
 import java.io.IOException;
-
 /**
  * @author Mikhail Bragin
  */

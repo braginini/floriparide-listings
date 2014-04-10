@@ -34,7 +34,7 @@ public class RawDataController extends BaseController {
                                  HttpServletRequest httpRequest) throws Exception {
 
         request.validate();
-	    log.info("CREATE RAW DATA REQUEST " + jsonMapper.writeValueAsString(request));
+	    log.info("CREATE RAW DATA REQUEST size=" + request.getEntities().size());
         rawDataDao.create(RawDataElement.getRawDataModelsFromRawDataElements(request.getEntities()));
 
         return new ResponseEntity<>(HttpStatus.OK);

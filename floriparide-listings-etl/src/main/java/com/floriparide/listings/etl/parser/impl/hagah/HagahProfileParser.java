@@ -164,7 +164,7 @@ public class HagahProfileParser implements Parser<JsonNode> {
 		obj.put("facilities", facilitiesNode);
 
 		List<String> cards = new ArrayList<>();
-		List<String> addPaymentOptions = new ArrayList<>();
+		Map<String, String> addInfo = new HashMap<>();
 		Elements cardsEls = doc.getElementsByClass("cartao");
 		if (cardsEls != null && !cardsEls.isEmpty()) {
 			for (Element ciEl : cardsEls) {
@@ -175,8 +175,12 @@ public class HagahProfileParser implements Parser<JsonNode> {
 						for (Element cardEl : li.children()) {
 							if (!cardEl.attr("title").isEmpty())
 								cards.add(cardEl.attr("title"));
-							else
-								addPaymentOptions.add(cardEl.text());
+							else {
+								Element p = cardEl.parent().parent().parent().getElementsByTag("h3").first();
+								if (p != null) {
+									addInfo.put(p.text().replace(":", ""), cardEl.text());
+								}
+							}
 						}
 					}
 				}
@@ -184,9 +188,15 @@ public class HagahProfileParser implements Parser<JsonNode> {
 		}
 
 		ArrayNode paymentNode = createArrayNodeFromList(cards, factory);
-		ArrayNode additionalPaymentNode = createArrayNodeFromList(addPaymentOptions, factory);
+		ArrayNode addInfoNode = factory.arrayNode();
+		for (Map.Entry<String, String> e : addInfo.entrySet()) {
+			ObjectNode n = factory.objectNode();
+			n.put("name", e.getKey());
+			n.put("value", e.getValue());
+			addInfoNode.add(n);
+		}
 		obj.put("payment_options", paymentNode);
-		obj.put("add_payment_options", additionalPaymentNode);
+		obj.put("add_info", addInfoNode);
 
 		String openedFrom = null;
 		String updated = null;

@@ -11,4 +11,6 @@ SELECT element::text
 	WHERE d.source = 'hagah'
 	GROUP BY element::text;
 
+select element->>'name', element->>'value' from raw_data.data as d, json_array_elements(d.data->'add_info') as element where d.source = 'hagah' group by element->>'name', element->>'value' order by element->>'name';
+
 
