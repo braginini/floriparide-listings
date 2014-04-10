@@ -2,6 +2,7 @@ package com.floriparide.listings.etl.parser.impl.hagah.thread;
 
 import com.floriparide.listings.etl.parser.AbstractParseManager;
 import com.floriparide.listings.etl.parser.impl.hagah.HagahCategoryParser;
+import com.floriparide.listings.etl.parser.impl.hagah.HagahProfileListPagesCountParser;
 import com.floriparide.listings.etl.parser.model.Task;
 import com.floriparide.listings.etl.parser.model.Worker;
 import com.floriparide.listings.etl.parser.util.HttpConnector;
@@ -16,8 +17,6 @@ import java.util.List;
 public class HagahParseManager extends AbstractParseManager {
 
 	String categoryPageUrl;
-
-	public static final int PAGE_NUM = 150;
 
 	public HagahParseManager(Worker profileListWorker, Worker profileWorker, Worker archiveWorker, String categoryPageUrl) {
 		super(profileListWorker, profileWorker, archiveWorker);
@@ -37,16 +36,26 @@ public class HagahParseManager extends AbstractParseManager {
 		HagahCategoryParser categoryParser = new HagahCategoryParser();
 		List<String> categoryUrls = categoryParser.parse(resource);
 
+		HagahProfileListPagesCountParser pagesCountParser = new HagahProfileListPagesCountParser();
 		for (final String u : categoryUrls) {
-			for (int i = 1; i <= PAGE_NUM; i++) {
-				final int j = i;
-				profileListWorker.addTask(new Task<String>() {
-					@Override
-					public String taskObject() {
-						return u + ("&p=" + j);
-					}
-				});
+			String categoryPage = null;
+			while (categoryPage == null)
+				categoryPage = HttpConnector.getPageAsString(u, new HashMap<String, String>());
+
+			if (categoryPage != null) {
+				int numPages = pagesCountParser.parse(categoryPage);
+				for (int i = 1; i <= numPages; i++) {
+					final int j = i;
+					profileListWorker.addTask(new Task<String>() {
+						@Override
+						public String taskObject() {
+							return u + ("&p=" + j);
+						}
+					});
+				}
 			}
+
+			Thread.sleep(1000);
 		}
 
 	}

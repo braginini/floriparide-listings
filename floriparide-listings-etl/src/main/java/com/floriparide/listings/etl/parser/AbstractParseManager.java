@@ -61,7 +61,7 @@ public abstract class AbstractParseManager {
 				}
 
 			}
-		}, 20, 20, TimeUnit.SECONDS);
+		}, 300, 300, TimeUnit.SECONDS);
 
 	}
 }

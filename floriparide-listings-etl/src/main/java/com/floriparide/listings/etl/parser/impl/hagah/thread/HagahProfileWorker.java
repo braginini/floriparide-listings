@@ -55,7 +55,11 @@ public class HagahProfileWorker extends Abstract3TaskWorker<String> {
 					} else {
 						returnTask(task);
 					}
+
+					totalDone.incrementAndGet();
+					lastDoneTs.set(System.currentTimeMillis());
 					Thread.sleep(2000);
+
 				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (InterruptedException e) {
