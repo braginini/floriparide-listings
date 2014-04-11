@@ -6,6 +6,9 @@ import com.floriparide.listings.etl.parser.model.Worker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -19,6 +22,9 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class Abstract3TaskWorker<T> implements Worker<T> {
 
+	public Set<Object> set = Collections.<Object>synchronizedSet(new HashSet<Object>());
+	public Set<Object> dubsSet = Collections.<Object>synchronizedSet(new HashSet<Object>());
+
 	protected static final Logger log = LoggerFactory.getLogger(Abstract3TaskWorker.class);
 
 	protected ExecutorService executorService;
@@ -30,6 +36,7 @@ public abstract class Abstract3TaskWorker<T> implements Worker<T> {
 	protected boolean stopped = false;
 
 	protected AtomicInteger totalDone = new AtomicInteger();
+	protected AtomicInteger submitted = new AtomicInteger();
 	protected AtomicLong lastDoneTs = new AtomicLong(System.currentTimeMillis());
 
 	public Abstract3TaskWorker(Worker nextWorker) {
@@ -75,6 +82,7 @@ public abstract class Abstract3TaskWorker<T> implements Worker<T> {
 	protected abstract long getShutDownTimeout();
 
 	protected void returnTask(Task task) {
+		set.remove(task.taskObject());
 		log.warn("Resource was null, adding as a new task " + task.taskObject());
 		addTask(task);
 	}
@@ -85,5 +93,17 @@ public abstract class Abstract3TaskWorker<T> implements Worker<T> {
 
 	protected String getWorkersName() {
 		return "worker";
+	}
+
+	public int getSubmitted() {
+		return submitted.get();
+	}
+
+	public int getDone() {
+		return totalDone.get();
+	}
+
+	public Set getDubsSet() {
+		return new HashSet(dubsSet);
 	}
 }

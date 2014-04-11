@@ -13,4 +13,8 @@ public interface Worker<T> {
 	public boolean shouldShutdown();
 
 	public boolean isStopped();
+
+	public int getSubmitted();
+
+	public int getDone();
 }

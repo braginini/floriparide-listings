@@ -1,6 +1,5 @@
 package com.floriparide.listings.etl.parser.impl.hagah.thread;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.floriparide.listings.etl.parser.Abstract3TaskWorker;
 import com.floriparide.listings.etl.parser.impl.hagah.HagahProfileListParser;
 import com.floriparide.listings.etl.parser.model.Task;
@@ -39,6 +38,15 @@ public class HagahProfileListWorker extends Abstract3TaskWorker<String> {
 
 	@Override
 	public void addTask(final Task<String> task) {
+
+		if (set.contains(task.taskObject())) {
+			log.warn("HagahProfileListWorker Already did WTF??? " + task.taskObject());
+			dubsSet.add(task.taskObject());
+			return;
+		} else {
+			set.add(task.taskObject());
+		}
+
 		executorService.submit(new Runnable() {
 			@Override
 			public void run() {
@@ -65,12 +73,15 @@ public class HagahProfileListWorker extends Abstract3TaskWorker<String> {
 					Thread.sleep(2000);
 				} catch (IOException e) {
 					log.error("Error while running list worker " + task.taskObject(), e);
+					submitted.decrementAndGet();
 					returnTask(task);
 				} catch (InterruptedException e) {
 					log.error("Error while running list worker " + task.taskObject(), e);
+					submitted.decrementAndGet();
 					returnTask(task);
 				}
 			}
 		});
+		submitted.incrementAndGet();
 	}
 }

@@ -158,4 +158,14 @@ public class ParseResultArchiveWorker implements Worker<ArchiveTask> {
 	public boolean isStopped() {
 		return stopped;
 	}
+
+	@Override
+	public int getSubmitted() {
+		return 0;
+	}
+
+	@Override
+	public int getDone() {
+		return 0;
+	}
 }

@@ -92,6 +92,13 @@
 			<version>${foursquare.api.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.nutch</groupId>
+			<artifactId>nutch</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+
+
 	</dependencies>
 
 

@@ -106,4 +106,14 @@ public class FoursquareVenueProfileWorker implements Worker<CompactVenue> {
 	public boolean isStopped() {
 		return false;
 	}
+
+	@Override
+	public int getSubmitted() {
+		return 0;
+	}
+
+	@Override
+	public int getDone() {
+		return 0;
+	}
 }

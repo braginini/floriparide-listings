@@ -87,4 +87,14 @@ public class FoursquareVenueListWorker implements Worker<Map<String, String>> {
 	public boolean isStopped() {
 		return false;
 	}
+
+	@Override
+	public int getSubmitted() {
+		return 0;
+	}
+
+	@Override
+	public int getDone() {
+		return 0;
+	}
 }

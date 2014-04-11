@@ -37,6 +37,7 @@ public class HagahParseManager extends AbstractParseManager {
 		List<String> categoryUrls = categoryParser.parse(resource);
 
 		HagahProfileListPagesCountParser pagesCountParser = new HagahProfileListPagesCountParser();
+		int total = 0;
 		for (final String u : categoryUrls) {
 			String categoryPage = null;
 			while (categoryPage == null)
@@ -45,6 +46,7 @@ public class HagahParseManager extends AbstractParseManager {
 			if (categoryPage != null) {
 				int numPages = pagesCountParser.parse(categoryPage);
 				for (int i = 1; i <= numPages; i++) {
+
 					final int j = i;
 					profileListWorker.addTask(new Task<String>() {
 						@Override
@@ -52,11 +54,14 @@ public class HagahParseManager extends AbstractParseManager {
 							return u + ("&p=" + j);
 						}
 					});
+					total++;
 				}
 			}
 
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		}
+
+		System.out.println("total="+ total);
 
 	}
 }

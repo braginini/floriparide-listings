@@ -10,7 +10,10 @@ import com.floriparide.listings.etl.parser.util.HttpConnector;
 import com.floriparide.listings.model.RawData;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Mikhail Bragin
@@ -29,15 +32,29 @@ public class HagahProfileWorker extends Abstract3TaskWorker<String> {
 	}
 
 	@Override
+	protected int getPoolSize() {
+		return 30;
+	}
+
+	@Override
 	protected String getWorkersName() {
 		return WORKER_NAME;
 	}
 
 	@Override
 	public void addTask(final Task<String> task) {
+		if (set.contains(task.taskObject())) {
+			log.warn("HagahProfileWorker Already did WTF??? " + task.taskObject());
+			dubsSet.add(task.taskObject());
+			return;
+		} else {
+			set.add(task.taskObject());
+		}
+
 		executorService.submit(new Runnable() {
 			@Override
 			public void run() {
+				submitted.incrementAndGet();
 				try {
 					String url = task.taskObject();
 					String resource = HttpConnector.getPageAsString(url, new HashMap<String, String>());
@@ -62,9 +79,11 @@ public class HagahProfileWorker extends Abstract3TaskWorker<String> {
 
 				} catch (IOException e) {
 					log.error("Error while running profile worker " + task.taskObject(), e);
+					submitted.decrementAndGet();
 					returnTask(task);
 				} catch (InterruptedException e) {
 					log.error("Error while running profile worker " + task.taskObject(), e);
+					submitted.decrementAndGet();
 					returnTask(task);
 				}
 			}

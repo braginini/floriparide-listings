@@ -46,6 +46,11 @@ public abstract class AbstractParseManager {
 			@Override
 			public void run() {
 
+				log.info(profileListWorker.getClass().getSimpleName() + " submitted=" + profileListWorker.getSubmitted()
+						+ " done=" + profileListWorker.getDone());
+				log.info(profileWorker.getClass().getSimpleName() + " submitted=" + profileWorker.getSubmitted()
+						+ " done=" + profileWorker.getDone());
+
 				if (profileListWorker.shouldShutdown())
 					profileListWorker.shutdown();
 
@@ -57,11 +62,15 @@ public abstract class AbstractParseManager {
 
 				if (profileListWorker.isStopped() && profileWorker.isStopped() && archiveWorker.isStopped()) {
 					shutdownPool.shutdown();
+					log.info("Stopped");
+					for (Object o : ((Abstract3TaskWorker) profileWorker).getDubsSet()) {
+						log.info(o.toString());
+					}
 					System.exit(1);
 				}
 
 			}
-		}, 300, 300, TimeUnit.SECONDS);
+		}, 120, 120, TimeUnit.SECONDS);
 
 	}
 }
