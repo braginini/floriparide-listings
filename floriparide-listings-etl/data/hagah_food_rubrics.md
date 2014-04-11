@@ -24,7 +24,6 @@
 00000024 Cozinha vegetariana
 00000025 Distribuidoras de produtos alimentícios
 00000026 Doces
-00000027 Esporte
 00000028 Eventos
 00000029 Fast-food e Lancheria
 00000030 Feijoada
@@ -32,7 +31,6 @@
 00000032 Gaúcha
 00000033 Grelhados
 00000034 Lanchonetes, Casas de Chá e de Sucos
-00000035 Lojas
 00000036 Mate
 00000037 Mercearias
 00000038 Natural e light
