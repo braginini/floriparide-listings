@@ -23,6 +23,16 @@ select * from raw_data.data as d where (d.data->>'name')::text = 'John Bull Pub'
 --query to select food service categories
 select distinct cat::text from raw_data.data as d, json_array_elements(d.data->'payment_options') as card, json_array_elements(d.data->'categories') as cat where card::text LIKE '%Refeição%' or card::text LIKE '%Alimentação%' order by cat::text;
 
+--query to get all facilities of food service categories
+select distinct facility::text from raw_data.data as d, json_array_elements(d.data->'categories') as category, json_array_elements(d.data->'facilities') as facility
+where category::text in (select distinct cat::text from raw_data.data as d, json_array_elements(d.data->'payment_options') as card, json_array_elements(d.data->'categories') as cat
+where card::text LIKE '%Refeição%' or card::text LIKE '%Alimentação%' order by cat::text) order by facility::text;
+
+--query to get all distinct facilities for food service without useless information in braces
+ select regexp_replace(facility::text, '(\(.*\))','') as f from raw_data.data as d, json_array_elements(d.data->'categories') as category, json_array_elements(d.data->'facilities') as facility
+where category::text in (select distinct cat::text from raw_data.data as d, json_array_elements(d.data->'payment_options') as card, json_array_elements(d.data->'categories') as cat
+where card::text LIKE '%Refeição%' or card::text LIKE '%Alimentação%' order by cat::text) group by f order by f;
+
 --query to select facilities of food rubrics
 select regexp_replace(cat::text, '(\(.*\))','') from raw_data.data as d, json_array_elements(d.data->'payment_options') as card, json_array_elements(d.data->'facilities') as cat where card::text LIKE '%Refeição%' or card::text LIKE '%Alimentação%' group by regexp_replace(cat::text, '(\(.*\))','') order by regexp_replace(cat::text, '(\(.*\))','');
 
@@ -32,7 +42,9 @@ select distinct count(*) from raw_data.data as d, json_array_elements(d.data->'c
 	IN (select cat::text from raw_data.data as d, json_array_elements(d.data->'payment_options') as card, json_array_elements(d.data->'categories') as cat where card::text LIKE '%Refeição%' or card::text LIKE '%Alimentação%' group by cat::text order by cat::text)
 
 select (d.data->>'name')::text from raw_data.data as d where source = 'hagah' group by (d.data->>'name')::text HAVING COUNT(*) > 1
+--query to get facilities without additional useless words in braces
 select regexp_replace(element::text, '(\(.*\))','') from raw_data.data as d, json_array_elements(d.data->'facilities') as element where d.source = 'hagah' group by regexp_replace(element::text, '(\(.*\))','');
+
 select element::text from raw_data.data as d, json_array_elements(d.data->'categories') as element where d.source = 'hagah' group by element::text order by element::text;
 select element->>'name', element->>'value' from raw_data.data as d, json_array_elements(d.data->'add_info') as element where d.source = 'hagah' group by element->>'name', element->>'value' order by element->>'name'
 

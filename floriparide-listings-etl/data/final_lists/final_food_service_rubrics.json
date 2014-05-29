@@ -1,0 +1,142 @@
+[
+	{
+		"entity": {
+			"parent_id": "",
+			"names": {
+				"en_Us": "Entertainment and catering",
+				"pt_Br": "Entretenimento e catering",
+				"ru_Ru": "Развлечения и общественное питание"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Bars",
+				"pt_Br": "Bares",
+				"ru_Ru": "Бары"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Bistro",
+				"pt_Br": "Bistrô",
+				"ru_Ru": "Бистро"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Cafes / Cafeterias",
+				"pt_Br": "Cafés / Cafeterias",
+				"ru_Ru": "Кафе / Кафетерии"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Churrascarias",
+				"pt_Br": "Churrascarias",
+				"ru_Ru": "Чурраскария"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Fast-food",
+				"pt_Br": "Lanchonetes / Fast-food",
+				"ru_Ru": "Рестораны быстрого питания"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Bakeries",
+				"pt_Br": "Padarias",
+				"ru_Ru": "Пекарни"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Pizzerias",
+				"pt_Br": "Pizzarias",
+				"ru_Ru": "Пиццерии"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Pubs",
+				"pt_Br": "Pubs",
+				"ru_Ru": "Пабы"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Buffet / Kilo",
+				"pt_Br": "Buffet / Comida a quilo",
+				"ru_Ru": "Буфет / Еда на развес"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Restaurants",
+				"pt_Br": "Restaurantes",
+				"ru_Ru": "Рестораны"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Ice Cream",
+				"pt_Br": "Sorveterias",
+				"ru_Ru": "Мороженое"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Ice Cream",
+				"pt_Br": "Sorveterias",
+				"ru_Ru": "Мороженое"
+			}
+		}
+	},
+	{
+		"entity": {
+			"parent_id": "link to first one",
+			"names": {
+				"en_Us": "Sushi bars / Restaurants",
+				"pt_Br": "Sushi bares / Restaurantes",
+				"ru_Ru": "Суши-бары / Рестораны"
+			}
+		}
+	}
+]
