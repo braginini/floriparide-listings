@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * @author Andrei Tupitcyn
  */
-public class CrudDao<E> extends AbstractSpringJdbc implements IBaseEntityDao<E> {
+public abstract class CrudDao<E> extends AbstractSpringJdbc implements IBaseEntityDao<E> {
 
     protected String table;
 
@@ -86,6 +86,8 @@ public class CrudDao<E> extends AbstractSpringJdbc implements IBaseEntityDao<E> 
         if (id != null) {
             idField = id;
         }
+
+	    this.rowMapper = getRowMapper();
     }
 
     protected String getUpdateSql() {
@@ -253,4 +255,6 @@ public class CrudDao<E> extends AbstractSpringJdbc implements IBaseEntityDao<E> 
         }
         return new MapSqlParameterSource(params);
     }
+
+	protected abstract RowMapper<E> getRowMapper();
 }

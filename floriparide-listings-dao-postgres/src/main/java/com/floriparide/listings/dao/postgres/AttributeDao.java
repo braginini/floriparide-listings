@@ -10,6 +10,7 @@ import com.floriparide.listings.model.sort.SortField;
 import com.floriparide.listings.model.sort.SortType;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -72,7 +73,12 @@ public class AttributeDao extends CrudDao<Attribute> implements IAttributeDao {
         return 0;
     }
 
-    @NotNull
+	@Override
+	protected RowMapper<Attribute> getRowMapper() {
+		return new AttributeRowMapper();
+	}
+
+	@NotNull
     @Override
     public List<Attribute> getAttributes(int offset, int limit) throws Exception {
         return null;

@@ -3,10 +3,12 @@ package com.floriparide.listings.dao.postgres;
 import com.floriparide.listings.dao.IRubricDao;
 import com.floriparide.listings.dao.postgres.json.ModelJsonFactory;
 import com.floriparide.listings.dao.postgres.springjdbc.CrudDao;
+import com.floriparide.listings.dao.postgres.springjdbc.mapper.RubricRowMapper;
 import com.floriparide.listings.model.Rubric;
 import com.floriparide.listings.model.Schema;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -59,4 +61,11 @@ public class RubricDao extends CrudDao<Rubric> implements IRubricDao {
                         .addValue("id", entity.getId()));
 
     }
+
+	@Override
+	protected RowMapper<Rubric> getRowMapper() {
+		return new RubricRowMapper();
+	}
+
+
 }

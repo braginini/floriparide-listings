@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 /**
  * @author Andrei Tupitcyn
  */
@@ -32,22 +34,20 @@ public class SimpleCrudController<E extends Element, M, D extends IBaseEntityDao
     }
 
     @Override
-    public ResponseEntity<E> create(@RequestBody E entity,
+    public ResponseEntity<Long> create(@RequestBody E entity,
                                     HttpServletRequest httpRequest) throws Exception {
 
         long id = dao.create((M) entity.getModel());
 
-        M model = dao.get(id);
-
-        if (model == null)
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-
-        entity = elementClass.getConstructor(modelClass).newInstance(model);
-
-        return new ResponseEntity<>(entity, HttpStatus.OK);
+        return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
-    @Override
+	@Override
+	public ResponseEntity<List<E>> batchCreate(@RequestBody List<E> batch, HttpServletRequest httpRequest) throws Exception {
+		throw new UnsupportedOperationException("not supported yet");
+	}
+
+	@Override
     public ResponseEntity delete(@PathVariable(value = "id") long id,
                                  HttpServletRequest httpRequest) throws Exception {
 

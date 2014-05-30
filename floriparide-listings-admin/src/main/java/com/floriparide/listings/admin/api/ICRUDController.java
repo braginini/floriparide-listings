@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.List;
+
 /**
  * @author Mikhail Bragin
  */
@@ -26,8 +28,23 @@ public interface ICRUDController<E extends Element> {
      */
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json",
             headers = "Accept=application/json")
-    ResponseEntity<E> create(@RequestBody E entity,
+    ResponseEntity<Long> create(@RequestBody E entity,
                              HttpServletRequest httpRequest) throws Exception;
+
+	/**
+	 * Creates an entity of type {@code E} in a batch
+	 *
+	 * @param batch       a list of entities to create
+	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
+	 *                    (headers, statuses, etc)
+	 * @return a instance of {@link org.springframework.http.ResponseEntity} with a list of newly created entities
+	 * with a HTTP 200 or HTTP 204 status code, exception response if any exception occurs
+	 * @throws Exception
+	 */
+	@RequestMapping(method = RequestMethod.POST, value = "/batch", consumes = "application/json",
+			headers = "Accept=application/json")
+	ResponseEntity<List<E>> batchCreate(@RequestBody List<E> batch,
+	                            HttpServletRequest httpRequest) throws Exception;
 
     /**
      * Deletes a specific entity of type {@code E}

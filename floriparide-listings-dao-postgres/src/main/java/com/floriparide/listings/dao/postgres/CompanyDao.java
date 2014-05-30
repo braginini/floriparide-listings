@@ -9,6 +9,7 @@ import com.floriparide.listings.model.sort.SortField;
 import com.floriparide.listings.model.sort.SortType;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -24,7 +25,12 @@ public class CompanyDao extends CrudDao<Company> implements ICompanyDao {
         rowMapper = new CompanyRowMapper();
     }
 
-    @NotNull
+	@Override
+	protected RowMapper<Company> getRowMapper() {
+		return new CompanyRowMapper();
+	}
+
+	@NotNull
     @Override
     public List<Company> getCompanies(long projectId, int offset, int limit) throws Exception {
 

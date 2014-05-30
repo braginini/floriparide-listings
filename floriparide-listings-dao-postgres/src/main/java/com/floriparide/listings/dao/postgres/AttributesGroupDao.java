@@ -8,6 +8,7 @@ import com.floriparide.listings.model.AttributesGroup;
 import com.floriparide.listings.model.Schema;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -60,4 +61,9 @@ public class AttributesGroupDao extends CrudDao<AttributesGroup> implements IAtt
                         .addValue("updated", System.currentTimeMillis())
                         .addValue("data", ModelJsonFactory.getAttributesGroupJSONData(entity)));
     }
+
+	@Override
+	protected RowMapper<AttributesGroup> getRowMapper() {
+		return new AttributesGroupRowMapper();
+	}
 }

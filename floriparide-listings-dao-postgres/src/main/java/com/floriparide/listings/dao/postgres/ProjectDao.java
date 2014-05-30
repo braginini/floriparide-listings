@@ -5,6 +5,7 @@ import com.floriparide.listings.dao.postgres.springjdbc.CrudDao;
 import com.floriparide.listings.dao.postgres.springjdbc.mapper.ProjectRowMapper;
 import com.floriparide.listings.model.Project;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 /**
@@ -16,4 +17,9 @@ public class ProjectDao extends CrudDao<Project> implements IProjectDao {
         super(namedJdbcTemplate, jdbcTemplate);
         rowMapper = new ProjectRowMapper();
     }
+
+	@Override
+	protected RowMapper<Project> getRowMapper() {
+		return new ProjectRowMapper();
+	}
 }

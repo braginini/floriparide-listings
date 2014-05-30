@@ -15,6 +15,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -207,7 +208,12 @@ public class BranchDao extends CrudDao<Branch> implements IBranchDao {
         return null;
     }
 
-    private void addRubric(long branchId, @NotNull Rubric rubric) throws Exception {
+	@Override
+	protected RowMapper<Branch> getRowMapper() {
+		return new BranchRowMapper();
+	}
+
+	private void addRubric(long branchId, @NotNull Rubric rubric) throws Exception {
         addRubrics(branchId, Arrays.asList(rubric));
     }
 
