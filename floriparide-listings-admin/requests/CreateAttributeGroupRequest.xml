@@ -1,7 +1,7 @@
 <RestClientRequest>
   <option name="httpMethod" value="POST" />
   <option name="urlBase" value="http://localhost:8080" />
-  <option name="urlPath" value="/admin/v1/attributesgroup/create/" />
+  <option name="urlPath" value="/admin/v1/attributesgroup/" />
   <option name="headers">
     <list>
       <KeyValuePair>
@@ -25,6 +25,6 @@
   <option name="haveTextToSend" value="true" />
   <option name="haveFileToSend" value="false" />
   <option name="isFileUpload" value="false" />
-  <option name="textToSend" value="{     &quot;entity&quot;: {         &quot;names&quot;: {             &quot;en_Us&quot;: &quot;name&quot;,             &quot;pt_Br&quot;: &quot;nome&quot;         },         &quot;attributes&quot;: []     } }" />
+  <option name="textToSend" value="{ &#9;&#9;&quot;names&quot;: { &#9;&#9;&#9;&quot;en&quot;: &quot;Сuisine&quot;, &#9;&#9;&#9;&quot;pt&quot;: &quot;Сozinha&quot;, &#9;&#9;&#9;&quot;ru&quot;: &quot;Кухня&quot; &#9;&#9;}, &#9;&#9;&quot;string_id&quot;: &quot;food_service_сuisine&quot;, &#9;&#9;&quot;description&quot;: &quot;&quot; &#9;}" />
   <option name="filesToSend" value="" />
 </RestClientRequest>

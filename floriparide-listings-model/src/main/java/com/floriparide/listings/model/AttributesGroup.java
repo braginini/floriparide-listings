@@ -1,5 +1,7 @@
 package com.floriparide.listings.model;
 
+import javax.persistence.Table;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Map;
  *
  * @author Mikhail Bragin
  */
+@Table(name = "attributes_group")
 public class AttributesGroup extends MultiLangMetaModel {
 
 	Long id;

@@ -15,9 +15,6 @@ import java.util.Map;
  */
 public class AttributesGroupElement extends MultiLangElement<AttributesGroup> {
 
-    @JsonProperty("")
-    Map<String, String> names;
-
     @JsonProperty("string_id")
     String stringId;
 

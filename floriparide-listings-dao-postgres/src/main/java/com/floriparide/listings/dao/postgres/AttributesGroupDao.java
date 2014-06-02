@@ -21,18 +21,16 @@ public class AttributesGroupDao extends CrudDao<AttributesGroup> implements IAtt
 
     protected AttributesGroupDao(NamedParameterJdbcTemplate namedJdbcTemplate, JdbcTemplate jdbcTemplate) {
         super(namedJdbcTemplate, jdbcTemplate);
-        rowMapper = new AttributesGroupRowMapper();
     }
 
     @Override
-    public long create(@NotNull AttributesGroup entity) throws Exception {
+    public long create(@NotNull AttributesGroup entity ) throws Exception {
 
         String query = "INSERT INTO " + table + " ("
                 + Schema.FIELD_CREATED +
                 "," + Schema.FIELD_UPDATED +
                 "," + Schema.FIELD_DATA +
-                ") VALUES (:created, :updated, :data::json)" +
-                " WHERE " + Schema.FIELD_ID + " = :id";
+                ") VALUES (:created, :updated, :data::json)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -40,7 +38,6 @@ public class AttributesGroupDao extends CrudDao<AttributesGroup> implements IAtt
                 new MapSqlParameterSource()
                         .addValue("created", System.currentTimeMillis())
                         .addValue("updated", System.currentTimeMillis())
-                        .addValue("id", entity.getId())
                         .addValue("data", ModelJsonFactory.getAttributesGroupJSONData(entity)),
                 keyHolder);
 
