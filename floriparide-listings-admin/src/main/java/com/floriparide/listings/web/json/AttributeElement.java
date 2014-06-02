@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class AttributeElement extends MultiLangElement<Attribute> {
 
-    @JsonProperty("")
+    @JsonProperty("group_id")
     Long groupId;
 
     @JsonProperty("possible_values")

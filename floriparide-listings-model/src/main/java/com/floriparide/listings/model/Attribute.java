@@ -2,6 +2,8 @@ package com.floriparide.listings.model;
 
 import org.jetbrains.annotations.Nullable;
 
+import javax.persistence.Table;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Map;
  *
  * @author Mikhail Bragin
  */
+@Table(name = "attribute")
 public class Attribute extends MultiLangMetaModel {
 
 	Long id;

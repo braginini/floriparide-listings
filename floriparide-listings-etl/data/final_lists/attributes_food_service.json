@@ -1,41 +1,228 @@
 [
 	{
+		"group_id":"18",
 		"names": {
-			"en": "Extra",
-			"pt": "Adicional",
-			"ru": "Дополнительно"
+			"en": "Outdoor table",
+			"pt": "Ambiente ao ar livre",
+			"ru": "Стол на открытом воздухе"
 		},
-		"string_id": "food_service_extra",
-		"description": ""
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
 	},
 
 	{
+		"group_id":"18",
 		"names": {
-			"en": "Infrastructure",
-			"pt": "Infra-estrutura",
-			"ru": "Инфраструктура"
+			"en": "Live music",
+			"pt": "Música ao vivo",
+			"ru": "Живая музыка"
 		},
-		"string_id": "food_service_infra",
-		"description": ""
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
 	},
 
 	{
+		"group_id":"18",
 		"names": {
-			"en": "Сuisine",
-			"pt": "Сozinha",
-			"ru": "Кухня"
+			"en": "Accessibility",
+			"pt": "Acessibilidade",
+			"ru": "Доступность для инвалидов"
 		},
-		"string_id": "food_service_сuisine",
-		"description": ""
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
 	},
 
 	{
+		"group_id":"18",
 		"names": {
-			"en": "General",
-			"pt": "General",
-			"ru": "Общее"
+			"en": "Air Conditioning",
+			"pt": "Ar condicionado",
+			"ru": "Кондиционер"
 		},
-		"string_id": "food_service_general",
-		"description": ""
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+	},
+
+	{
+		"group_id":"18",
+		"names": {
+			"en": "Parking",
+			"pt": "Estacionamento",
+			"ru": "Парковка"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+	},
+
+	{
+		"group_id":"18",
+		"names": {
+			"en": "Smoking area",
+			"pt": "Área de Fumante",
+			"ru": "Место для курения"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+	},
+
+	{
+		"group_id":"17",
+		"names": {
+			"en": "Food delivery",
+			"pt": "Tele-entrega",
+			"ru": "Доставка еды"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+
+	},
+
+	{
+		"group_id":"17",
+		"names": {
+			"en": "Accepts reservations",
+			"pt": "Aceita Reserva",
+			"ru": "Бронирование столиков"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+
+	},
+
+	{
+		"group_id":"17",
+		"names": {
+			"en": "Pets Allowed",
+			"pt": "Permite Animais",
+			"ru": "Можно с животными"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+
+	},
+	{
+		"group_id":"18",
+		"names": {
+			"en": "Heating",
+			"pt": "Calefação",
+			"ru": "Обогрев"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+
+	},
+	{
+		"group_id":"18",
+		"names": {
+			"en": "TV / Big Screen",
+			"pt": "TV / Telão",
+			"ru": "Телевизор"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+
+	},
+	{
+		"group_id":"18",
+		"names": {
+			"en": "Barbecue place",
+			"pt": "Churrasqueira",
+			"ru": "Место для барбекю"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+
+	},
+	{
+		"group_id":"16",
+		"names": {
+			"en": "Wi-Fi",
+			"pt": "Wi-Fi",
+			"ru": "Wi-Fi"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+
+	},
+	{
+		"group_id":"18",
+		"names": {
+			"en": "Area for children",
+			"pt": "Área para crianças",
+			"ru": "Детский уголок"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+
+	},
+	{
+		"group_id":"17",
+		"names": {
+			"en": "Menu for children",
+			"pt": "Menu para crianças",
+			"ru": "Детское меню"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+
+	},
+	{
+		"group_id":"16",
+		"names": {
+			"en": "Average ticket",
+			"pt": "Ticket médio",
+			"ru": "Средний чек"
+		},
+		"possible_values": [],
+		"input_type": "number",
+		"filter_type": "slider"
+	},
+	{
+		"group_id":"16",
+		"names": {
+			"en": "Cash payment",
+			"pt": "A vista",
+			"ru": "Наличный расчет"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+	},
+	{
+		"group_id":"16",
+		"names": {
+			"en": "Accept cards",
+			"pt": "Aceitar cartões",
+			"ru": "Оплата по картам"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
+	},
+	{
+		"group_id":"16",
+		"names": {
+			"en": "Have website",
+			"pt": "Tem website",
+			"ru": "Есть сайт"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
 	}
 ]
