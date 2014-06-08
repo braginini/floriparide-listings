@@ -3,7 +3,7 @@ package com.floriparide.listings.model;
 /**
  * @author Mikhail Bragin
  */
-public abstract class MetaModel {
+public abstract class MetaModel extends Model {
 
 	Long created;
 

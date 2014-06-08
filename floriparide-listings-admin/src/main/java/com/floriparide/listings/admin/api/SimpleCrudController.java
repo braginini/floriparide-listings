@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,19 +39,33 @@ public class SimpleCrudController<E extends Element, M, D extends IBaseEntityDao
 
     @Override
     public ResponseEntity<Long> create(@RequestBody E entity,
-                                    HttpServletRequest httpRequest) throws Exception {
+                                       HttpServletRequest httpRequest) throws Exception {
 
         long id = dao.create((M) entity.getModel());
 
         return new ResponseEntity<>(id, HttpStatus.OK);
     }
 
-	@Override
-	public ResponseEntity<List<E>> batchCreate(@RequestBody List<E> batch, HttpServletRequest httpRequest) throws Exception {
-		throw new UnsupportedOperationException("not supported yet");
-	}
+    @Override
+    public ResponseEntity<List<Long>> batchCreate(@RequestBody List<E> batch, HttpServletRequest httpRequest) throws Exception {
 
-	@Override
+        List<Long> ids = new ArrayList<>(batch.size());
+        for (E el : batch) {
+            try {
+                //todo maybe batch here?
+                ids.add(dao.create((M) el.getModel()));
+            } catch (IOException e) {
+                //delete all that was created
+                Long[] arr = new Long[ids.size()];
+                dao.delete(ids.toArray(arr));
+                throw e;
+            }
+        }
+
+        return new ResponseEntity<>(ids, HttpStatus.OK);
+    }
+
+    @Override
     public ResponseEntity delete(@PathVariable(value = "id") long id,
                                  HttpServletRequest httpRequest) throws Exception {
 

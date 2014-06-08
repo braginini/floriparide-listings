@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * @author Mikhail Bragin
  */
-public class RawData {
+public class RawData extends Model {
 
 	Long id;
 

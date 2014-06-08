@@ -1,5 +1,5 @@
 -Aceita Reserva 470
-Aberto 24h 220
+-Aberto 24h 220
 -Área para fumantes  156
 -Permite Animais  49
 -Ambiente ao ar livre 296

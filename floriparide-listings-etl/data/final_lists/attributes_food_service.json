@@ -224,5 +224,16 @@
 		"possible_values": [],
 		"input_type": "boolean",
 		"filter_type": "checkbox"
+	},
+	{
+		"group_id":"16",
+		"names": {
+			"en": "Open 24h",
+			"pt": "Aberto 24h",
+			"ru": "Работает круглосуточно"
+		},
+		"possible_values": [],
+		"input_type": "boolean",
+		"filter_type": "checkbox"
 	}
 ]

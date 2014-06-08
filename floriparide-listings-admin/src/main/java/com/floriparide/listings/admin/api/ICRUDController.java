@@ -37,13 +37,13 @@ public interface ICRUDController<E extends Element> {
 	 * @param batch       a list of entities to create
 	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
 	 *                    (headers, statuses, etc)
-	 * @return a instance of {@link org.springframework.http.ResponseEntity} with a list of newly created entities
+	 * @return a instance of {@link org.springframework.http.ResponseEntity} with a list of newly created ids
 	 * with a HTTP 200 or HTTP 204 status code, exception response if any exception occurs
 	 * @throws Exception
 	 */
 	@RequestMapping(method = RequestMethod.POST, value = "/batch", consumes = "application/json",
 			headers = "Accept=application/json")
-	ResponseEntity<List<E>> batchCreate(@RequestBody List<E> batch,
+	ResponseEntity<List<Long>> batchCreate(@RequestBody List<E> batch,
 	                            HttpServletRequest httpRequest) throws Exception;
 
     /**
