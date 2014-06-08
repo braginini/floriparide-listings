@@ -15,3 +15,7 @@ print("Attributes map map %s" % attrs_map)
 rubrics = raw_data_dao.get_by_value_list(raw_data_dao.RawData.CATEGORIES, rubrics_map.keys())
 
 #todo process rubrics
+
+for rubric in rubrics:
+    #todo rubric[1] - json(dictionary)
+    print(rubric)
