@@ -32,7 +32,8 @@ public interface ICRUDController<E extends Element> {
                              HttpServletRequest httpRequest) throws Exception;
 
 	/**
-	 * Creates an entity of type {@code E} in a batch
+	 * Creates an entity of type {@code E} in a batch.
+     * If an error occurs during insertion of any of the elements nothing will be inserted.
 	 *
 	 * @param batch       a list of entities to create
 	 * @param httpRequest The raw httpRequest type of {@link javax.servlet.http.HttpServletRequest} for advanced usage
