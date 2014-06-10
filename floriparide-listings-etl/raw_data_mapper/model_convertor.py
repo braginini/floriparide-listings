@@ -1,5 +1,6 @@
 __author__ = 'mikhail'
 import json
+import re
 
 def convert_raw_branch(raw_branch, mapping, rubrics_map, attrs_map):
     """
@@ -25,14 +26,21 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
     :param attrs_map:
     :return:
     """
-    print(json.dumps(data))
+
+    print(json.dumps(data["facilities"]))
     result = {}
     if "facilities" in data:
-        #todo reg exp facilities names!!!!!
-        attributes = map(lambda v: dict(id=attrs_map[v], value=True) if v in attrs_map else None, data["facilities"])
-        attributes = {a["id"]: a for a in attributes if a}
+        #We use regexp here to filter out unnecessary characters in facilities names e.g. Tele-entrega(blablabla).
+        #In this case regexp will return just Tele-enterga
+        attributes = map(lambda v: dict(id=attrs_map.get(re.sub('(\(.*\))', '', v)), value=True), data["facilities"])
+        #filter out None
+        attributes = {a["id"]: a for a in attributes if a["id"]}
         result[mapping["facilities"]] = list(attributes.values())
 
+    #todo other fields that need mapping
+
     print(result)
+
+
 
 
