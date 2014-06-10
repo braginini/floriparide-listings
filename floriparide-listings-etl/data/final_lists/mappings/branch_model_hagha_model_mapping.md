@@ -1,9 +1,9 @@
-branch_model_field;hagah_field;model_contents
+branch_model_field;hagah_field
 name;name
 description;description
 address;address
-contacts;contacts;type-value
-attributes;facilities;id-value
+contacts;contacts
+attributes;facilities
 payment_options;payment_options
-rubrics;categories;id
-schedule;
+rubrics;categories
+schedule;hours

@@ -7,6 +7,7 @@ attribute_id;hagah_name_reg_exed;
 14;Área para fumantes
 15;Tele-entrega
 16;Aceita Reserva
+16;Aceita reserva para eventos
 17;Permite Animais
 18;Calefação
 19;TV/Telão

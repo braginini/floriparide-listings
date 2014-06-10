@@ -1,21 +1,34 @@
 __author__ = 'Mike'
 import raw_data_dao
-import read_mappings
+import mappings_reader
+import traceback
+import os
+import model_convertor
 
-rubrics_path = r"C:\Users\Mike\Documents\IdeaProjects\floriparide-listings\floriparide-listings-etl\data\final_lists\mappings\rubric_hagah_mapping.md"
+rootPath = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+rubrics_path = rootPath + r"\data\final_lists\mappings\rubric_hagah_mapping.md"
+attrs_path = rootPath + r"\data\final_lists\mappings\attribute_hagah_mapping.md"
 
-attrs_path = r"C:\Users\Mike\Documents\IdeaProjects\floriparide-listings\floriparide-listings-etl\data\final_lists\mappings\attribute_hagah_mapping.md"
+hagah_map_path = rootPath + r"\data\final_lists\mappings\branch_model_hagha_model_mapping.md"
 
-rubrics_map = read_mappings.getmap(rubrics_path)
-attrs_map = read_mappings.getmap(attrs_path)
+rubrics_map = mappings_reader.getmap(rubrics_path)
+attrs_map = mappings_reader.getmap(attrs_path)
 
 print("Rubrics map %s" % rubrics_map)
 print("Attributes map map %s" % attrs_map)
 
-rubrics = raw_data_dao.get_by_value_list(raw_data_dao.RawData.CATEGORIES, rubrics_map.keys())
+branches = None
+try:
+    branches = raw_data_dao.get_by_value_list(raw_data_dao.RawData.CATEGORIES, rubrics_map.keys())
+except:
+    print(traceback.format_exc())
 
-#todo process rubrics
+if branches:
+    mapping = mappings_reader.getmap(hagah_map_path)
+    #todo process rubrics
+    for branch in branches:
+        model_convertor.convert_raw_branch(branch, mapping, rubrics_map, attrs_map)
 
-for rubric in rubrics:
-    #todo rubric[1] - json(dictionary)
-    print(rubric)
+
+
+
