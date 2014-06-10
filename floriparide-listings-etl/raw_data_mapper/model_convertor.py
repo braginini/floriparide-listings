@@ -2,6 +2,7 @@ __author__ = 'mikhail'
 import json
 import re
 
+
 def convert_raw_branch(raw_branch, mapping, rubrics_map, attrs_map):
     """
     converts raw branch to one to be sent to admin api
@@ -16,7 +17,6 @@ def convert_raw_branch(raw_branch, mapping, rubrics_map, attrs_map):
         return hagah_raw_branch(raw_branch.get("data"), mapping, rubrics_map, attrs_map)
 
 
-
 def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
     """
     hagah convertor
@@ -29,33 +29,26 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
 
     print(json.dumps(data["categories"]))
     result = {}
-    if "facilities" in data:
-        #We use regexp here to filter out unnecessary characters in facilities names e.g. Tele-entrega(blablabla).
-        #In this case regexp will return just Tele-enterga
-        attributes = map(lambda v: dict(id=attrs_map.get(re.sub('(\(.*\))', '', v)), value=True), data["facilities"])
-        #filter out None
-        attributes = {a["id"]: a for a in attributes if a["id"]}
-        result[mapping["facilities"]] = list(attributes.values())
+    for k in mapping.keys():
+        if k in data:
+            if k == "facilities":
+                # We use regexp here to filter out unnecessary characters in facilities names e.g.
+                # Tele-entrega(blablabla). In this case regexp will return just Tele-enterga
+                attributes = map(lambda v: dict(id=attrs_map.get(re.sub('(\(.*\))', '', v)), value=True), data[k])
+                #filter out None
+                attributes = {a["id"]: a for a in attributes if a["id"]}
+                result[mapping[k]] = list(attributes.values())
+            else:
+                if k == "categories":
+                    rubrics = map(lambda v: dict(id=rubrics_map.get(v)), data[k])
+                    rubrics = {a["id"]: a for a in rubrics if a["id"]}
+                    result[mapping[k]] = list(rubrics.values())
 
-    if "categories" in data:
-        rubrics = map(lambda v: dict(id=rubrics_map.get(v)), data["categories"])
-        rubrics = {a["id"]: a for a in rubrics if a["id"]}
-        result[mapping["categories"]] = list(rubrics.values())
+                    # todo other fields that need mapping in simple iteration over map fields
+                else:
+                    result[mapping[k]] = data[k]
 
-    #todo other fields that need mapping in simple iteration over map fields
-    if "name" in data:
-        result[mapping["name"]] = data["name"]
-
-    if "address" in data:
-        result[mapping["address"]] = data["address"]
-
-    if "contacts" in data:
-        result[mapping["contacts"]] = data["contacts"]
-
-    if "payment_options" in data:
-        result[mapping["contacts"]] = data["contacts"]
-
-    print(result)
+    print(json.dumps(result))
 
 
 
