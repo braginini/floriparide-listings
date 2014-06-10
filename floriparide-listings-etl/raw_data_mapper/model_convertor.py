@@ -27,7 +27,7 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
     :return:
     """
 
-    print(json.dumps(data["facilities"]))
+    print(json.dumps(data["categories"]))
     result = {}
     if "facilities" in data:
         #We use regexp here to filter out unnecessary characters in facilities names e.g. Tele-entrega(blablabla).
@@ -38,6 +38,10 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
         result[mapping["facilities"]] = list(attributes.values())
 
     #todo other fields that need mapping
+    if "categories" in data:
+        rubrics = map(lambda v: dict(id=rubrics_map.get(v)), data["categories"])
+        rubrics = {a["id"]: a for a in rubrics if a["id"]}
+        result[mapping["categories"]] = list(rubrics.values())
 
     print(result)
 
