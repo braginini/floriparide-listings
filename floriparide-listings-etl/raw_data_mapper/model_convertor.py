@@ -38,15 +38,12 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
                 #filter out None
                 attributes = {a["id"]: a for a in attributes if a["id"]}
                 result[mapping[k]] = list(attributes.values())
+            elif k == "categories":
+                rubrics = map(lambda v: dict(id=rubrics_map.get(v)), data[k])
+                rubrics = {a["id"]: a for a in rubrics if a["id"]}
+                result[mapping[k]] = list(rubrics.values())
             else:
-                if k == "categories":
-                    rubrics = map(lambda v: dict(id=rubrics_map.get(v)), data[k])
-                    rubrics = {a["id"]: a for a in rubrics if a["id"]}
-                    result[mapping[k]] = list(rubrics.values())
-
-                    # todo other fields that need mapping in simple iteration over map fields
-                else:
-                    result[mapping[k]] = data[k]
+                result[mapping[k]] = data[k]
 
     print(json.dumps(result))
 
