@@ -49,3 +49,9 @@ select element::text from raw_data.data as d, json_array_elements(d.data->'categ
 select element->>'name', element->>'value' from raw_data.data as d, json_array_elements(d.data->'add_info') as element where d.source = 'hagah' group by element->>'name', element->>'value' order by element->>'name'
 
 select element::text from raw_data.data as d, json_array_elements(d.data->'categories') as element where d.source = 'hagah' and  group by element::text order by element::text;
+
+--query to get all hours
+SELECT (d.data->'hours')::text as hours FROM raw_data.data as d WHERE (d.data->'hours')::text != '' and (d.data->'hours')::text != 'null'
+
+--query for hours regexp
+SELECT regexp_replace((d.data->'hours')::text, '(\d|Diariamente|segunda|Segunda|Quarta|quarta|sexta|Sexta|sábado|Sábado|sexta-feira|Terça|terça|Quinta|quinta|domingo|Domingo)', '', 'g') as hours FROM raw_data.data as d WHERE (d.data->'hours')::text != '' and (d.data->'hours')::text != 'null' group by hours;
