@@ -41,6 +41,7 @@ def get_by_value_list(field, in_list):
 
     return result
 
+
 def enum(**enums):
     return type('Enum', (), enums)
 
