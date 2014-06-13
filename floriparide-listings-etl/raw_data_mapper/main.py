@@ -19,13 +19,9 @@ attrs_map = mappings_reader.getmap(attrs_path)
 print("Rubrics map %s" % rubrics_map)
 print("Attributes map map %s" % attrs_map)
 
-a = u"maçã"
-for norm in ('NFC', 'NFKC', 'NFD','NFKD'):
-    b = unicodedata.normalize(norm, a)
-    print(b, len(b))
-model_convertor.parse_hours("De segunda a sexta, 9h às 20h. Sábado, das 9h às 19h.")
-model_convertor.parse_hours("De segunda a sexta, das 8h às 19h.")
-model_convertor.parse_hours("De Segunda a Sexta, das 08:00 às 12:00 e das 13:30 às 18:00")
+#model_convertor.parse_hours("De segunda a sexta, 9h às 20h. Sábado, das 9h às 19h.")
+#model_convertor.parse_hours("De segunda a sexta, das 8h às 19h.")
+#model_convertor.parse_hours("De Segunda a Sexta, das 08:00 às 12:00 e das 13:30 às 18:00")
 
 branches = None
 try:

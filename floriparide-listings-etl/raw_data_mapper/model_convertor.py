@@ -28,7 +28,8 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
     :return:
     """
 
-    print(json.dumps(data["categories"]))
+    #print(data)
+   # print(json.dumps(data))
     result = {}
     for k in mapping.keys():
         if k in data:
@@ -46,7 +47,9 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
             else:
                 result[mapping[k]] = data[k]
 
-    print(json.dumps(result))
+    #print(json.dumps(result))
+    parse_hours(result.get("schedule"))
+    return result
 
 #De segunda a sexta, 9h às 20h. Sábado, das 9h às 19h.
 def parse_hours(string):
@@ -54,11 +57,30 @@ def parse_hours(string):
         return
 
     print("Parsing: %s" % string)
+    if not string.startswith("De "):
+        return
+
     string = string.strip(" .")
-    print(string)
     first_split = string.split(".")
     first_split = [el.strip(" ") for el in first_split]
-    dic = map(lambda e: dict(days=e.split(",")[0].strip(" "), hours=e.split(",")[1].strip(" ")), first_split)
+    print(first_split)
+    #exclude elements that have no comma like Domingo das 11h às 22h
+    first_split = [e for e in first_split if "," in e]
+
+
+
+
+
+
+
+
+
+
+    try:
+        dic = map(lambda e: dict(days=e.split(",")[0].strip(" "), hours=e.split(",")[1].strip(" ")), first_split)
+    except IndexError:
+        return
+
     #make a dictionary with key - days and value - hours
     dic = {a["days"]: a["hours"] for a in dic}
     dic = {(k.replace("De ", ""), v.replace("das ", "")) for k, v in dic.items()}
@@ -78,15 +100,15 @@ def get_day_number(raw_day):
     :param raw_day:
     :return:
     """
-    days = {"segunda": 1, "terca": 2, "quarta": 3, "quinta": 4, "sexta": 5, "sabado": 6, "domingo": 7}
+    days = {"segunda": 1, "terca": 2, "quarta": 3, "quinta": 4, "sexta": 5, "sabado": 6, "domingo": 7, "diariamente": 8}
     raw_day = raw_day.lower()
 
     if raw_day in days:
         return days[raw_day]
 
-    #raw_day = raw_day.replace("á", "a")
-    #raw_day = raw_day.replace("ç", "c")
-    #raw_day = re.sub("feira|-", "", raw_day)
+    raw_day = raw_day.replace("á", "a")
+    raw_day = raw_day.replace("ç", "c")
+    raw_day = re.sub("feira|-", "", raw_day)
 
     return days.get(raw_day)
 
