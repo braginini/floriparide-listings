@@ -67,18 +67,21 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
                 result[mapping[k]] = data[k]
 
     # print(json.dumps(result))
+    result["raw_schedule"] = result.get("schedule")
     result["schedule"] = parse_hours(result.get("schedule"))
+
+    print(json.dumps(result))
     return result
 
 
 # De segunda a sexta, 9h às 20h. Sábado, das 9h às 19h.
 def parse_hours(string):
     if not string:
-        return
+        return None
 
     if not string.startswith("De ") and not string.startswith("Diariamente") and ")" in string and "(" in string:
-        return
-    print("Parsing: %s" % string)
+        return None
+    #print("Parsing: %s" % string)
     split = string.split(".")
     split = [e.strip(" ") for e in split if e]
     # exclude elements that have no comma like Domingo das 11h às 22h
@@ -101,8 +104,22 @@ def parse_hours(string):
     #now each entry of dictionary has days as a key and hours as a value
     #we have to parse keys and values
     dic = {convert_days(d): convert_hours(h) for d, h in dic.items()}
-    print(dic)
-    return dic
+    #print(dic)
+    dic = {d: v for d, v in dic.items() if d and v}
+    #key -> week day, value -> list pf hours
+    result = {}
+    for k, v in dic.items():
+        #k - tuple with days
+        #v - hours
+        for d in k:
+            hours_list = result.get(d)
+            if not hours_list:
+                hours_list = []
+                result[d] = hours_list
+            for h in v:
+                hours_list.append(h)
+
+    return result
 
 
 def convert_days(raw_days):
