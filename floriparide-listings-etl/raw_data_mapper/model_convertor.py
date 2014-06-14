@@ -56,61 +56,88 @@ def parse_hours(string):
     if not string:
         return
 
+    if not string.startswith("De ") and not string.startswith("Diariamente") and ")" in string and "(" in string:
+        return
     print("Parsing: %s" % string)
-    if not string.startswith("De "):
-        return
-
-    string = string.strip(" .")
-    first_split = string.split(".")
-    first_split = [el.strip(" ") for el in first_split]
-    print(first_split)
+    split = string.split(".")
+    split = [e.strip(" ") for e in split if e]
+    print(split)
     #exclude elements that have no comma like Domingo das 11h às 22h
-    first_split = [e for e in first_split if "," in e]
+    split = [e for e in split if "," in e if e]
+    #split each group into days->hours dictionary
+    dic = {}
+    for e in split:
+        days_hours = e.split(",")
+        days_hours = [el.strip(" ") for el in days_hours]
+        dic[days_hours[0]] = days_hours[1]
+
+    #now each entry of dictionary has days as a key and hours as a value
+    #we have to parse keys and values
+    dic = {convert_days(d): convert_hours(h) for d, h in dic.items()}
+    print(dic)
 
 
-
-
-
-
-
-
-
-
-    try:
-        dic = map(lambda e: dict(days=e.split(",")[0].strip(" "), hours=e.split(",")[1].strip(" ")), first_split)
-    except IndexError:
-        return
-
-    #make a dictionary with key - days and value - hours
-    dic = {a["days"]: a["hours"] for a in dic}
-    dic = {(k.replace("De ", ""), v.replace("das ", "")) for k, v in dic.items()}
-    for k, v in dic:
-        #todo parse hours (interval) as a map from to
-        day_split = k.split(" a ")
-        day1 = get_day_number(day_split[0])
-        if len(day_split) > 1:
-           day2 = get_day_number(day_split[1])
-
-        #todo for each day starting from day1 to day2
-
-def get_day_number(raw_day):
+def convert_days(raw_days):
     """
-    Searches the corresponding day no matter how it is written
-    return an integer from 1 to 7 for corresponding week day
-    :param raw_day:
+    converts draw days string to a tuple of days - strings monday to sunday
+    Note! Should return only tuple, because it will be used as a key in a map
+    :param raw_days:
     :return:
     """
-    days = {"segunda": 1, "terca": 2, "quarta": 3, "quinta": 4, "sexta": 5, "sabado": 6, "domingo": 7, "diariamente": 8}
-    raw_day = raw_day.lower()
+    days = {"segunda": ("monday", 0),
+            "terca": ("tuesday", 1),
+            "quarta": ("wednesday", 2),
+            "quinta": ("thursday", 3),
+            "sexta": ("friday", 4),
+            "sabado": ("saturday", 5),
+            "domingo": ("sunday", 6)}
 
-    if raw_day in days:
-        return days[raw_day]
+    days_indexed = {0: "monday",
+                    1: "tuesday",
+                    2: "wednesday",
+                    3: "thursday",
+                    4: "friday",
+                    5: "saturday",
+                    6: "sunday"}
+    #remove umlauts, accents etc
+    raw_days = unicodedata.normalize('NFKD', raw_days).encode('ASCII', 'ignore').decode(encoding='UTF-8').lower()
+    raw_days = raw_days.replace("-", "").replace("feira", "").replace("de ", "")
+    print(raw_days)
 
-    raw_day = raw_day.replace("á", "a")
-    raw_day = raw_day.replace("ç", "c")
-    raw_day = re.sub("feira|-", "", raw_day)
+    if raw_days == "diariamente":
+        return tuple(e[0] for e in days.values())
 
-    return days.get(raw_day)
+    # we go further and split by " a " to get "from" day and "to" day. now raw_days is a list. trim all elements as well
+    raw_days = [e.strip(" ") for e in raw_days.split(" a ") if e]
+    #todo could be split by " e " && len = 1
+    #it could be that we did not split actually - we had just one day, so we search for it in a dictionary
+    if len(raw_days) == 1:
+        day = days.get(raw_days[0])
+        if day:
+            return day[0]
+    else:
+        #len = 2
+        day_from = days.get(raw_days[0])
+        day_to = days.get(raw_days[1])
+        if day_from and day_to:
+            day_list = []
+            day_from = day_from[1]
+            day_to = day_to[1]
+            while day_from <= day_to:
+                day_list.append(days_indexed.get(day_from))
+                day_from += 1
+            return tuple(day_list)
+
+    return None
+
+
+def convert_hours(raw_hours):
+    """
+    converts raw hours to map with two entries with keys from and to {"from":"09:00", "to":"24:00"} hh:mm
+    :param raw_hours:
+    :return:
+    """
+    return raw_hours
 
 
 
