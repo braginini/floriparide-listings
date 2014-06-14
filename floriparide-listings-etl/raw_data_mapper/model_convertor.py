@@ -61,7 +61,6 @@ def parse_hours(string):
     print("Parsing: %s" % string)
     split = string.split(".")
     split = [e.strip(" ") for e in split if e]
-    print(split)
     #exclude elements that have no comma like Domingo das 11h às 22h
     split = [e for e in split if "," in e if e]
     #split each group into days->hours dictionary
@@ -102,20 +101,14 @@ def convert_days(raw_days):
     #remove umlauts, accents etc
     raw_days = unicodedata.normalize('NFKD', raw_days).encode('ASCII', 'ignore').decode(encoding='UTF-8').lower()
     raw_days = raw_days.replace("-", "").replace("feira", "").replace("de ", "")
-    print(raw_days)
 
     if raw_days == "diariamente":
         return tuple(e[0] for e in days.values())
 
     # we go further and split by " a " to get "from" day and "to" day. now raw_days is a list. trim all elements as well
-    raw_days = [e.strip(" ") for e in raw_days.split(" a ") if e]
-    #todo could be split by " e " && len = 1
-    #it could be that we did not split actually - we had just one day, so we search for it in a dictionary
-    if len(raw_days) == 1:
-        day = days.get(raw_days[0])
-        if day:
-            return day[0]
-    else:
+    if " a " in raw_days:
+        #split by " a " as here "segunda a sabado"
+        raw_days = [e.strip(" ") for e in raw_days.split(" a ") if e]
         #len = 2
         day_from = days.get(raw_days[0])
         day_to = days.get(raw_days[1])
@@ -127,13 +120,28 @@ def convert_days(raw_days):
                 day_list.append(days_indexed.get(day_from))
                 day_from += 1
             return tuple(day_list)
+    elif " e " in raw_days:
+        #split by " e " as here "sabado e domingo"
+        raw_days = [e.strip(" ") for e in raw_days.split(" e ") if e]
+        day_from = days.get(raw_days[0])
+        day_to = days.get(raw_days[1])
+        if day_from and day_to:
+            return tuple([day_from[0], day_to[0]])
+    else:
+        #it could be that we have just one day, so we search for it in a dictionary
+        day = days.get(raw_days[0])
+        if day:
+            return day[0]
 
+    #todo Parsing: De domingo a quinta, das 18h30 a 0h. Sexta e sábado, das 18h30 a 0h30.
+    #todo {('friday', 'saturday'): 'das 18h30 a 0h30', (): 'das 18h30 a 0h'}
     return None
 
 
 def convert_hours(raw_hours):
     """
-    converts raw hours to map with two entries with keys from and to {"from":"09:00", "to":"24:00"} hh:mm
+    conv
+    erts raw hours to map with two entries with keys from and to {"from":"09:00", "to":"24:00"} hh:mm
     :param raw_hours:
     :return:
     """
