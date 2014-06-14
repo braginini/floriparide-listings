@@ -83,21 +83,22 @@ def convert_days(raw_days):
     :param raw_days:
     :return:
     """
-    days = {"segunda": ("monday", 0),
-            "terca": ("tuesday", 1),
-            "quarta": ("wednesday", 2),
-            "quinta": ("thursday", 3),
-            "sexta": ("friday", 4),
-            "sabado": ("saturday", 5),
-            "domingo": ("sunday", 6)}
+    #days_set = {"monday": ["tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]}
+    days = {"segunda": ("monday", 1),
+            "terca": ("tuesday", 2),
+            "quarta": ("wednesday", 3),
+            "quinta": ("thursday", 4),
+            "sexta": ("friday", 5),
+            "sabado": ("saturday", 6),
+            "domingo": ("sunday", 0)}
 
-    days_indexed = {0: "monday",
-                    1: "tuesday",
-                    2: "wednesday",
-                    3: "thursday",
-                    4: "friday",
-                    5: "saturday",
-                    6: "sunday"}
+    days_indexed = {0: "sunday",
+                    1: "monday",
+                    2: "tuesday",
+                    3: "wednesday",
+                    4: "thursday",
+                    5: "friday",
+                    6: "saturday"}
     #remove umlauts, accents etc
     raw_days = unicodedata.normalize('NFKD', raw_days).encode('ASCII', 'ignore').decode(encoding='UTF-8').lower()
     raw_days = raw_days.replace("-", "").replace("feira", "").replace("de ", "")
@@ -116,10 +117,18 @@ def convert_days(raw_days):
             day_list = []
             day_from = day_from[1]
             day_to = day_to[1]
+            #if end day is sunday
+            #set day to to saturday
+            if day_to == 0:
+                day_list.append(days_indexed.get(day_to))
+                day_to = 6
+
             while day_from <= day_to:
                 day_list.append(days_indexed.get(day_from))
                 day_from += 1
+
             return tuple(day_list)
+
     elif " e " in raw_days:
         #split by " e " as here "sabado e domingo"
         raw_days = [e.strip(" ") for e in raw_days.split(" e ") if e]
@@ -131,7 +140,7 @@ def convert_days(raw_days):
         #it could be that we have just one day, so we search for it in a dictionary
         day = days.get(raw_days[0])
         if day:
-            return day[0]
+            return tuple([day[0]])
 
     #todo Parsing: De domingo a quinta, das 18h30 a 0h. Sexta e sábado, das 18h30 a 0h30.
     #todo {('friday', 'saturday'): 'das 18h30 a 0h30', (): 'das 18h30 a 0h'}
