@@ -56,7 +56,7 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
                 # We use regexp here to filter out unnecessary characters in facilities names e.g.
                 # Tele-entrega(blablabla). In this case regexp will return just Tele-enterga
                 attributes = map(lambda v: dict(id=attrs_map.get(re.sub('(\(.*\))', '', v)), value=True), data[k])
-                #filter out None
+                # filter out None
                 attributes = {a["id"]: a for a in attributes if a["id"]}
                 result[mapping[k]] = list(attributes.values())
             elif k == "categories":
@@ -66,7 +66,7 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
             else:
                 result[mapping[k]] = data[k]
 
-    #print(json.dumps(result))
+    # print(json.dumps(result))
     result["schedule"] = parse_hours(result.get("schedule"))
     return result
 
@@ -81,7 +81,7 @@ def parse_hours(string):
     print("Parsing: %s" % string)
     split = string.split(".")
     split = [e.strip(" ") for e in split if e]
-    #exclude elements that have no comma like Domingo das 11h às 22h
+    # exclude elements that have no comma like Domingo das 11h às 22h
     split = [e for e in split if "," in e if e]
     #split each group into days->hours dictionary
     dic = {}
@@ -112,7 +112,7 @@ def convert_days(raw_days):
     :param raw_days:
     :return:
     """
-    #each week day followed by all next days list
+    # each week day followed by all next days list
     days_mapping = DaysMapping.days_mapping
     days = DaysMapping.days
 
@@ -170,8 +170,43 @@ def convert_hours(raw_hours):
     :param raw_hours:
     :return:
     """
-    return raw_hours
+    # remove umlauts, accents etc
+    raw_hours = unicodedata.normalize('NFKD', raw_hours).encode('ASCII', 'ignore').decode(encoding='UTF-8').lower()
+    raw_hours = raw_hours.replace("das ", "").strip(" ")
+    #print(raw_hours)
+    if "partir" in raw_hours or "ultimo" in raw_hours:
+        return None
 
+    raw_hours = [e.strip(" ") for e in raw_hours.split(" e ")]
+    for e in raw_hours:
+        e = re.compile(" as | a | ass | ").split(e)
+        hour_from = e[0]
+        hour_to = e[1]
+        if "h" in hour_from and "h" in hour_to:
+            hour_from = format_hour(hour_from)
+            hour_to = format_hour(hour_to)
+            return {"from": hour_from, "to": hour_to}
+        else:
+            return {"from": hour_from, "to": hour_to}
+
+
+def format_hour(hour):
+    """
+    formats hour to hh:mm
+    :param hour:
+    :return:
+    """
+    hour = hour.split("h")
+    result = []
+    for h in hour:
+        if not h:
+            result.append("00")
+        elif len(h) == 1:
+            result.append("0" + h)
+        else:
+            result.append(h)
+
+    return ":".join(result)
 
 
 
