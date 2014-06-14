@@ -4,6 +4,25 @@ import re
 import unicodedata
 
 
+class DaysMapping:
+    # each week day followed by all next days list
+    days = {"monday": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+            "tuesday": ["tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "monday"],
+            "wednesday": ["wednesday", "thursday", "friday", "saturday", "sunday", "monday", "tuesday"],
+            "thursday": ["thursday", "friday", "saturday", "sunday", "monday", "tuesday", "wednesday"],
+            "friday": ["friday", "saturday", "sunday", "monday", "tuesday", "wednesday", "thursday"],
+            "saturday": ["saturday", "sunday", "monday", "tuesday", "wednesday", "thursday", "friday"],
+            "sunday": ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]}
+
+    days_mapping = {"segunda": "monday",
+                    "terca": "tuesday",
+                    "quarta": "wednesday",
+                    "quinta": "thursday",
+                    "sexta": "friday",
+                    "sabado": "saturday",
+                    "domingo": "sunday"}
+
+
 def convert_raw_branch(raw_branch, mapping, rubrics_map, attrs_map):
     """
     converts raw branch to one to be sent to admin api
@@ -28,8 +47,8 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
     :return:
     """
 
-    #print(data)
-   # print(json.dumps(data))
+    # print(data)
+    # print(json.dumps(data))
     result = {}
     for k in mapping.keys():
         if k in data:
@@ -51,7 +70,8 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
     parse_hours(result.get("schedule"))
     return result
 
-#De segunda a sexta, 9h às 20h. Sábado, das 9h às 19h.
+
+# De segunda a sexta, 9h às 20h. Sábado, das 9h às 19h.
 def parse_hours(string):
     if not string:
         return
@@ -68,7 +88,14 @@ def parse_hours(string):
     for e in split:
         days_hours = e.split(",")
         days_hours = [el.strip(" ") for el in days_hours]
-        dic[days_hours[0]] = days_hours[1]
+        #can be Domingo, terca e quinta .... or Domingo, terca, quinta, quarta e sabado etc
+        if len(days_hours) > 2:
+            i = 0
+            while i < len(days_hours) - 1:
+                dic[days_hours[i]] = days_hours[len(days_hours) - 1]
+                i += 1
+        else:
+            dic[days_hours[0]] = days_hours[1]
 
     #now each entry of dictionary has days as a key and hours as a value
     #we have to parse keys and values
@@ -83,64 +110,53 @@ def convert_days(raw_days):
     :param raw_days:
     :return:
     """
-    #days_set = {"monday": ["tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]}
-    days = {"segunda": ("monday", 1),
-            "terca": ("tuesday", 2),
-            "quarta": ("wednesday", 3),
-            "quinta": ("thursday", 4),
-            "sexta": ("friday", 5),
-            "sabado": ("saturday", 6),
-            "domingo": ("sunday", 0)}
+    #each week day followed by all next days list
+    days_mapping = DaysMapping.days_mapping
+    days = DaysMapping.days
 
-    days_indexed = {0: "sunday",
-                    1: "monday",
-                    2: "tuesday",
-                    3: "wednesday",
-                    4: "thursday",
-                    5: "friday",
-                    6: "saturday"}
     #remove umlauts, accents etc
     raw_days = unicodedata.normalize('NFKD', raw_days).encode('ASCII', 'ignore').decode(encoding='UTF-8').lower()
     raw_days = raw_days.replace("-", "").replace("feira", "").replace("de ", "")
 
     if raw_days == "diariamente":
-        return tuple(e[0] for e in days.values())
+        return tuple(e for e in days_mapping.values())
 
     # we go further and split by " a " to get "from" day and "to" day. now raw_days is a list. trim all elements as well
     if " a " in raw_days:
         #split by " a " as here "segunda a sabado"
         raw_days = [e.strip(" ") for e in raw_days.split(" a ") if e]
         #len = 2
-        day_from = days.get(raw_days[0])
-        day_to = days.get(raw_days[1])
-        if day_from and day_to:
-            day_list = []
-            day_from = day_from[1]
-            day_to = day_to[1]
-            #if end day is sunday
-            #set day to to saturday
-            if day_to == 0:
-                day_list.append(days_indexed.get(day_to))
-                day_to = 6
+        #get days tuple e.g. ("monday", 0)
+        day_from = days_mapping.get(raw_days[0])
+        day_to = days_mapping.get(raw_days[1])
 
-            while day_from <= day_to:
-                day_list.append(days_indexed.get(day_from))
-                day_from += 1
+        if not day_from or not day_to:
+            return None
 
-            return tuple(day_list)
+        #Could be terca a terca
+        if day_from == day_to:
+            return tuple(e for e in days_mapping.values())
+
+        day_list = days[day_from][:(days[day_from].index(day_to) + 1)]
+        return tuple(day_list)
 
     elif " e " in raw_days:
         #split by " e " as here "sabado e domingo"
         raw_days = [e.strip(" ") for e in raw_days.split(" e ") if e]
-        day_from = days.get(raw_days[0])
-        day_to = days.get(raw_days[1])
-        if day_from and day_to:
-            return tuple([day_from[0], day_to[0]])
+        day_from = days_mapping.get(raw_days[0])
+        day_to = days_mapping.get(raw_days[1])
+
+        if not day_from or not day_to:
+            return None
+        if day_from == day_to:
+            return tuple(e for e in days_mapping.values())
+
+        return tuple([day_from, day_to])
     else:
         #it could be that we have just one day, so we search for it in a dictionary
-        day = days.get(raw_days[0])
+        day = days_mapping.get(raw_days)
         if day:
-            return tuple([day[0]])
+            return tuple([day])
 
     #todo Parsing: De domingo a quinta, das 18h30 a 0h. Sexta e sábado, das 18h30 a 0h30.
     #todo {('friday', 'saturday'): 'das 18h30 a 0h30', (): 'das 18h30 a 0h'}
