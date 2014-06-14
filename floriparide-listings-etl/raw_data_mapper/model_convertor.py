@@ -67,7 +67,7 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
                 result[mapping[k]] = data[k]
 
     #print(json.dumps(result))
-    parse_hours(result.get("schedule"))
+    result["schedule"] = parse_hours(result.get("schedule"))
     return result
 
 
@@ -88,6 +88,7 @@ def parse_hours(string):
     for e in split:
         days_hours = e.split(",")
         days_hours = [el.strip(" ") for el in days_hours]
+
         #can be Domingo, terca e quinta .... or Domingo, terca, quinta, quarta e sabado etc
         if len(days_hours) > 2:
             i = 0
@@ -101,12 +102,13 @@ def parse_hours(string):
     #we have to parse keys and values
     dic = {convert_days(d): convert_hours(h) for d, h in dic.items()}
     print(dic)
+    return dic
 
 
 def convert_days(raw_days):
     """
     converts draw days string to a tuple of days - strings monday to sunday
-    Note! Should return only tuple, because it will be used as a key in a map
+    Note! Should return only tuple, because it will be used as a key in a dictionary
     :param raw_days:
     :return:
     """
@@ -158,8 +160,6 @@ def convert_days(raw_days):
         if day:
             return tuple([day])
 
-    #todo Parsing: De domingo a quinta, das 18h30 a 0h. Sexta e sábado, das 18h30 a 0h30.
-    #todo {('friday', 'saturday'): 'das 18h30 a 0h30', (): 'das 18h30 a 0h'}
     return None
 
 
