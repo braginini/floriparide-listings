@@ -176,7 +176,7 @@ def convert_hours(raw_hours):
     #print(raw_hours)
     if "partir" in raw_hours or "ultimo" in raw_hours:
         return None
-
+    result = []
     raw_hours = [e.strip(" ") for e in raw_hours.split(" e ")]
     for e in raw_hours:
         e = re.compile(" as | a | ass | ").split(e)
@@ -185,9 +185,11 @@ def convert_hours(raw_hours):
         if "h" in hour_from and "h" in hour_to:
             hour_from = format_hour(hour_from)
             hour_to = format_hour(hour_to)
-            return {"from": hour_from, "to": hour_to}
+            result.append({"from": hour_from, "to": hour_to})
         else:
-            return {"from": hour_from, "to": hour_to}
+            result.append({"from": hour_from, "to": hour_to})
+
+    return result
 
 
 def format_hour(hour):
