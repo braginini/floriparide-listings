@@ -25,7 +25,7 @@ class DaysMapping:
 
 def convert_raw_branch(raw_branch, mapping, rubrics_map, attrs_map):
     """
-    converts raw branch to one to be sent to admin api
+    converts raw branch to JSON to be sent to admin api
     :param raw_branch: raw branch object as a dictionary
     :param mapping: mapping for raw data source
     :param rubrics_map: mapping for rubrics
@@ -69,9 +69,7 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
     # print(json.dumps(result))
     result["raw_schedule"] = result.get("schedule")
     result["schedule"] = parse_hours(result.get("schedule"))
-
-    print(json.dumps(result))
-    return result
+    return json.dumps(result)
 
 
 # De segunda a sexta, 9h às 20h. Sábado, das 9h às 19h.

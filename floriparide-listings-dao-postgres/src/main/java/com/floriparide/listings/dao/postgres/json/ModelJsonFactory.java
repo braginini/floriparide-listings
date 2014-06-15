@@ -80,7 +80,39 @@ public class ModelJsonFactory {
             object.put(JSONSchema.BRANCH_DATA_ATTRIBUTES, attributesGroup);
         }
 
+        if (branch.getSchedule() != null) {
+            JSONObject schedule = new JSONObject();
+
+            JSONArray monday = fillUpIntervals(branch.getSchedule().getMonday());
+            JSONArray tuesday = fillUpIntervals(branch.getSchedule().getMonday());
+            JSONArray wednesday = fillUpIntervals(branch.getSchedule().getMonday());
+            JSONArray thursday = fillUpIntervals(branch.getSchedule().getMonday());
+            JSONArray friday = fillUpIntervals(branch.getSchedule().getMonday());
+            JSONArray saturday = fillUpIntervals(branch.getSchedule().getMonday());
+            JSONArray sunday = fillUpIntervals(branch.getSchedule().getMonday());
+
+            schedule.put(JSONSchema.SCHEDULE_DATA_MONDAY, monday);
+            schedule.put("monday", monday);
+            schedule.put("monday", monday);
+            schedule.put("monday", monday);
+            schedule.put("monday", monday);
+            schedule.put("monday", monday);
+            schedule.put("monday", monday);
+            schedule.put("monday", monday);
+        }
+
         return object.toJSONString();
+    }
+
+    private static JSONArray fillUpIntervals(List<Interval> intervals) {
+        JSONArray intervalArray = new JSONArray();
+        for (Interval i : intervals) {
+            JSONObject intervalObj = new JSONObject();
+            intervalObj.put(JSONSchema.INTERVAL_DATA_FROM, i.getFrom());
+            intervalObj.put(JSONSchema.INTERVAL_DATA_TO, i.getTo());
+            intervalArray.add(intervalObj);
+        }
+        return intervalArray;
     }
 
     public static void populateBranchDataFromJSON(Branch branch, String json) throws ParseException {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.floriparide.listings.model.Branch;
 import com.floriparide.listings.model.PaymentOption;
 import com.floriparide.listings.model.Point;
+import com.floriparide.listings.model.Schedule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,12 @@ public class BranchElement extends Element<Branch> {
     @JsonProperty("payment_options")
     List<String> paymentOptions;
 
+    @JsonProperty("raw_schedule")
+    String rawSchedule;
+
+    @JsonProperty("")
+    ScheduleElement schedule;
+
     public BranchElement() {
     }
 
@@ -71,6 +78,8 @@ public class BranchElement extends Element<Branch> {
         this.office = branch.getOffice();
         this.currency = branch.getCurrency();
         this.article = branch.getArticle();
+        this.rawSchedule = branch.getRawSchedule();
+        this.schedule = new ScheduleElement(branch.getSchedule());
 
         this.paymentOptions = new ArrayList<>();
         for (PaymentOption po : branch.getPaymentOptions())
@@ -190,6 +199,22 @@ public class BranchElement extends Element<Branch> {
         this.paymentOptions = paymentOptions;
     }
 
+    public ScheduleElement getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(ScheduleElement schedule) {
+        this.schedule = schedule;
+    }
+
+    public String getRawSchedule() {
+        return rawSchedule;
+    }
+
+    public void setRawSchedule(String rawSchedule) {
+        this.rawSchedule = rawSchedule;
+    }
+
     @Override
     @JsonIgnore
     public Branch getModel() {
@@ -204,10 +229,15 @@ public class BranchElement extends Element<Branch> {
         branch.setContacts(ContactElement.contactsElementsToToContacts(contacts));
         branch.setCurrency(currency);
         branch.setOffice(office);
-        branch.setPaymentOptions(PaymentOption.split(paymentOptions));
+        if (paymentOptions != null)
+            branch.setPaymentOptions(PaymentOption.split(paymentOptions));
         branch.setPoint(new Point(lat, lon));
         branch.setRubrics(RubricElement.rubricsElementsToRubrics(rubrics));
-        //todo schedule
+        if (rawSchedule != null)
+            branch.setRawSchedule(rawSchedule);
+        if (schedule != null)
+            branch.setSchedule(schedule.getModel());
+
         return branch;
     }
 }

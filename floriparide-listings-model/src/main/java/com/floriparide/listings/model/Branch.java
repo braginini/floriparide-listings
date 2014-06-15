@@ -38,6 +38,8 @@ public class Branch extends MetaModel {
 
 	List<Attribute> attributes;
 
+    String rawSchedule;
+
 	public Long getId() {
 		return id;
 	}
@@ -149,4 +151,12 @@ public class Branch extends MetaModel {
 	public void setAttributes(List<Attribute> attributes) {
 		this.attributes = attributes;
 	}
+
+    public String getRawSchedule() {
+        return rawSchedule;
+    }
+
+    public void setRawSchedule(String rawSchedule) {
+        this.rawSchedule = rawSchedule;
+    }
 }
