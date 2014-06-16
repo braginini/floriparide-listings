@@ -53,6 +53,9 @@ public class Schedule {
 	public void addToSunday(Interval interval) {
 		saturday.add(interval);
 	}
+	public void addToWednesday(Interval interval) {
+		wednesday.add(interval);
+	}
 
 	public List<Interval> getMonday() {
 		return monday;

@@ -84,21 +84,22 @@ public class ModelJsonFactory {
             JSONObject schedule = new JSONObject();
 
             JSONArray monday = fillUpIntervals(branch.getSchedule().getMonday());
-            JSONArray tuesday = fillUpIntervals(branch.getSchedule().getMonday());
-            JSONArray wednesday = fillUpIntervals(branch.getSchedule().getMonday());
-            JSONArray thursday = fillUpIntervals(branch.getSchedule().getMonday());
-            JSONArray friday = fillUpIntervals(branch.getSchedule().getMonday());
-            JSONArray saturday = fillUpIntervals(branch.getSchedule().getMonday());
-            JSONArray sunday = fillUpIntervals(branch.getSchedule().getMonday());
+            JSONArray tuesday = fillUpIntervals(branch.getSchedule().getTuesday());
+            JSONArray wednesday = fillUpIntervals(branch.getSchedule().getWednesday());
+            JSONArray thursday = fillUpIntervals(branch.getSchedule().getThursday());
+            JSONArray friday = fillUpIntervals(branch.getSchedule().getFriday());
+            JSONArray saturday = fillUpIntervals(branch.getSchedule().getSaturday());
+            JSONArray sunday = fillUpIntervals(branch.getSchedule().getSunday());
 
             schedule.put(JSONSchema.SCHEDULE_DATA_MONDAY, monday);
-            schedule.put("monday", monday);
-            schedule.put("monday", monday);
-            schedule.put("monday", monday);
-            schedule.put("monday", monday);
-            schedule.put("monday", monday);
-            schedule.put("monday", monday);
-            schedule.put("monday", monday);
+            schedule.put(JSONSchema.SCHEDULE_DATA_TUESDAY, tuesday);
+            schedule.put(JSONSchema.SCHEDULE_DATA_SATURDAY, wednesday);
+            schedule.put(JSONSchema.SCHEDULE_DATA_THURSDAY, thursday);
+            schedule.put(JSONSchema.SCHEDULE_DATA_FRIDAY, friday);
+            schedule.put(JSONSchema.SCHEDULE_DATA_SATURDAY, saturday);
+            schedule.put(JSONSchema.SCHEDULE_DATA_SUNDAY, sunday);
+	        
+	        object.put(JSONSchema.SCHEDULE_FIELD, schedule);
         }
 
         return object.toJSONString();
@@ -170,6 +171,69 @@ public class ModelJsonFactory {
                         (String) attribute.get(JSONSchema.VALUE)));
             }
         }
+
+	    JSONObject scheduleObj = (JSONObject) object.get(JSONSchema.SCHEDULE_FIELD);
+	    if (scheduleObj != null) {
+		    Schedule schedule = new Schedule();
+		    JSONArray dayObj = (JSONArray) scheduleObj.get(JSONSchema.SCHEDULE_DATA_MONDAY);
+		    Iterator<JSONObject> it = dayObj.iterator();
+		    JSONObject intervalObj;
+		    while (it.hasNext()) {
+			    intervalObj = it.next();
+			    schedule.addToMonday(new Interval((String)intervalObj.get(JSONSchema.INTERVAL_DATA_FROM),
+					    (String)intervalObj.get(JSONSchema.INTERVAL_DATA_TO)));
+		    }
+
+		    dayObj = (JSONArray) scheduleObj.get(JSONSchema.SCHEDULE_DATA_TUESDAY);
+		    it = dayObj.iterator();
+		    while (it.hasNext()) {
+			    intervalObj = it.next();
+			    schedule.addToTuesday(new Interval((String)intervalObj.get(JSONSchema.INTERVAL_DATA_FROM),
+					    (String)intervalObj.get(JSONSchema.INTERVAL_DATA_TO)));
+		    }
+
+		    dayObj = (JSONArray) scheduleObj.get(JSONSchema.SCHEDULE_DATA_WEDNESDAY);
+		    it = dayObj.iterator();
+		    while (it.hasNext()) {
+			    intervalObj = it.next();
+			    schedule.addToWednesday(new Interval((String)intervalObj.get(JSONSchema.INTERVAL_DATA_FROM),
+					    (String)intervalObj.get(JSONSchema.INTERVAL_DATA_TO)));
+		    }
+
+		    dayObj = (JSONArray) scheduleObj.get(JSONSchema.SCHEDULE_DATA_THURSDAY);
+		    it = dayObj.iterator();
+		    while (it.hasNext()) {
+			    intervalObj = it.next();
+			    schedule.addToThursday(new Interval((String)intervalObj.get(JSONSchema.INTERVAL_DATA_FROM),
+					    (String)intervalObj.get(JSONSchema.INTERVAL_DATA_TO)));
+		    }
+
+		    dayObj = (JSONArray) scheduleObj.get(JSONSchema.SCHEDULE_DATA_FRIDAY);
+		    it = dayObj.iterator();
+		    while (it.hasNext()) {
+			    intervalObj = it.next();
+			    schedule.addToFriday(new Interval((String)intervalObj.get(JSONSchema.INTERVAL_DATA_FROM),
+					    (String)intervalObj.get(JSONSchema.INTERVAL_DATA_TO)));
+		    }
+
+		    dayObj = (JSONArray) scheduleObj.get(JSONSchema.SCHEDULE_DATA_SATURDAY);
+		    it = dayObj.iterator();
+		    while (it.hasNext()) {
+			    intervalObj = it.next();
+			    schedule.addToSaturday(new Interval((String)intervalObj.get(JSONSchema.INTERVAL_DATA_FROM),
+					    (String)intervalObj.get(JSONSchema.INTERVAL_DATA_TO)));
+		    }
+
+		    dayObj = (JSONArray) scheduleObj.get(JSONSchema.SCHEDULE_DATA_SUNDAY);
+		    it = dayObj.iterator();
+		    while (it.hasNext()) {
+			    intervalObj = it.next();
+			    schedule.addToSunday(new Interval((String)intervalObj.get(JSONSchema.INTERVAL_DATA_FROM),
+					    (String)intervalObj.get(JSONSchema.INTERVAL_DATA_TO)));
+		    }
+
+		    branch.setSchedule(schedule);
+	    }
 
         branch.setAttributes(attributes);
     }
@@ -282,5 +346,15 @@ public class ModelJsonFactory {
 
         public static final String META_CREATED = "created";
         public static final String META_UPDATED = "updated";
+	    public static final String SCHEDULE_DATA_MONDAY = "monday";
+	    public static final String SCHEDULE_DATA_TUESDAY = "tuesday";
+	    public static final String SCHEDULE_DATA_WEDNESDAY = "wednesday";
+	    public static final String SCHEDULE_DATA_THURSDAY = "thursday";
+	    public static final String SCHEDULE_DATA_FRIDAY = "friday";
+	    public static final String SCHEDULE_DATA_SATURDAY = "saturday";
+	    public static final String SCHEDULE_DATA_SUNDAY = "sunday";
+	    public static final String INTERVAL_DATA_FROM = "from";
+	    public static final String INTERVAL_DATA_TO = "to";
+	    public static final String SCHEDULE_FIELD = "schedule";
     }
 }
