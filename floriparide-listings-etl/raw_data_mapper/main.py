@@ -31,8 +31,21 @@ if branches:
     branches = [model_convertor.convert_raw_branch(b, mapping, rubrics_map, attrs_map) for b in branches]
     print(len(branches))
 
-    for branch in branches:
-        webapiaccess.create_branch(branch)
+    branch_set = set()
+    dup = 0
+    for b in branches:
+        if b.get("address"):
+            key = b["name"] + b["address"]
+            if key not in branch_set:
+                webapiaccess.create_branch(b)
+                branch_set.add(key)
+            else:
+                dup += 1
+        else:
+            webapiaccess.create_branch(b)
+
+    print(dup)
+
 
 
 
