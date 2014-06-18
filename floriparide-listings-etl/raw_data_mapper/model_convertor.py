@@ -69,7 +69,7 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
     # print(json.dumps(result))
     result["raw_schedule"] = result.get("schedule")
     result["schedule"] = parse_hours(result.get("schedule"))
-    return json.dumps(result)
+    return result
 
 
 # De segunda a sexta, 9h às 20h. Sábado, das 9h às 19h.

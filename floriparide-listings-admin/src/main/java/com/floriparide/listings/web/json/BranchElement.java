@@ -81,9 +81,7 @@ public class BranchElement extends Element<Branch> {
         this.rawSchedule = branch.getRawSchedule();
         this.schedule = new ScheduleElement(branch.getSchedule());
 
-        this.paymentOptions = new ArrayList<>();
-        for (PaymentOption po : branch.getPaymentOptions())
-            paymentOptions.add(po.getType());
+        this.paymentOptions = branch.getPaymentOptions();
     }
 
     public static List<BranchElement> branchesToBranchElements(List<Branch> branches) {
@@ -230,7 +228,7 @@ public class BranchElement extends Element<Branch> {
         branch.setCurrency(currency);
         branch.setOffice(office);
         if (paymentOptions != null)
-            branch.setPaymentOptions(PaymentOption.split(paymentOptions));
+            branch.setPaymentOptions(paymentOptions);
         branch.setPoint(new Point(lat, lon));
         branch.setRubrics(RubricElement.rubricsElementsToRubrics(rubrics));
         if (rawSchedule != null)

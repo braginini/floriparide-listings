@@ -58,9 +58,9 @@ public class ModelJsonFactory {
 
         if (branch.getPaymentOptions() != null && !branch.getPaymentOptions().isEmpty()) {
             JSONArray options = new JSONArray();
-            for (PaymentOption o : branch.getPaymentOptions()) {
+            for (String o : branch.getPaymentOptions()) {
                 JSONObject option = new JSONObject();
-                option.put(JSONSchema.BRANCH_DATA_PAYMENT_OPTIONS_OPTION, o.name().toLowerCase());
+                option.put(JSONSchema.BRANCH_DATA_PAYMENT_OPTIONS_OPTION, o.toLowerCase());
                 options.add(option);
             }
 
@@ -142,13 +142,13 @@ public class ModelJsonFactory {
         }
         branch.setContacts(contactList);
 
-        List<PaymentOption> paymentOptionList = new ArrayList<>();
+        List<String> paymentOptionList = new ArrayList<>();
         JSONArray paymentOptions = (JSONArray) object.get(JSONSchema.BRANCH_DATA_PAYMENT_OPTIONS);
         if (paymentOptions != null) {
             Iterator<JSONObject> it = paymentOptions.iterator();
             while (it.hasNext()) {
                 JSONObject p = it.next();
-                paymentOptionList.add(PaymentOption.lookup((String) p.get(JSONSchema.BRANCH_DATA_PAYMENT_OPTIONS_OPTION)));
+                paymentOptionList.add((String) p.get(JSONSchema.BRANCH_DATA_PAYMENT_OPTIONS_OPTION));
             }
         }
         branch.setPaymentOptions(paymentOptionList);

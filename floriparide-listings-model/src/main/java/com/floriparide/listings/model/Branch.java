@@ -27,7 +27,7 @@ public class Branch extends MetaModel {
 	//ISO 4217 format
 	String currency;
 
-	List<PaymentOption> paymentOptions;
+	List<String> paymentOptions;
 
 	List<Rubric> rubrics;
 
@@ -112,11 +112,11 @@ public class Branch extends MetaModel {
 		this.currency = currency;
 	}
 
-	public List<PaymentOption> getPaymentOptions() {
+	public List<String> getPaymentOptions() {
 		return paymentOptions;
 	}
 
-	public void setPaymentOptions(List<PaymentOption> paymentOptions) {
+	public void setPaymentOptions(List<String> paymentOptions) {
 		this.paymentOptions = paymentOptions;
 	}
 

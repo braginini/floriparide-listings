@@ -34,6 +34,9 @@ public class ScheduleElement extends Element<Schedule> {
     @JsonProperty("")
     List<IntervalElement> sunday = new ArrayList<>();
 
+    public ScheduleElement() {
+    }
+
     public ScheduleElement(Schedule schedule) {
         if (schedule != null) {
             this.monday = IntervalElement.modelListToElementList(schedule.getMonday());

@@ -551,4 +551,9 @@
 		</addColumn>
 	</changeSet>
 
+    <changeSet author="mbragin" id="40">
+        <sql>ALTER TABLE branch DROP CONSTRAINT validate_branch_payment_options;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

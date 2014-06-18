@@ -12,6 +12,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -30,6 +33,33 @@ public class CompanyDao extends CrudDao<Company> implements ICompanyDao {
 		return new CompanyRowMapper();
 	}
 
+    @Override
+    public long create(@NotNull Company company) throws Exception {
+
+        Assert.notNull(company, "Parameter company must not be null");
+
+        String query = "INSERT INTO " + table + " ("
+                + Schema.FIELD_NAME +
+                "," + Schema.FIELD_DESCRIPTION +
+                "," + Schema.TABLE_COMPANY_FIELD_PROJECT_ID +
+                "," + Schema.TABLE_COMPANY_FIELD_PROMO +
+                ") VALUES (:name, :description, :project_id, :promo)";
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        getNamedJdbcTemplate().update(query,
+                new MapSqlParameterSource()
+                        .addValue("name", company.getName())
+                        .addValue("description", company.getDescription())
+                        .addValue("promo", company.getPromoText())
+                        .addValue("project_id", company.getProjectId()),
+                keyHolder);
+
+        Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
+
+        return id;
+    }
+
 	@NotNull
     @Override
     public List<Company> getCompanies(long projectId, int offset, int limit) throws Exception {
@@ -42,7 +72,7 @@ public class CompanyDao extends CrudDao<Company> implements ICompanyDao {
                         .addValue("limit", limit)
                         .addValue("offset", offset)
                         .addValue("project_id", projectId),
-                new CompanyRowMapper());
+                new CompanyRowMapper( ));
     }
 
     @NotNull

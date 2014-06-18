@@ -18,6 +18,9 @@ public class IntervalElement extends Element<Interval> {
     @JsonProperty("")
     String to;
 
+    public IntervalElement() {
+    }
+
     @Override
     public Interval getModel() {
         return new Interval(from, to);
