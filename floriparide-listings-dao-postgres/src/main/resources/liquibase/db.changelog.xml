@@ -556,4 +556,10 @@
         </sql>
     </changeSet>
 
+    <changeSet author="mbragin" id="41">
+        <sql>ALTER TABLE company DROP CONSTRAINT company_name_key;
+        ALTER TABLE branch DROP CONSTRAINT branch_name_key;
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
