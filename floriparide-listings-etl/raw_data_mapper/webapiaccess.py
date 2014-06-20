@@ -16,10 +16,10 @@ def create_branch(branch):
     company["project_id"] = 0
     response = urllib.request.urlopen(req, json.dumps(company).encode("UTF-8"))
     company_id = int(response.read())
-    print(company_id)
+    #print(company_id)
 
     branch["company_id"] = company_id
     req = urllib.request.Request('http://localhost:8080/admin/v1/branch')
     req.add_header('Content-Type', 'application/json')
     response = urllib.request.urlopen(req, json.dumps(branch).encode("UTF-8"))
-    print(int(response.read()))
+    #print(int(response.read()))
