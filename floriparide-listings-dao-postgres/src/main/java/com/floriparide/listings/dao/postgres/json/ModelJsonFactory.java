@@ -102,6 +102,14 @@ public class ModelJsonFactory {
 	        object.put(JSONSchema.SCHEDULE_FIELD, schedule);
         }
 
+        if (branch.getRawSchedule() != null && !branch.getRawSchedule().isEmpty()) {
+            object.put(JSONSchema.BRANCH_RAW_SCHEDULE, branch.getRawSchedule());
+        }
+
+        if (branch.getRawAddress() != null && !branch.getRawAddress().isEmpty()) {
+            object.put(JSONSchema.BRANCH_RAW_ADDRESS, branch.getRawAddress());
+        }
+
         return object.toJSONString();
     }
 
@@ -356,5 +364,7 @@ public class ModelJsonFactory {
 	    public static final String INTERVAL_DATA_FROM = "from";
 	    public static final String INTERVAL_DATA_TO = "to";
 	    public static final String SCHEDULE_FIELD = "schedule";
+        public static final String BRANCH_RAW_ADDRESS = "raw_address";
+        public static final String BRANCH_RAW_SCHEDULE = "raw_schedule";
     }
 }

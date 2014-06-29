@@ -23,4 +23,5 @@ def create_branch(branch):
     req.add_header('Content-Type', 'application/json')
     response = urllib.request.urlopen(req, json.dumps(branch).encode("UTF-8"))
     branch_id = int(response.read())
-    print(branch_id)
+    print("%s" % str(branch_id))
+    return branch_id

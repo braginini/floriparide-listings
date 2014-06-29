@@ -1,5 +1,4 @@
 __author__ = 'mikhail'
-import json
 import re
 import unicodedata
 

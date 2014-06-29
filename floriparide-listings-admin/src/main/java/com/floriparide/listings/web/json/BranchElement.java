@@ -58,6 +58,9 @@ public class BranchElement extends Element<Branch> {
     @JsonProperty("raw_schedule")
     String rawSchedule;
 
+    @JsonProperty("raw_address")
+    String rawAddress;
+
     @JsonProperty("")
     ScheduleElement schedule;
 
@@ -79,6 +82,7 @@ public class BranchElement extends Element<Branch> {
         this.currency = branch.getCurrency();
         this.article = branch.getArticle();
         this.rawSchedule = branch.getRawSchedule();
+        this.rawAddress = branch.getRawAddress();
         this.schedule = new ScheduleElement(branch.getSchedule());
 
         this.paymentOptions = branch.getPaymentOptions();
@@ -213,6 +217,14 @@ public class BranchElement extends Element<Branch> {
         this.rawSchedule = rawSchedule;
     }
 
+    public String getRawAddress() {
+        return rawAddress;
+    }
+
+    public void setRawAddress(String rawAddress) {
+        this.rawAddress = rawAddress;
+    }
+
     @Override
     @JsonIgnore
     public Branch getModel() {
@@ -235,6 +247,8 @@ public class BranchElement extends Element<Branch> {
             branch.setRawSchedule(rawSchedule);
         if (schedule != null)
             branch.setSchedule(schedule.getModel());
+        if (rawAddress != null)
+            branch.setRawAddress(rawAddress);
 
         return branch;
     }
