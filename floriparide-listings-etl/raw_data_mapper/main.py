@@ -5,8 +5,7 @@ import traceback
 import os
 import model_convertor
 import webapiaccess
-import sys
-import unicodedata
+from geopy import geocoders
 
 rootPath = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 rubrics_path = rootPath + r"\data\final_lists\mappings\rubric_hagah_mapping.md"
@@ -28,19 +27,26 @@ except:
 
 if branches:
     mapping = mappings_reader.getmap(hagah_map_path)
-    branches = [model_convertor.convert_raw_branch(b, mapping, rubrics_map, attrs_map) for b in branches]
+    branches = [model_convertor.convert_raw_branch(b, mapping, rubrics_map, attrs_map) for b in branches if b]
     print(len(branches))
 
     branch_set = set()
     dup = 0
+    g = geocoders.GoogleV3()
     for b in branches:
         if b.get("address"):
-            key = b["name"] + b["address"]
-            if key not in branch_set:
-                webapiaccess.create_branch(b)
-                branch_set.add(key)
-            else:
-                dup += 1
+            loc = g.geocode(b["address"])
+            if loc:
+                place, (lat, lon) = str(loc), (loc.latitude, loc.longitude)
+                b["address"] = place
+                b["lat"] = lat
+                b["lon"] = lon
+                key = b["name"] + b["address"]
+                if key not in branch_set:
+                    webapiaccess.create_branch(b)
+                    branch_set.add(key)
+                else:
+                    dup += 1
         else:
             webapiaccess.create_branch(b)
 
