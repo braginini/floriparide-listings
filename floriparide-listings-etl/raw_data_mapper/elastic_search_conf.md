@@ -1,3 +1,21 @@
+PUT florianopolis/
+{
+    "settings": {
+        "analysis": {
+            "analyzer": {
+                "index_analyzer": {
+                    "tokenizer": "standard",
+                    "filter": ["standard", "lowercase", "stop", "asciifolding", "porter_stem"]
+                },
+                "search_analyzer": {
+                    "tokenizer": "standard",
+                    "filter": ["standard", "lowercase", "stop", "asciifolding", "porter_stem"]
+                }
+            }
+        }
+    }
+}
+
 PUT florianopolis/branch/_mapping
 {
 "branch": {
