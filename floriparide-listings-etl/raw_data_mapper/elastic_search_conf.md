@@ -36,3 +36,17 @@ PUT florianopolis/branch/_mapping
       }
     }
 }
+
+#river conf
+PUT /_river/my_jdbc_river/_meta
+{
+    "type" : "jdbc",
+    "jdbc" : {
+        "url" : "jdbc:postgresql://localhost:5432/floriparide_listings",
+        "user" : "postgres",
+        "password" : "postgres",
+        "sql" : "select id as _id, name, data  from public.branch",
+        "index" : "florianopolis",
+        "type" : "branch"
+    }
+}
