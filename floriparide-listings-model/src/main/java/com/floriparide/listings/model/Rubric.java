@@ -27,7 +27,11 @@ public class Rubric extends MultiLangMetaModel {
 	public Rubric() {
 	}
 
-	public Rubric(Long id, Long parentId, List<Rubric> children, List<AttributesGroup> attributesGroups, Map<String, String> names) {
+    public Rubric(Long id) {
+        this.id = id;
+    }
+
+    public Rubric(Long id, Long parentId, List<Rubric> children, List<AttributesGroup> attributesGroups, Map<String, String> names) {
 		super(names);
 		this.id = id;
 		this.parentId = parentId;

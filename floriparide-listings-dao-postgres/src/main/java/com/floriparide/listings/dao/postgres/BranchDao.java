@@ -90,8 +90,6 @@ public class BranchDao extends CrudDao<Branch> implements IBranchDao {
     }
 
     @Override
-    //TODO make transactional
-    @Transactional(propagation = Propagation.REQUIRED)
     public long create(@NotNull Branch branch) throws Exception {
 
         String query = "INSERT INTO " + table + " ("
@@ -113,14 +111,7 @@ public class BranchDao extends CrudDao<Branch> implements IBranchDao {
                         .addValue("data", ModelJsonFactory.getBranchJSONData(branch)),
                 keyHolder);
 
-        Long id = (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
-
-        branch.setId(id);
-
-        if (branch.getRubrics() != null && !branch.getRubrics().isEmpty())
-            addRubrics(branch.getId(), branch.getRubrics());
-
-        return id;
+        return (Long) keyHolder.getKeys().get(Schema.FIELD_ID);
     }
 
     @Override
@@ -140,54 +131,6 @@ public class BranchDao extends CrudDao<Branch> implements IBranchDao {
                         .addValue("id", branch.getId())
                         .addValue("data", ModelJsonFactory.getBranchJSONData(branch)));
 
-        updateRubrics(branch);
-
-    }
-
-    //DuplicateKeyException is thrown when we already have a branch-rubric reference
-    //so we insert the batch one by one ignoring DuplicateKeyException
-    //todo maybe get all rubrics and insert that ones that does not exist? it is more elegant
-    private void updateRubrics(@NotNull Branch branch) throws Exception {
-
-        if (branch.getRubrics() != null && !branch.getRubrics().isEmpty()) {
-            try {
-                addRubrics(branch.getId(), branch.getRubrics());
-            } catch (DuplicateKeyException e) {
-                log.debug("Duplicate key detected while updating rubrics. Don't worry I'll handle this");
-
-                List<Rubric> fromDb = new ArrayList<>(); //todo reference rubricDao
-                List<Rubric> referencesToCreate = new ArrayList<>();
-
-                for (Rubric r : branch.getRubrics()) {
-                    if (!fromDb.contains(r))
-                        referencesToCreate.add(r);
-
-                    fromDb.remove(r);
-                }
-
-                addRubrics(branch.getId(), referencesToCreate);
-                deleteRubrics(branch.getId(), fromDb);
-            }
-        }
-    }
-
-    private void deleteRubrics(final long branchId, final @NotNull List<Rubric> toDelete) throws Exception {
-        String query = "DELETE FROM " + Schema.TABLE_BRANCH_RUBRICS + " WHERE " +
-                Schema.FIELD_BRANCH_ID + " = ? AND " + Schema.FIELD_RUBRIC_ID + " = ?";
-
-        getJdbcTemplate().batchUpdate(query, new BatchPreparedStatementSetter() {
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                Rubric rubric = toDelete.get(i);
-                ps.setLong(1, branchId);
-                ps.setLong(2, rubric.getId());
-            }
-
-            @Override
-            public int getBatchSize() {
-                return toDelete.size();
-            }
-        });
     }
 
     @Nullable
@@ -212,29 +155,4 @@ public class BranchDao extends CrudDao<Branch> implements IBranchDao {
 	protected RowMapper<Branch> getRowMapper() {
 		return new BranchRowMapper();
 	}
-
-	private void addRubric(long branchId, @NotNull Rubric rubric) throws Exception {
-        addRubrics(branchId, Arrays.asList(rubric));
-    }
-
-    private void addRubrics(final long branchId, @NotNull final List<Rubric> rubrics) throws Exception {
-
-        String query = "INSERT INTO " + Schema.TABLE_BRANCH_RUBRICS + " (" + Schema.FIELD_BRANCH_ID +
-                "," + Schema.FIELD_RUBRIC_ID + ") VALUES (?, ?);";
-
-        getJdbcTemplate().batchUpdate(query, new BatchPreparedStatementSetter() {
-
-            @Override
-            public void setValues(PreparedStatement ps, int i) throws SQLException {
-                Rubric rubric = rubrics.get(i);
-                ps.setLong(1, branchId);
-                ps.setLong(2, rubric.getId());
-            }
-
-            @Override
-            public int getBatchSize() {
-                return rubrics.size();
-            }
-        });
-    }
 }
