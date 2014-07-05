@@ -562,4 +562,8 @@
         </sql>
     </changeSet>
 
+    <changeSet id="42" author="mbragin">
+        <dropTable tableName="branch_rubrics"/>
+    </changeSet>
+
 </databaseChangeLog>

@@ -9,7 +9,7 @@ import mappings_reader
 import traceback
 import os
 import model_convertor
-import webapiaccess
+import webapi_access
 
 rootPath = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 rubrics_path = rootPath + r"\data\final_lists\mappings\rubric_hagah_mapping.md"
@@ -61,7 +61,7 @@ if branches:
                         raise GeocoderServiceError(sys.exc_info()[0])
             key = b["name"] + b["address"]
             if key not in branch_set:
-                branch_id = webapiaccess.create_branch(b)
+                branch_id = webapi_access.create_branch(b)
                 branch_set.add(key)
                 #write to file to save the state
                 line = "%s;%s;%s;%s;%s\n" % (b.get("name"), str(branch_id), b.get("address"), b.get("lat"), b.get("lon"))
@@ -70,7 +70,7 @@ if branches:
             else:
                 dup += 1
         else:
-            webapiaccess.create_branch(b)
+            webapi_access.create_branch(b)
 
     f.close()
     print(dup)
