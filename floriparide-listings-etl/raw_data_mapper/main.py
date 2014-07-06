@@ -41,7 +41,7 @@ if branches:
         b["raw_address"] = b.get("address")
         if b.get("address"):
             #get the geocoding info for an address
-            g = geocoders.GoogleV3(api_key="AIzaSyC3pYl4E8bwR6OLtGWZOh6etjjtcNyN-Cw", timeout=300)
+            g = geocoders.GoogleV3(api_key="AIzaSyArI9wIPFW9iaMJHxdPzh7bGceb6C3Oef8", timeout=300)
             done = False
             attempt = 0
             while not done:
@@ -64,7 +64,8 @@ if branches:
                 branch_id = webapi_access.create_branch(b)
                 branch_set.add(key)
                 #write to file to save the state
-                line = "%s;%s;%s;%s;%s\n" % (b.get("name"), str(branch_id), b.get("address"), b.get("lat"), b.get("lon"))
+                line = "%s;%s;%s;%s;%s;%s\n" % (b.get("name"), str(branch_id), b.get("address"), b.get("raw_address"),
+                                                b.get("lat"), b.get("lon"))
                 f.write(line.encode("utf-8"))
                 f.flush()
             else:
