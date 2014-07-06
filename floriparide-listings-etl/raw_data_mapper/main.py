@@ -10,6 +10,7 @@ import traceback
 import os
 import model_convertor
 import webapi_access
+import geocoded_reader
 
 rootPath = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 rubrics_path = rootPath + r"\data\final_lists\mappings\rubric_hagah_mapping.md"
@@ -36,6 +37,10 @@ if branches:
 
     branch_set = set()
     dup = 0
+
+    #geo_map = geocoded_reader.getmap("C://Users//mikhail//Documents//IdeaProjects//floriparide-listings//"
+    #                                "floriparide-listings-etl//raw_data_mapper//geocoded")
+
     f = open("geocoded", "ab")
     for b in branches:
         b["raw_address"] = b.get("address")

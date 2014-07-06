@@ -95,18 +95,14 @@ public class BranchDao extends CrudDao<Branch> implements IBranchDao {
         String query = "INSERT INTO " + table + " ("
                 + Schema.FIELD_NAME +
                 "," + Schema.TABLE_BRANCH_FIELD_COMPANY_ID +
-                "," + Schema.FIELD_CREATED +
-                "," + Schema.FIELD_UPDATED +
                 "," + Schema.FIELD_DATA +
-                ") VALUES (:name, :company_id, :created, :updated, :data::json)";
+                ") VALUES (:name, :company_id, :data::json)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         getNamedJdbcTemplate().update(query,
                 new MapSqlParameterSource()
                         .addValue("name", branch.getName())
-                        .addValue("created", System.currentTimeMillis())
-                        .addValue("updated", System.currentTimeMillis())
                         .addValue("company_id", branch.getCompanyId())
                         .addValue("data", ModelJsonFactory.getBranchJSONData(branch)),
                 keyHolder);
@@ -119,14 +115,12 @@ public class BranchDao extends CrudDao<Branch> implements IBranchDao {
         String query = "UPDATE " + table + " SET " +
                 Schema.FIELD_NAME + " = :name" +
                 "," + Schema.TABLE_BRANCH_FIELD_COMPANY_ID + " = :company_id" +
-                "," + Schema.FIELD_UPDATED + " = :updated" +
                 "," + Schema.FIELD_DATA + " = :data::json" +
                 " WHERE " + Schema.FIELD_ID + " = :id";
 
         getNamedJdbcTemplate().update(query,
                 new MapSqlParameterSource()
                         .addValue("name", branch.getName())
-                        .addValue("updated", System.currentTimeMillis())
                         .addValue("company_id", branch.getCompanyId())
                         .addValue("id", branch.getId())
                         .addValue("data", ModelJsonFactory.getBranchJSONData(branch)));
