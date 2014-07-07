@@ -57,7 +57,22 @@ def get_history(ts, audit_table):
 
 old_timestamp, new_timestamp = load_timestamps()
 history = get_history(old_timestamp, "audit.a_branch")
+
+#map with key = entity_id (e.g. branch, company) and all the rest as a value
+history_map = {}
+for h in history:
+    key = h["data"]["id"]
+    value = history_map.get(key)
+    if not value:
+        history_map[key] = h
+    else:
+        #take into account only latest changes for specific id
+        if h["timestamp"] > value["timestamp"]:
+            history_map[key] = h
+
 pass
+#for h in history:
+
 
 
 

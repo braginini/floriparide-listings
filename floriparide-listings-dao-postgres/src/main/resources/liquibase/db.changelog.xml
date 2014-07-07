@@ -1007,5 +1007,14 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="64" author="mbragin">
+       <sql>DELETE FROM audit.index_builder;
+	       INSERT INTO audit.index_builder(
+	       "timestamp")
+	       VALUES ('2014-01-01 00:00:00.000-03');</sql>
+    </changeSet>
+
+
+
 
 </databaseChangeLog>
