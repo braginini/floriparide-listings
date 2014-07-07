@@ -703,13 +703,16 @@
             -- make use of the special variable TG_OP to work out the operation.
             --
             IF (TG_OP = 'DELETE') THEN
-            INSERT INTO journal.j_branch (source_id, name, operation_type, timestamp, company_id) VALUES (OLD.id, OLD.name, 'D', now(), OLD.company_id);
+            INSERT INTO journal.j_branch (source_id, name, operation_type, timestamp, company_id) VALUES (OLD.id,
+            OLD.name, 'D', now(), OLD.company_id);
             RETURN OLD;
             ELSIF (TG_OP = 'UPDATE') THEN
-            INSERT INTO journal.j_branch (source_id, name, operation_type, timestamp, company_id) VALUES (NEW.id, NEW.name, 'U', now(), NEW.company_id);
+            INSERT INTO journal.j_branch (source_id, name, operation_type, timestamp, company_id) VALUES (NEW.id,
+            NEW.name, 'U', now(), NEW.company_id);
             RETURN NEW;
             ELSIF (TG_OP = 'INSERT') THEN
-            INSERT INTO journal.j_branch (source_id, name, operation_type, timestamp, company_id) VALUES (NEW.id, NEW.name, 'I', now(), NEW.company_id);
+            INSERT INTO journal.j_branch (source_id, name, operation_type, timestamp, company_id) VALUES (NEW.id,
+            NEW.name, 'I', now(), NEW.company_id);
             RETURN NEW;
             END IF;
             RETURN NULL; -- result is ignored since this is an AFTER trigger
@@ -837,146 +840,172 @@
         </rollback>
     </changeSet>
 
-	<changeSet id="56" author="mbragin">
-		<sql splitStatements="false">
-			CREATE SCHEMA IF NOT EXISTS audit
-	    </sql>
-		<createTable schemaName="audit"
-		             tableName="a_branch">
-			<column name="id" type="bigserial">
-				<constraints primaryKey="true" nullable="false"/>
-			</column>
-			<column name="data" type="json">
-				<constraints nullable="false"/>
-			</column>
-			<column name="timestamp" type="TIMESTAMP WITH TIMEZONE">
-				<constraints nullable="false"/>
-			</column>
-			<column name="operation_type" type="operation_type">
-				<constraints nullable="false"/>
-			</column>
-		</createTable>
+    <changeSet id="56" author="mbragin">
+        <sql splitStatements="false">
+            CREATE SCHEMA IF NOT EXISTS audit
+        </sql>
+        <createTable schemaName="audit"
+                     tableName="a_branch">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="data" type="json">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP WITH TIMEZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation_type" type="operation_type">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
 
-		<createTable schemaName="audit"
-		             tableName="a_company">
-			<column name="id" type="bigserial">
-				<constraints primaryKey="true" nullable="false"/>
-			</column>
-			<column name="data" type="json">
-				<constraints nullable="false"/>
-			</column>
-			<column name="timestamp" type="TIMESTAMP WITH TIMEZONE">
-				<constraints nullable="false"/>
-			</column>
-			<column name="operation_type" type="operation_type">
-				<constraints nullable="false"/>
-			</column>
-		</createTable>
-	</changeSet>
+        <createTable schemaName="audit"
+                     tableName="a_company">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="data" type="json">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP WITH TIMEZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation_type" type="operation_type">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 
-	<changeSet id="57" author="mbragin">
-		<sql>DROP TRIGGER branch_journaling ON public.branch;</sql>
-		<sql>DROP TRIGGER company_journaling ON public.company;</sql>
-		<sql>DROP FUNCTION IF EXISTS process_branch_journaling()</sql>
-		<sql>DROP FUNCTION IF EXISTS process_company_journaling()</sql>
-		<dropTable tableName="journal.j_branch"/>
-		<dropTable tableName="journal.j_company"/>
-		<sql splitStatements="false">
-			DROP SCHEMA IF EXISTS journal CASCADE;
-		</sql>
-	</changeSet>
+    <changeSet id="57" author="mbragin">
+        <sql>DROP TRIGGER branch_journaling ON public.branch;</sql>
+        <sql>DROP TRIGGER company_journaling ON public.company;</sql>
+        <sql>DROP FUNCTION IF EXISTS process_branch_journaling()</sql>
+        <sql>DROP FUNCTION IF EXISTS process_company_journaling()</sql>
+        <dropTable tableName="journal.j_branch"/>
+        <dropTable tableName="journal.j_company"/>
+        <sql splitStatements="false">
+            DROP SCHEMA IF EXISTS journal CASCADE;
+        </sql>
+    </changeSet>
 
 
-	<changeSet id="58" author="mbragin">
-		<sql splitStatements="false">
-			CREATE OR REPLACE FUNCTION branch_audit()
-			RETURNS trigger AS
-			$BODY$
-			BEGIN
-			IF (TG_OP = 'DELETE') THEN
-			INSERT INTO audit.a_branch (operation_type, timestamp, data)
-			VALUES ('D', now(), row_to_json(OLD));
-			RETURN OLD;
-			ELSIF (TG_OP = 'UPDATE') THEN
-			INSERT INTO audit.a_branch (operation_type, timestamp, data)
-			VALUES ('U', now(), row_to_json(NEW));
-			RETURN NEW;
-			ELSIF (TG_OP = 'INSERT') THEN
-			INSERT INTO audit.a_branch (operation_type, timestamp, data)
-			VALUES ('I', now(), row_to_json(NEW));
-			RETURN NEW;
-			END IF;
-			RETURN NULL; -- result is ignored since this is an AFTER trigger
-			END;
-			$BODY$
-			LANGUAGE plpgsql VOLATILE
-			COST 100;
-			ALTER FUNCTION branch_audit()
-			OWNER TO postgres;
+    <changeSet id="58" author="mbragin">
+        <sql splitStatements="false">
+            CREATE OR REPLACE FUNCTION branch_audit()
+            RETURNS trigger AS
+            $BODY$
+            BEGIN
+            IF (TG_OP = 'DELETE') THEN
+            INSERT INTO audit.a_branch (operation_type, timestamp, data)
+            VALUES ('D', now(), row_to_json(OLD));
+            RETURN OLD;
+            ELSIF (TG_OP = 'UPDATE') THEN
+            INSERT INTO audit.a_branch (operation_type, timestamp, data)
+            VALUES ('U', now(), row_to_json(NEW));
+            RETURN NEW;
+            ELSIF (TG_OP = 'INSERT') THEN
+            INSERT INTO audit.a_branch (operation_type, timestamp, data)
+            VALUES ('I', now(), row_to_json(NEW));
+            RETURN NEW;
+            END IF;
+            RETURN NULL; -- result is ignored since this is an AFTER trigger
+            END;
+            $BODY$
+            LANGUAGE plpgsql VOLATILE
+            COST 100;
+            ALTER FUNCTION branch_audit()
+            OWNER TO postgres;
 
-			DROP TRIGGER IF EXISTS trg_branch_audit ON public.branch;
+            DROP TRIGGER IF EXISTS trg_branch_audit ON public.branch;
 
-			CREATE TRIGGER trg_branch_audit
-			AFTER INSERT OR UPDATE OR DELETE
-			ON branch
-			FOR EACH ROW
-			EXECUTE PROCEDURE branch_audit();
-		</sql>
-		<rollback>
-			DROP TRIGGER trg_branch_audit ON public.branch;
-		</rollback>
-	</changeSet>
+            CREATE TRIGGER trg_branch_audit
+            AFTER INSERT OR UPDATE OR DELETE
+            ON branch
+            FOR EACH ROW
+            EXECUTE PROCEDURE branch_audit();
+        </sql>
+        <rollback>
+            DROP TRIGGER trg_branch_audit ON public.branch;
+        </rollback>
+    </changeSet>
 
-	<changeSet id="59" author="mbragin">
-		<sql splitStatements="false">
-			CREATE OR REPLACE FUNCTION company_audit()
-			RETURNS trigger AS
-			$BODY$
-			BEGIN
-			IF (TG_OP = 'DELETE') THEN
-			INSERT INTO audit.a_company (operation_type, timestamp, data)
-			VALUES ('D', now(), row_to_json(OLD));
-			RETURN OLD;
-			ELSIF (TG_OP = 'UPDATE') THEN
-			INSERT INTO audit.a_company (operation_type, timestamp, data)
-			VALUES ('U', now(), row_to_json(NEW));
-			RETURN NEW;
-			ELSIF (TG_OP = 'INSERT') THEN
-			INSERT INTO audit.a_company (operation_type, timestamp, data)
-			VALUES ('I', now(), row_to_json(NEW));
-			RETURN NEW;
-			END IF;
-			RETURN NULL; -- result is ignored since this is an AFTER trigger
-			END;
-			$BODY$
-			LANGUAGE plpgsql VOLATILE
-			COST 100;
-			ALTER FUNCTION company_audit()
-			OWNER TO postgres;
+    <changeSet id="59" author="mbragin">
+        <sql splitStatements="false">
+            CREATE OR REPLACE FUNCTION company_audit()
+            RETURNS trigger AS
+            $BODY$
+            BEGIN
+            IF (TG_OP = 'DELETE') THEN
+            INSERT INTO audit.a_company (operation_type, timestamp, data)
+            VALUES ('D', now(), row_to_json(OLD));
+            RETURN OLD;
+            ELSIF (TG_OP = 'UPDATE') THEN
+            INSERT INTO audit.a_company (operation_type, timestamp, data)
+            VALUES ('U', now(), row_to_json(NEW));
+            RETURN NEW;
+            ELSIF (TG_OP = 'INSERT') THEN
+            INSERT INTO audit.a_company (operation_type, timestamp, data)
+            VALUES ('I', now(), row_to_json(NEW));
+            RETURN NEW;
+            END IF;
+            RETURN NULL; -- result is ignored since this is an AFTER trigger
+            END;
+            $BODY$
+            LANGUAGE plpgsql VOLATILE
+            COST 100;
+            ALTER FUNCTION company_audit()
+            OWNER TO postgres;
 
-			CREATE TRIGGER trg_company_audit
-			AFTER INSERT OR UPDATE OR DELETE
-			ON company
-			FOR EACH ROW
-			EXECUTE PROCEDURE company_audit();
-		</sql>
-		<rollback>
-			DROP TRIGGER trg_company_audit ON public.company;
-		</rollback>
-	</changeSet>
+            CREATE TRIGGER trg_company_audit
+            AFTER INSERT OR UPDATE OR DELETE
+            ON company
+            FOR EACH ROW
+            EXECUTE PROCEDURE company_audit();
+        </sql>
+        <rollback>
+            DROP TRIGGER trg_company_audit ON public.company;
+        </rollback>
+    </changeSet>
 
-	<changeSet id="60" author="mbragin">
-	<dropColumn columnName="created"
-	            tableName="branch"/>
-	<dropColumn columnName="updated"
-	            tableName="branch"/>
+    <changeSet id="60" author="mbragin">
+        <dropColumn columnName="created"
+                    tableName="branch"/>
+        <dropColumn columnName="updated"
+                    tableName="branch"/>
 
-	<dropColumn columnName="created"
-	            tableName="company"/>
-	<dropColumn columnName="updated"
-	            tableName="company"/>
-	</changeSet>
+        <dropColumn columnName="created"
+                    tableName="company"/>
+        <dropColumn columnName="updated"
+                    tableName="company"/>
+    </changeSet>
 
+    <changeSet id="61" author="mbragin">
+        <createIndex indexName="idx_a_branch_timestamp"
+                     schemaName="audit"
+                     tableName="a_branch">
+            <column name="timestamp" type="timestamp with timezone"/>
+        </createIndex>
+        <createIndex indexName="idx_a_company_timestamp"
+                     schemaName="audit"
+                     tableName="a_company">
+            <column name="timestamp" type="timestamp with timezone"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="62" author="mbragin">
+        <sql>ALTER TABLE audit.a_branch ADD CONSTRAINT validate_source_id CHECK ((data->>'id') IS NOT NULL AND (data->>'id')::text != '');</sql>
+        <sql>ALTER TABLE audit.a_company ADD CONSTRAINT validate_source_id CHECK ((data->>'id') IS NOT NULL AND (data->>'id')::text != '');</sql>
+    </changeSet>
+
+    <changeSet id="63" author="mbragin">
+        <createTable schemaName="audit"
+                     tableName="index_builder">
+            <column name="timestamp" type="timestamp with timezone">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 
 
 </databaseChangeLog>
