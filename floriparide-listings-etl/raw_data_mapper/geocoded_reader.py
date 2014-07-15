@@ -1,4 +1,6 @@
 import traceback
+
+
 def getmap(file_path):
     """
     opens and reads attribute or rubric mapping files
@@ -8,13 +10,11 @@ def getmap(file_path):
     try:
         f = open(file_path, encoding="utf-8")
         try:
-            #skip header
-            f.readline()
             for line in f:
-              split = line.split(";")
-              name = split[0]
-              address = split[3]
-              map[name+address] = True
+                split = line.split(";")
+                name = split[0]
+                address = split[3]
+                map[name + address] = True
         finally:
             f.close()
     except IOError:

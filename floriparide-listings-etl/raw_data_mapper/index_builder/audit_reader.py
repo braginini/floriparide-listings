@@ -1,5 +1,6 @@
-import psycopg2
-import psycopg2.extras
+import audit_dao
+import base_dao
+import json
 __author__ = 'Mike'
 #load timestamp from db of file
 #get new_timestamp in ms from DB "SELECT EXTRACT (EPOCH FROM now())"
@@ -10,53 +11,11 @@ __author__ = 'Mike'
 #update timestamp in DB or file by new_timestamp
 
 
-def load_timestamps():
-    """
-    loads the last run timestamp along with current timestamp of the DB
-    :return: timestamp with timezone
-    """
+old_timestamp, new_timestamp = audit_dao.load_timestamps()
+history = audit_dao.get_history(old_timestamp, "audit.a_branch")
 
-    conn = None
-    cur = None
-    try:
-        conn = psycopg2.connect("dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432")
-        cur = conn.cursor()
-        query = "SELECT timestamp, now() FROM audit.index_builder"
-        print("Running query %s" % query)
-        cur.execute(query)
-        return cur.fetchone()
-    finally:
-        if cur is not None:
-            cur.close()
-        if conn is not None:
-            conn.close()
-
-
-def get_history(ts, audit_table):
-    """
-    selects all fields from specified audit_table that have timestamp >= specified one
-    :param ts: timestamp with timezone
-    :param audit_table: the audit table with schema specified
-    :return: the set of rows specified audit_table
-    """
-
-    conn = None
-    cur = None
-    try:
-        conn = psycopg2.connect("dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432")
-        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT * FROM %s WHERE timestamp >= '%s'" % (audit_table, ts)
-        print("Running query %s" % query)
-        cur.execute(query)
-        return cur.fetchall()
-    finally:
-        if cur is not None:
-            cur.close()
-        if conn is not None:
-            conn.close()
-
-old_timestamp, new_timestamp = load_timestamps()
-history = get_history(old_timestamp, "audit.a_branch")
+rubrics = {r[0]: r for r in base_dao.get_all("public.rubric")}
+attributes = {r[0]: r for r in base_dao.get_all("public.attribute")}
 
 #map with key = entity_id (e.g. branch, company) and all the rest as a value
 history_map = {}
@@ -70,8 +29,34 @@ for h in history:
         if h["timestamp"] > value["timestamp"]:
             history_map[key] = h
 
-pass
-#for h in history:
+to_delete = []
+to_update_create = []
+for k, v in history_map.items():
+    if v["operation_type"] is "D":
+        to_delete.append(k)
+    else:
+        #bulding up document for index
+        #first take all fields from data
+        data = {key: value for key, value in v["data"]["data"].items() if key is "description" or key
+                is "payment_options" or key is "address"}
+        #add name
+        data["name"] = v["data"]["name"]
+
+        #add rubrics and attributes names
+        data["rubrics"] = [rubrics[k["id"]][2]["names"] for k in v["data"]["data"].get("rubrics")]
+        curr_attributes = v["data"]["data"].get("attributes")
+        if curr_attributes:
+            curr_attributes = [attributes[k["id"]][1]["names"] for k in v["data"]["data"].get("attributes")]
+        data["attributes"] = curr_attributes
+        to_update_create.append(data)
+
+print(json.dumps(to_update_create, ensure_ascii=False))
+print(json.dumps(to_delete, ensure_ascii=False))
+
+
+
+
+
 
 
 
