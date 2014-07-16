@@ -1,6 +1,7 @@
 import audit_dao
 import base_dao
 import json
+import branch_dao
 __author__ = 'Mike'
 #load timestamp from db of file
 #get new_timestamp in ms from DB "SELECT EXTRACT (EPOCH FROM now())"
@@ -14,24 +15,32 @@ __author__ = 'Mike'
 old_timestamp, new_timestamp = audit_dao.load_timestamps()
 history = audit_dao.get_history(old_timestamp, "audit.a_branch")
 
-rubrics = {r[0]: r for r in base_dao.get_all("public.rubric")}
-attributes = {r[0]: r for r in base_dao.get_all("public.attribute")}
-
 #map with key = entity_id (e.g. branch, company) and all the rest as a value
-history_map = {}
+branch_history_map = {}
 for h in history:
     key = h["data"]["id"]
-    value = history_map.get(key)
+    value = branch_history_map.get(key)
     if not value:
-        history_map[key] = h
+        branch_history_map[key] = h
     else:
         #take into account only latest changes for specific id
         if h["timestamp"] > value["timestamp"]:
-            history_map[key] = h
+            branch_history_map[key] = h
+
+#we have to track attributes and rubrics changes in order to update branches who's attribute names were changed
+#we need just id
+attribute_history_set = set(a["data"]["id"] for a in audit_dao.get_history(old_timestamp, "audit.a_attribute")
+                            if a["operation_type"] is 'U')
+rubric_history_set = set(r["data"]["id"] for r in audit_dao.get_history(old_timestamp, "audit.a_rubric")
+                         if r["operation_type"] is 'U')
+
+#get the set of current rubrics and attributes
+rubrics = {r[0]: r for r in base_dao.get_all("public.rubric")}
+attributes = {r[0]: r for r in base_dao.get_all("public.attribute")}
 
 to_delete = []
 to_update_create = []
-for k, v in history_map.items():
+for k, v in branch_history_map.items():
     if v["operation_type"] is "D":
         to_delete.append(k)
     else:

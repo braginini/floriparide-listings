@@ -54,6 +54,32 @@ def get_branch_rubrics(branch_id):
 
     return result
 
+def get_by_attrs_rubrics(attribute_ids=None, rubric_ids=None, exclude_is=None):
+    """
+    """
+    result = []
+    conn = None
+    cur = None
+    try:
+        conn = psycopg2.connect("dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432")
+        cur = conn.cursor()
+        query = "SELECT b.* FROM branch b, " \
+                "json_array_elements((data->>'attributes')::json) as a, " \
+                "json_array_elements((data->>'rubrics')::json) as r " \
+                "WHERE id NOT IN (%s) " \
+                "AND (a->>'id')::bigint IN (%s) " \
+                "OR (r->>'id')::bigint IN (%s)" % ",".join(exclude_is), ",".join(attribute_ids), ",".join(rubric_ids)
+        print("Running query %s" % query)
+        cur.execute(query)
+        result = cur.fetchall()
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+    return result
+
 
 def enum(**enums):
     return type('Enum', (), enums)
