@@ -2,6 +2,8 @@ import audit_dao
 import base_dao
 import json
 import branch_dao
+from elasticsearch import Elasticsearch
+from elasticsearch import helpers
 __author__ = 'Mike'
 #load timestamp from db of file
 #get new_timestamp in ms from DB "SELECT EXTRACT (EPOCH FROM now())"
@@ -40,11 +42,17 @@ attributes = {r[0]: r for r in base_dao.get_all("public.attribute")}
 
 other_branches = branch_dao.get_by_attrs_rubrics(attribute_history_set, rubric_history_set, branch_history_map.keys())
 
-to_delete = []
-to_update_create = []
+es_actions = []
 for k, v in branch_history_map.items():
-    if v["operation_type"] is "D":
-        to_delete.append(k)
+    action = {}
+    operation = v["operation_type"]
+    if operation is "D":
+        action = {
+            '_op_type': 'delete',
+            '_index': 'florianopolis',
+            '_type': 'branch',
+            '_id': int(k)
+        }
     else:
         #bulding up document for index
         #first take all fields from data
@@ -52,7 +60,6 @@ for k, v in branch_history_map.items():
                 or key == "description"}
         #add name
         data["name"] = v["data"]["name"]
-        data["_id"] = v["data"]["id"]
 
         #add rubrics and attributes names
         data["rubrics"] = [rubrics[k["id"]][2]["names"] for k in v["data"]["data"].get("rubrics")]
@@ -60,7 +67,22 @@ for k, v in branch_history_map.items():
         if curr_attributes:
             curr_attributes = [attributes[key["id"]][1]["names"] for key in v["data"]["data"].get("attributes")]
         data["attributes"] = curr_attributes
-        to_update_create.append(data)
+
+        #define es operation type
+        if operation == "I":
+            operation = "create"
+        else:
+            operation = "update"
+
+        action = {
+            '_op_type': operation,
+            '_index': 'florianopolis',
+            '_type': 'branch',
+            '_id': int(k),
+            'doc': data
+        }
+
+    es_actions.append(action)
 
 #add branches who's attributes or rubrics were updated
 if other_branches:
@@ -68,19 +90,28 @@ if other_branches:
         data = {key: value for key, value in b["data"].items() if key == "address" or key == "payment_options"
                 or key == "description"}
         data["name"] = b["name"]
-        data["_id"] = b["id"]
         data["rubrics"] = [rubrics[key["id"]][2]["names"] for key in b["data"].get("rubrics")]
         curr_attributes = b["data"].get("attributes")
         if curr_attributes:
                 curr_attributes = [attributes[key["id"]][1]["names"] for key in b["data"].get("attributes")]
         data["attributes"] = curr_attributes
-        to_update_create.append(data)
+        action = {
+            '_op_type': 'update',
+            '_index': 'florianopolis',
+            '_type': 'branch',
+            '_id': int(b["id"]),
+            'doc': data
+        }
+
+        es_actions.append(action)
 
 #todo send to ES
 #audit_dao.update_timestamp(new_timestamp)
 
-print(json.dumps(to_update_create, ensure_ascii=False))
-print(json.dumps(to_delete, ensure_ascii=False))
+print(json.dumps(es_actions, ensure_ascii=False))
+es = Elasticsearch()
+es.bulk(es_actions)
+
 
 
 
