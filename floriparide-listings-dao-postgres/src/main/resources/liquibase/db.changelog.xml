@@ -994,8 +994,12 @@
     </changeSet>
 
     <changeSet id="62" author="mbragin">
-        <sql>ALTER TABLE audit.a_branch ADD CONSTRAINT validate_source_id CHECK ((data->>'id') IS NOT NULL AND (data->>'id')::text != '');</sql>
-        <sql>ALTER TABLE audit.a_company ADD CONSTRAINT validate_source_id CHECK ((data->>'id') IS NOT NULL AND (data->>'id')::text != '');</sql>
+        <sql>ALTER TABLE audit.a_branch ADD CONSTRAINT validate_source_id CHECK ((data->>'id') IS NOT NULL AND
+            (data->>'id')::text != '');
+        </sql>
+        <sql>ALTER TABLE audit.a_company ADD CONSTRAINT validate_source_id CHECK ((data->>'id') IS NOT NULL AND
+            (data->>'id')::text != '');
+        </sql>
     </changeSet>
 
     <changeSet id="63" author="mbragin">
@@ -1008,120 +1012,130 @@
     </changeSet>
 
     <changeSet id="64" author="mbragin">
-       <sql>DELETE FROM audit.index_builder;
-	       INSERT INTO audit.index_builder(
-	       "timestamp")
-	       VALUES ('2014-01-01 00:00:00.000-03');</sql>
+        <sql>DELETE FROM audit.index_builder;
+            INSERT INTO audit.index_builder(
+            "timestamp")
+            VALUES ('2014-01-01 00:00:00.000-03');
+        </sql>
     </changeSet>
 
-	<changeSet id="65" author="mbragin">
-		<createTable schemaName="audit"
-		             tableName="a_attribute">
-			<column name="id" type="bigserial">
-				<constraints primaryKey="true" nullable="false"/>
-			</column>
-			<column name="data" type="json">
-				<constraints nullable="false"/>
-			</column>
-			<column name="timestamp" type="TIMESTAMP WITH TIMEZONE">
-				<constraints nullable="false"/>
-			</column>
-			<column name="operation_type" type="operation_type">
-				<constraints nullable="false"/>
-			</column>
-		</createTable>
+    <changeSet id="65" author="mbragin">
+        <createTable schemaName="audit"
+                     tableName="a_attribute">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="data" type="json">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP WITH TIMEZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation_type" type="operation_type">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
 
-		<createTable schemaName="audit"
-		             tableName="a_rubric">
-			<column name="id" type="bigserial">
-				<constraints primaryKey="true" nullable="false"/>
-			</column>
-			<column name="data" type="json">
-				<constraints nullable="false"/>
-			</column>
-			<column name="timestamp" type="TIMESTAMP WITH TIMEZONE">
-				<constraints nullable="false"/>
-			</column>
-			<column name="operation_type" type="operation_type">
-				<constraints nullable="false"/>
-			</column>
-		</createTable>
-	</changeSet>
+        <createTable schemaName="audit"
+                     tableName="a_rubric">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="data" type="json">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP WITH TIMEZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="operation_type" type="operation_type">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 
-	<changeSet id="66" author="mbragin">
-		<sql splitStatements="false">
-			CREATE OR REPLACE FUNCTION attribute_audit()
-			RETURNS trigger AS
-			$BODY$
-			BEGIN
-			IF (TG_OP = 'DELETE') THEN
-			INSERT INTO audit.a_attribute (operation_type, timestamp, data)
-			VALUES ('D', now(), row_to_json(OLD));
-			RETURN OLD;
-			ELSIF (TG_OP = 'UPDATE') THEN
-			INSERT INTO audit.a_attribute (operation_type, timestamp, data)
-			VALUES ('U', now(), row_to_json(NEW));
-			RETURN NEW;
-			ELSIF (TG_OP = 'INSERT') THEN
-			INSERT INTO audit.a_attribute (operation_type, timestamp, data)
-			VALUES ('I', now(), row_to_json(NEW));
-			RETURN NEW;
-			END IF;
-			RETURN NULL; -- result is ignored since this is an AFTER trigger
-			END;
-			$BODY$
-			LANGUAGE plpgsql VOLATILE
-			COST 100;
-			ALTER FUNCTION attribute_audit()
-			OWNER TO postgres;
+    <changeSet id="66" author="mbragin">
+        <sql splitStatements="false">
+            CREATE OR REPLACE FUNCTION attribute_audit()
+            RETURNS trigger AS
+            $BODY$
+            BEGIN
+            IF (TG_OP = 'DELETE') THEN
+            INSERT INTO audit.a_attribute (operation_type, timestamp, data)
+            VALUES ('D', now(), row_to_json(OLD));
+            RETURN OLD;
+            ELSIF (TG_OP = 'UPDATE') THEN
+            INSERT INTO audit.a_attribute (operation_type, timestamp, data)
+            VALUES ('U', now(), row_to_json(NEW));
+            RETURN NEW;
+            ELSIF (TG_OP = 'INSERT') THEN
+            INSERT INTO audit.a_attribute (operation_type, timestamp, data)
+            VALUES ('I', now(), row_to_json(NEW));
+            RETURN NEW;
+            END IF;
+            RETURN NULL; -- result is ignored since this is an AFTER trigger
+            END;
+            $BODY$
+            LANGUAGE plpgsql VOLATILE
+            COST 100;
+            ALTER FUNCTION attribute_audit()
+            OWNER TO postgres;
 
-			CREATE TRIGGER trg_attribute_audit
-			AFTER INSERT OR UPDATE OR DELETE
-			ON public.attribute
-			FOR EACH ROW
-			EXECUTE PROCEDURE attribute_audit();
-		</sql>
-		<rollback>
-			DROP TRIGGER trg_attribute_audit ON public.attribute;
-		</rollback>
-	</changeSet>
+            CREATE TRIGGER trg_attribute_audit
+            AFTER INSERT OR UPDATE OR DELETE
+            ON public.attribute
+            FOR EACH ROW
+            EXECUTE PROCEDURE attribute_audit();
+        </sql>
+        <rollback>
+            DROP TRIGGER trg_attribute_audit ON public.attribute;
+        </rollback>
+    </changeSet>
 
-	<changeSet id="67" author="mbragin">
-		<sql splitStatements="false">
-			CREATE OR REPLACE FUNCTION rubric_audit()
-			RETURNS trigger AS
-			$BODY$
-			BEGIN
-			IF (TG_OP = 'DELETE') THEN
-			INSERT INTO audit.a_rubric (operation_type, timestamp, data)
-			VALUES ('D', now(), row_to_json(OLD));
-			RETURN OLD;
-			ELSIF (TG_OP = 'UPDATE') THEN
-			INSERT INTO audit.a_rubric (operation_type, timestamp, data)
-			VALUES ('U', now(), row_to_json(NEW));
-			RETURN NEW;
-			ELSIF (TG_OP = 'INSERT') THEN
-			INSERT INTO audit.a_rubric (operation_type, timestamp, data)
-			VALUES ('I', now(), row_to_json(NEW));
-			RETURN NEW;
-			END IF;
-			RETURN NULL; -- result is ignored since this is an AFTER trigger
-			END;
-			$BODY$
-			LANGUAGE plpgsql VOLATILE
-			COST 100;
-			ALTER FUNCTION attribute_audit()
-			OWNER TO postgres;
+    <changeSet id="67" author="mbragin">
+        <sql splitStatements="false">
+            CREATE OR REPLACE FUNCTION rubric_audit()
+            RETURNS trigger AS
+            $BODY$
+            BEGIN
+            IF (TG_OP = 'DELETE') THEN
+            INSERT INTO audit.a_rubric (operation_type, timestamp, data)
+            VALUES ('D', now(), row_to_json(OLD));
+            RETURN OLD;
+            ELSIF (TG_OP = 'UPDATE') THEN
+            INSERT INTO audit.a_rubric (operation_type, timestamp, data)
+            VALUES ('U', now(), row_to_json(NEW));
+            RETURN NEW;
+            ELSIF (TG_OP = 'INSERT') THEN
+            INSERT INTO audit.a_rubric (operation_type, timestamp, data)
+            VALUES ('I', now(), row_to_json(NEW));
+            RETURN NEW;
+            END IF;
+            RETURN NULL; -- result is ignored since this is an AFTER trigger
+            END;
+            $BODY$
+            LANGUAGE plpgsql VOLATILE
+            COST 100;
+            ALTER FUNCTION attribute_audit()
+            OWNER TO postgres;
 
-			CREATE TRIGGER trg_rubric_audit
-			AFTER INSERT OR UPDATE OR DELETE
-			ON public.rubric
-			FOR EACH ROW
-			EXECUTE PROCEDURE rubric_audit();
-		</sql>
-		<rollback>
-			DROP TRIGGER trg_rubric_audit ON public.rubric;
-		</rollback>
-	</changeSet>
+            CREATE TRIGGER trg_rubric_audit
+            AFTER INSERT OR UPDATE OR DELETE
+            ON public.rubric
+            FOR EACH ROW
+            EXECUTE PROCEDURE rubric_audit();
+        </sql>
+        <rollback>
+            DROP TRIGGER trg_rubric_audit ON public.rubric;
+        </rollback>
+    </changeSet>
+
+    <changeSet id="68" author="mbragin">
+        <addColumn schemaName="audit"
+                   tableName="index_builder">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
 
 </databaseChangeLog>

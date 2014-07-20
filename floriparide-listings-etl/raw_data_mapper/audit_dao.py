@@ -14,6 +14,7 @@ def load_timestamps():
     try:
         conn = psycopg2.connect("dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432")
         cur = conn.cursor()
+        conn.autocommit = True
         query = "SELECT timestamp, now() FROM audit.index_builder"
         print("Running query %s" % query)
         cur.execute(query)
@@ -25,7 +26,7 @@ def load_timestamps():
             conn.close()
 
 
-def update_timestamp(timestamp):
+def update_timestamp(new_timestamp):
     """
     """
 
@@ -34,10 +35,10 @@ def update_timestamp(timestamp):
     try:
         conn = psycopg2.connect("dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432")
         cur = conn.cursor()
-        query = "UPDATE audit.index_builder SET timestamp = %s" % str(timestamp)
+        query = "UPDATE audit.index_builder SET timestamp = '%s' WHERE id = 1" % str(new_timestamp)
         print("Running query %s" % query)
         cur.execute(query)
-        return cur.fetchone()
+        conn.commit()
     finally:
         if cur is not None:
             cur.close()

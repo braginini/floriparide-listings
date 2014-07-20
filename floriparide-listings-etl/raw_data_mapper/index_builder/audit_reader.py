@@ -67,15 +67,8 @@ for k, v in branch_history_map.items():
         if curr_attributes:
             curr_attributes = [attributes[key["id"]][1]["names"] for key in v["data"]["data"].get("attributes")]
         data["attributes"] = curr_attributes
-
-        #define es operation type
-        if operation == "I":
-            operation = "create"
-        else:
-            operation = "update"
-
         action = {
-            '_op_type': operation,
+            '_op_type': 'index',
             '_index': 'florianopolis',
             '_type': 'branch',
             '_id': int(k),
@@ -96,22 +89,21 @@ if other_branches:
                 curr_attributes = [attributes[key["id"]][1]["names"] for key in b["data"].get("attributes")]
         data["attributes"] = curr_attributes
         action = {
-            '_op_type': 'update',
+            '_op_type': 'index',
             '_index': 'florianopolis',
             '_type': 'branch',
-            '_id': int(b["id"]),
+            '_id': b["id"],
             '_source': data
         }
 
         es_actions.append(action)
 
-#todo send to ES
-#audit_dao.update_timestamp(new_timestamp)
-
-print(json.dumps(es_actions, ensure_ascii=False))
-es = Elasticsearch()
-helpers.bulk(es, es_actions)
-
+#update ES index and DB timestamp
+if es_actions:
+    es = Elasticsearch()
+    print(helpers.bulk(es, es_actions))
+    print(new_timestamp)
+    audit_dao.update_timestamp(new_timestamp)
 
 
 

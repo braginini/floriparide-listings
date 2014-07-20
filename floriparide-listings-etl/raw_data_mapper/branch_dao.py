@@ -65,21 +65,21 @@ def get_by_attrs_rubrics(attribute_ids=None, rubric_ids=None, exclude_ids=None):
     cur = None
     try:
         conn = psycopg2.connect("dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432")
-        cur = conn.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
         query = "SELECT b.* FROM branch b, " \
                         "json_array_elements((data->>'attributes')::json) as a, " \
                         "json_array_elements((data->>'rubrics')::json) as r"
 
         if exclude_ids:
-            query += " WHERE id NOT IN %s" % ",".join(exclude_ids)
+            query += " WHERE id NOT IN (%s)" % ",".join(str(x) for x in exclude_ids)
 
         if attribute_ids:
             if exclude_ids:
                 query += " AND"
             else:
                 query += " WHERE"
-            query += " (a->>'id')::bigint IN (%s)" % ",".join(attribute_ids)
+            query += " (a->>'id')::bigint IN (%s)" % ",".join(str(x) for x in attribute_ids)
 
         if rubric_ids:
             if attribute_ids:
@@ -88,7 +88,7 @@ def get_by_attrs_rubrics(attribute_ids=None, rubric_ids=None, exclude_ids=None):
                 query += " AND"
             else:
                 query += " WHERE"
-            query += " (r->>'id')::bigint IN (%s)" % ",".join(attribute_ids)
+            query += " (r->>'id')::bigint IN (%s)" % ",".join(str(x) for x in rubric_ids)
 
         print("Running query %s" % query)
         cur.execute(query)
