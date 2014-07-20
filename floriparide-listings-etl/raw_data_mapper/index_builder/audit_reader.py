@@ -48,10 +48,11 @@ for k, v in branch_history_map.items():
     else:
         #bulding up document for index
         #first take all fields from data
-        data = {key: value for key, value in v["data"]["data"].items() if key is "description" or key
-                is "payment_options" or key is "address"}
+        data = {key: value for key, value in v["data"]["data"].items() if key == "address" or key == "payment_options"
+                or key == "description"}
         #add name
         data["name"] = v["data"]["name"]
+        data["_id"] = v["data"]["id"]
 
         #add rubrics and attributes names
         data["rubrics"] = [rubrics[k["id"]][2]["names"] for k in v["data"]["data"].get("rubrics")]
@@ -64,9 +65,10 @@ for k, v in branch_history_map.items():
 #add branches who's attributes or rubrics were updated
 if other_branches:
     for b in other_branches:
-        data = {key: value for key, value in b["data"].items() if key is "description" or key is "payment_options"
-                or key is "address"}
+        data = {key: value for key, value in b["data"].items() if key == "address" or key == "payment_options"
+                or key == "description"}
         data["name"] = b["name"]
+        data["_id"] = b["id"]
         data["rubrics"] = [rubrics[key["id"]][2]["names"] for key in b["data"].get("rubrics")]
         curr_attributes = b["data"].get("attributes")
         if curr_attributes:
