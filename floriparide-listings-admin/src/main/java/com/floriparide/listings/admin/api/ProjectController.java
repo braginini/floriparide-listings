@@ -19,7 +19,7 @@ import java.util.List;
  * Controller that defines all operations with projects.
  * <p/>
  * All the methods should throw an exception that are handled and converted to proper JSON response in
- * {@link com.floriparide.listings.admin.api.BaseController#handleException(javax.servlet.http.HttpServletResponse, Exception)}
+ * {@link com.floriparide.listings.BaseController#handleException(javax.servlet.http.HttpServletResponse, Exception)}
  *
  * @author Andrey Parfenov
  */

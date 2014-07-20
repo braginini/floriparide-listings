@@ -1,5 +1,6 @@
 package com.floriparide.listings.admin.api;
 
+import com.floriparide.listings.BaseController;
 import com.floriparide.listings.admin.api.request.impl.CreateEntityListRequest;
 import com.floriparide.listings.dao.IRawDataDao;
 import com.floriparide.listings.web.json.RawDataElement;

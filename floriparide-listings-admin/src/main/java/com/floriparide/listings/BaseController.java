@@ -1,4 +1,4 @@
-package com.floriparide.listings.admin.api;
+package com.floriparide.listings;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.floriparide.listings.admin.api.response.ErrorResponse;
