@@ -25,6 +25,26 @@ def load_timestamps():
             conn.close()
 
 
+def update_timestamp(timestamp):
+    """
+    """
+
+    conn = None
+    cur = None
+    try:
+        conn = psycopg2.connect("dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432")
+        cur = conn.cursor()
+        query = "UPDATE audit.index_builder SET timestamp = %s" % str(timestamp)
+        print("Running query %s" % query)
+        cur.execute(query)
+        return cur.fetchone()
+    finally:
+        if cur is not None:
+            cur.close()
+        if conn is not None:
+            conn.close()
+
+
 def get_history(ts, audit_table):
     """
     selects all fields from specified audit_table that have timestamp >= specified one
@@ -47,3 +67,4 @@ def get_history(ts, audit_table):
             cur.close()
         if conn is not None:
             conn.close()
+

@@ -38,6 +38,8 @@ rubric_history_set = set(r["data"]["id"] for r in audit_dao.get_history(old_time
 rubrics = {r[0]: r for r in base_dao.get_all("public.rubric")}
 attributes = {r[0]: r for r in base_dao.get_all("public.attribute")}
 
+other_branches = branch_dao.get_by_attrs_rubrics(attribute_history_set, rubric_history_set, branch_history_map.keys())
+
 to_delete = []
 to_update_create = []
 for k, v in branch_history_map.items():
@@ -55,9 +57,25 @@ for k, v in branch_history_map.items():
         data["rubrics"] = [rubrics[k["id"]][2]["names"] for k in v["data"]["data"].get("rubrics")]
         curr_attributes = v["data"]["data"].get("attributes")
         if curr_attributes:
-            curr_attributes = [attributes[k["id"]][1]["names"] for k in v["data"]["data"].get("attributes")]
+            curr_attributes = [attributes[key["id"]][1]["names"] for key in v["data"]["data"].get("attributes")]
         data["attributes"] = curr_attributes
         to_update_create.append(data)
+
+#add branches who's attributes or rubrics were updated
+if other_branches:
+    for b in other_branches:
+        data = {key: value for key, value in b["data"].items() if key is "description" or key is "payment_options"
+                or key is "address"}
+        data["name"] = b["name"]
+        data["rubrics"] = [rubrics[key["id"]][2]["names"] for key in b["data"].get("rubrics")]
+        curr_attributes = b["data"].get("attributes")
+        if curr_attributes:
+                curr_attributes = [attributes[key["id"]][1]["names"] for key in b["data"].get("attributes")]
+        data["attributes"] = curr_attributes
+        to_update_create.append(data)
+
+#todo send to ES
+#audit_dao.update_timestamp(new_timestamp)
 
 print(json.dumps(to_update_create, ensure_ascii=False))
 print(json.dumps(to_delete, ensure_ascii=False))
