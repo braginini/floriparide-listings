@@ -79,7 +79,7 @@ for k, v in branch_history_map.items():
             '_index': 'florianopolis',
             '_type': 'branch',
             '_id': int(k),
-            'doc': data
+            '_source': data
         }
 
     es_actions.append(action)
@@ -100,7 +100,7 @@ if other_branches:
             '_index': 'florianopolis',
             '_type': 'branch',
             '_id': int(b["id"]),
-            'doc': data
+            '_source': data
         }
 
         es_actions.append(action)
@@ -110,7 +110,7 @@ if other_branches:
 
 print(json.dumps(es_actions, ensure_ascii=False))
 es = Elasticsearch()
-es.bulk(es_actions)
+helpers.bulk(es, es_actions)
 
 
 
