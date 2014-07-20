@@ -35,7 +35,7 @@ def update_timestamp(new_timestamp):
     try:
         conn = psycopg2.connect("dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432")
         cur = conn.cursor()
-        query = "UPDATE audit.index_builder SET timestamp = '%s' WHERE id = 1" % str(new_timestamp)
+        query = "UPDATE audit.index_builder SET timestamp = '%s' WHERE id = 4" % str(new_timestamp)
         print("Running query %s" % query)
         cur.execute(query)
         conn.commit()
