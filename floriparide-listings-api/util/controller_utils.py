@@ -12,7 +12,7 @@ def check_params(**types):
             def_params = []
         farg = farg[:len(farg) - len(def_params)]
 
-        param_info = [(par, ptype, par in farg) for par, ptype in types.iteritems()]
+        param_info = [(par, ptype, par in farg) for par, ptype in types.items()]
 
         @functools.wraps(f)
         def wrapper(*args, **kargs):
