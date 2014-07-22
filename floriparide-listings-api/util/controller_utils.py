@@ -5,7 +5,7 @@ import inspect
 __author__ = 'Mike'
 
 
-def check_params(**types):
+def validate(**types):
     def decorate(f):
         farg, _, _, def_params = inspect.getargspec(f)
         if def_params is None:
