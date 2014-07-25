@@ -62,10 +62,13 @@ for k, v in branch_history_map.items():
         data["name"] = v["data"]["name"]
 
         #add rubrics and attributes names
-        data["rubrics"] = [rubrics[k["id"]][2]["names"] for k in v["data"]["data"].get("rubrics")]
+        data["rubrics"] = [{"names": rubrics[k["id"]][2]["names"], "id": k["id"]}
+                           for k in v["data"]["data"].get("rubrics")]
+
         curr_attributes = v["data"]["data"].get("attributes")
         if curr_attributes:
-            curr_attributes = [attributes[key["id"]][1]["names"] for key in v["data"]["data"].get("attributes")]
+            curr_attributes = [{"names": attributes[key["id"]][1]["names"], "id": key["id"]}
+                               for key in v["data"]["data"].get("attributes")]
         data["attributes"] = curr_attributes
         action = {
             '_op_type': 'index',
@@ -83,10 +86,13 @@ if other_branches:
         data = {key: value for key, value in b["data"].items() if key == "address" or key == "payment_options"
                 or key == "description"}
         data["name"] = b["name"]
-        data["rubrics"] = [rubrics[key["id"]][2]["names"] for key in b["data"].get("rubrics")]
+        data["rubrics"] = [{"names": rubrics[key["id"]][2]["names"], "id": key["id"]}
+                           for key in b["data"].get("rubrics")]
+
         curr_attributes = b["data"].get("attributes")
         if curr_attributes:
-                curr_attributes = [attributes[key["id"]][1]["names"] for key in b["data"].get("attributes")]
+                curr_attributes = [{"names": attributes[key["id"]][1]["names"], "id": key["id"]}
+                                   for key in b["data"].get("attributes")]
         data["attributes"] = curr_attributes
         action = {
             '_op_type': 'index',
@@ -97,6 +103,7 @@ if other_branches:
         }
 
         es_actions.append(action)
+
 
 #update ES index and DB timestamp
 if es_actions:
