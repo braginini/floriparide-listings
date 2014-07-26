@@ -31,7 +31,9 @@ public class BranchSearchController extends BaseController {
                                       @RequestParam(value = "limit", required = true) Integer limit,
                                       @RequestParam(value = "start", required = true) Integer start,
                                       @RequestParam(value = "project_id", required = true) Long projectId,
-                                 HttpServletRequest httpRequest) throws Exception {
+                                      HttpServletRequest httpRequest,
+                                      @RequestParam(value = "attrs", required = false) String... attributes) throws Exception {
+
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
