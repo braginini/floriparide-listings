@@ -26,7 +26,7 @@ The current API supports a bunch of methods:
    GET http://162.243.233.204:8888/catalog/1.0/branch/search?q=<query>&start=<start>&limit=<limit>&project_id=<project_id>&locale=<locale>
    ```
    Endpoint accepts the following parameters:
-   — ```q``` - the request query; mandatory, string
+   * ```q``` - the request query; mandatory, string
    — ```start``` - paging, index to return results from; mandatory, int
    — ```limit``` - paging, the size of the result set (if bigger than 1000, will be limited to 1000); mandatory, int
    — ```project_id``` - the id of a project to search branches in; mandatory, bigint
