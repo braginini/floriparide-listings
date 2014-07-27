@@ -33,7 +33,7 @@ The current API supports a bunch of methods:
    * ```project_id``` - the id of a project to search branches in; mandatory, bigint
    * ```locale``` - the locale of the client; optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
    
-   The response Content-Type is ```application/json``` and contains a field ```result``` with the following top level fields:
+   The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```result``` with the following top level fields:
    * ```items``` - the list of branches
    * ```total``` - the total number of results found
    * ```markers``` - the list of coordinates for all results found
@@ -44,7 +44,7 @@ The current API supports a bunch of methods:
    * ```rubrics``` - the list of rubrics with nested ```id``` and ```name``` (localized) fields
    * ```name``` - the name of a branch
    * ```address``` - the address of a branch
-   * ```point``` - the ```lat``` and ```lon``` of a branch
+   * ```geometry``` - contains a ```point``` with ```lat``` and ```lon``` of a branch
    
    Each ```markers``` entry has the following structure:
    * ```branch_id``` - the id of a corresponding branch
@@ -63,40 +63,45 @@ The current API supports a bunch of methods:
    ```
    {
         "result": {
-            "items": [
+            "total": 2,
+            "markers": [
                 {
-                    "attributes": null,
-                    "name": "Café e Cia solução em Café",
-                    "rubrics": [
-                        {
-                            "names": {
-                                "ru_Ru": "Бары",
-                                "en_Us": "Bars",
-                                "pt_Br": "Bares"
-                            },
-                            "id": 8
-                        }
-                    ]
+                    "branch_id": 1,
+                    "lon": -48.5136375,
+                    "name": "Meat Shop",
+                    "lat": -27.5171001
+                },
+                {
+                    "branch_id": 8,
+                    "lon": -48.50553110000001,
+                    "name": "Amoratto Drive Thru",
+                    "lat": -27.4945225
+                },
+                {
+                    "branch_id": 10,
+                    "lon": -48.4714615,
+                    "name": "Floripão",
+                    "lat": -27.6339339
                 }
             ],
-            "total": 2,
+            "items": [
+                {
+                    "id": 1,
+                    "rubrics": null,
+                    "attributes": null,
+                    "name": "Meat Shop",
+                    "geometry": {
+                        "point": {
+                            "lon": -48.5136375,
+                            "lat": -27.5171001
+                        }
+                    },
+                    "address": "SC-401, 10954 - Santo Antonio de Lisboa, Ratones, Florianopolis - Santa Catarina, Brazil"
+                }
+            ],
             "top_rubrics": [
                 9,
                 16
-            ],
-            "markers": [
-                {
-                    "lat": -27.4945225,
-                    "branch_id": 8,
-                    "lon": -48.50553110000001,
-                    "name": "Amoratto Drive Thru"
-                },
-                {
-                    "lat": -27.6339339,
-                    "branch_id": 10,
-                    "lon": -48.4714615,
-                    "name": "Floripão"
-                }
             ]
         }
     }

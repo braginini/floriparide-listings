@@ -68,7 +68,7 @@ def prepare_full_result(es_result, locale, limit):
                for b in branches if b["data"].get("geometry")]
 
     # prepare top rubrics. minimum = 1 rubric and 30% threshold
-    #key - id, value number of times appeared
+    # key - id, value number of times appeared
     rubrics = {}
     for b in branches:
         if b["data"].get("rubrics"):
@@ -79,13 +79,13 @@ def prepare_full_result(es_result, locale, limit):
                 else:
                     rubrics[r_id] = 1
 
-    #sort will result in a list of tuples (id, count)
+    # sort will result in a list of tuples (id, count)
     rubrics = sorted(rubrics.items(), key=itemgetter(1), reverse=True)
     # apply 30% threshold
     top_rubrics = [e[0] for e in rubrics if e[1] > (len(branches) * 0.3)]
 
     if not top_rubrics and rubrics:
-        #take top rubric if no rubric had survived a threshold
+        # take top rubric if no rubric had survived a threshold
         top_rubrics.append(rubrics[0][0])
 
     result["markers"] = markers
@@ -103,12 +103,29 @@ def prepare_result(es_result, locale, limit=None):
 
     result = {"total": es_result["hits"]["total"]}
 
-    items = [v["_source"] for v in es_result["hits"]["hits"]]
+    def prepare_attrs_rubrics(raw):
+        if raw:
+            return [dict(id=a["id"], name=a["names"].get(locale)) for a in raw]
+
+    # get rubrics and attributes from ES result
+    ids = {v["_id"]: dict(attributes=prepare_attrs_rubrics(v["_source"].get("attributes")),
+                          rubrics=prepare_attrs_rubrics(v["_source"].get("rubrics")))
+           for v in es_result["hits"]["hits"]}
+    branches = dao.get_branches(ids.keys())
+
     if limit:
         if limit > result["total"]:
             limit = result["total"]
-        items = items[:limit]
+        branches = branches[:limit]
 
-    result["items"] = items
+    branches = [dict(id=b["id"],
+                     name=b["name"],
+                     attributes=ids[str(b["id"])].get("attributes"),
+                     rubrics=ids[str(b["id"])].get("rubrics"),
+                     address=b["data"].get("address"),
+                     geometry=b["data"].get("geometry"))
+                for b in branches]
+
+    result["items"] = branches
 
     return result
