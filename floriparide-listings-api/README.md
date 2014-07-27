@@ -10,6 +10,7 @@ __Install and run:__
 ```sh
 $ git clone git@github.com:braginini/floriparide-listings.git listings
 $ cd listings/floriparide-listings-api
+```
 
 Use ```config.py``` to specify DB and WEB Server configuration properties
 
