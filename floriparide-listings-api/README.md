@@ -86,17 +86,22 @@ The current API supports a bunch of methods:
             ],
             "items": [
                 {
-                    "id": 1,
-                    "rubrics": null,
-                    "attributes": null,
-                    "name": "Meat Shop",
+                    "name": "Villas Café",
+                    "address": "Alameda César Nascimento, 322 - Jurerê, Florianopolis - Santa Catarina, 88053-500, Brazil",
                     "geometry": {
                         "point": {
-                            "lon": -48.5136375,
-                            "lat": -27.5171001
+                            "lat": -27.439457,
+                            "lon": -48.4907683
                         }
                     },
-                    "address": "SC-401, 10954 - Santo Antonio de Lisboa, Ratones, Florianopolis - Santa Catarina, Brazil"
+                    "attributes": null,
+                    "rubrics": [
+                        {
+                            "name": "Cafés / Cafeterias",
+                            "id": 9
+                        }
+                    ],
+                    "id": 381
                 }
             ],
             "top_rubrics": [

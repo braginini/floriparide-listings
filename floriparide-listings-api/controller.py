@@ -129,3 +129,6 @@ def prepare_result(es_result, locale, limit=None):
     result["items"] = branches
 
     return result
+
+#todo get full branch from dao
+#todo cache attributes and rubrics
