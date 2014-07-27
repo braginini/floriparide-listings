@@ -45,9 +45,9 @@ def branch_search(q, project_id, start, limit, locale="pt_Br", attrs=None):
                                       body=body), locale, limit)
 
     response.content_type = "application/json;charset=UTF8"
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE')
-    response.headers.add('Access-Control-Allow-Headers', '*')
+    response.set_header('Access-Control-Allow-Origin', '*')
+    response.set_header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE')
+    response.set_header('Access-Control-Allow-Headers', '*')
     return json.dumps({"result": es_result}, ensure_ascii=False)
 
 
