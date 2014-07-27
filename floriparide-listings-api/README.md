@@ -1,0 +1,96 @@
+floriparide-listings-api
+===========================
+
+__Info:__
+
+This is a catalog API which is used by listings client implementation here [floriparide-listings-client](https://github.com/braginini/floriparide-listings-client.git "floriparide-listings-client") client side. 
+
+__Install:__
+
+```sh
+$ git clone git@github.com:braginini/floriparide-listings.git listings
+$ cd listings/floriparide-listings-api
+$ python main.py
+```
+
+Use ```config.py``` to specify DB and WEB Server configuration properties
+
+__Methods:__
+The current API supports a bunch of methods:
+
+1. Branch search:
+   ```
+   GET http://162.243.233.204:8888/catalog/1.0/branch/search?q=<query>&start=<start>&limit=<limit>&project_id=<project_id>&locale=<locale>
+   ```
+   Endpoint accepts the following parameters:
+   ```q``` - the request query; mandatory, string
+   ```start``` - paging, index to return results from; mandatory, int
+   ```limit``` - paging, the size of the result set (if bigger than 1000, will be limited to 1000); mandatory, int
+   ```project_id``` - the id of a project to search branches in; mandatory, bigint
+   ```locale``` - the locale of the client; optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
+   
+   The response Content-Type is ```application/json``` and contains a field ```result``` with the following top level fields:
+   ```items``` - the list of branches
+   ```total``` - the total number of results found
+   ```markers``` - the list of coordinates for all results found
+   ```top_rubrics``` - the set of top rubrics(ids) for the current results (rubrics that are present in 30% of all results)
+   
+   Each ```items``` entry has the following structure:
+   ```attributes``` - the list of attributes with nested ```id``` and ```name```(localized) fields
+   ```rubrics``` - the list of rubrics with nested ```id``` and ```name``` (localized) fields
+   ```name``` - the name of a branch
+   ```address``` - the address of a branch
+   ```point``` - the ```lat``` and ```lon``` of a branch
+   
+   Each ```markers``` entry has the following structure:
+   ```branch_id``` - the id of a corresponding branch
+   ```name``` - the name of the marker(branch) to display
+   ```lat``` - the latitude of the marker to display on map
+   ```lon``` - the longitude of the marker to display on map
+   
+   Note that ```markers``` and ```top_rubrics``` will be returned only for the first page (if ```start``` = 0).
+   
+   Example:
+   ```http://162.243.233.204:8888/catalog/1.0/branch/search?q=cafe&start=0&limit=1&project_id=1```
+   
+   ```{
+    "result": {
+        "items": [
+            {
+                "attributes": null,
+                "name": "Café e Cia solução em Café",
+                "rubrics": [
+                    {
+                        "names": {
+                            "ru_Ru": "Бары",
+                            "en_Us": "Bars",
+                            "pt_Br": "Bares"
+                        },
+                        "id": 8
+                    }
+                ]
+            }
+        ],
+        "total": 2,
+        "top_rubrics": [
+            9,
+            16
+        ],
+        "markers": [
+            {
+                "lat": -27.4945225,
+                "branch_id": 8,
+                "lon": -48.50553110000001,
+                "name": "Amoratto Drive Thru"
+            },
+            {
+                "lat": -27.6339339,
+                "branch_id": 10,
+                "lon": -48.4714615,
+                "name": "Floripão"
+            }
+        ]
+    }
+}```
+   
+   
