@@ -1,0 +1,11 @@
+floriparide.com.br
+postgres users:
+
+	postgres: LISTINGShaha2014
+	listings: bumbumLISTINGS2014
+
+system users:
+	listings: bumbumLISTINGS2014
+
+
+access postgres: psql -U listings floriparide_listings

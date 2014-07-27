@@ -44,7 +44,7 @@ def branch_search(q, project_id, start, limit, locale="pt_Br", attrs=None):
                                       doc_type="branch",
                                       body=body), locale, limit)
 
-    response.content_type = "text/plain;charset=UTF8"
+    response.content_type = "application/json;charset=UTF8"
     return json.dumps({"result": es_result}, ensure_ascii=False)
 
 
@@ -79,7 +79,7 @@ def prepare_full_result(es_result, locale, limit):
     #sort will result in a list of tuples (id, count)
     rubrics = sorted(rubrics.items(), key=itemgetter(1), reverse=True)
     # apply 30% threshold
-    top_rubrics = [e[0] for e in rubrics if e[1] > (len(branches) * 0.9)]
+    top_rubrics = [e[0] for e in rubrics if e[1] > (len(branches) * 0.3)]
 
     if not top_rubrics and rubrics:
         #take top rubric if no rubric had survived a threshold

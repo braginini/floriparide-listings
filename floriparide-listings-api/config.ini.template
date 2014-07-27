@@ -1,0 +1,11 @@
+[db]
+host = localhost
+port = 5432
+dbname = floriparide_listings
+user = postgres
+password = postgres
+pool_min_conn = 1
+pool_max_con = 20
+[web]
+host = localhost
+port = 8888

@@ -2,13 +2,18 @@ from contextlib import contextmanager
 import psycopg2
 from psycopg2 import pool
 from psycopg2 import extras
+import config
 
 
 __author__ = 'Mike'
 
-connection_pool = pool.ThreadedConnectionPool(1, 20, dbname="floriparide_listings", user="postgres",
-                                              password="postgres",
-                                              host="localhost", port="5432")
+connection_pool = pool.ThreadedConnectionPool(config.DB.POOL_MIN_CONN,
+                                              config.DB.POOL_MAX_CONN,
+                                              dbname=config.DB.DB_NAME,
+                                              user=config.DB.USER,
+                                              password=config.DB.PASSWORD,
+                                              host=config.DB.HOST,
+                                              port=config.DB.PORT)
 
 
 def get_branches(branch_ids):
@@ -17,6 +22,8 @@ def get_branches(branch_ids):
     :param branch_ids: the list of branch ids to return
     :return:
     """
+    if not branch_ids:
+        return []
     with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         query = "SELECT * FROM public.branch as b WHERE b.id in (%s)" % ",".join(branch_ids)
         print("Running query %s" % query)
