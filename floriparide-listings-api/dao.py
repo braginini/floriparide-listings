@@ -3,9 +3,11 @@ import psycopg2
 from psycopg2 import pool
 from psycopg2 import extras
 import config
+import logging
 
 
 __author__ = 'Mike'
+
 
 connection_pool = pool.ThreadedConnectionPool(config.DB.POOL_MIN_CONN,
                                               config.DB.POOL_MAX_CONN,
@@ -26,7 +28,7 @@ def get_branches(branch_ids):
         return []
     with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
         query = "SELECT * FROM public.branch as b WHERE b.id in (%s)" % ",".join(branch_ids)
-        print("Running query %s" % query)
+        logging.info("Running query %s" % query)
         cur.execute(query)
         return cur.fetchall()
 

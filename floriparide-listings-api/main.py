@@ -1,4 +1,5 @@
 import getopt
+import logging
 import bottle
 import sys
 import config
@@ -6,6 +7,8 @@ import config
 import controller
 
 __author__ = 'Mikhail Bragin'
+
+logging.basicConfig(level=logging.INFO)
 
 
 def parse_args(argv):

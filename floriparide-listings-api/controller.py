@@ -1,9 +1,9 @@
-import json
+import logging
 from operator import itemgetter
 from bottle import response
 import bottle
 import dao
-from util.controller_utils import validate
+from util.controller_utils import validate, json_response, enable_cors
 from elasticsearch import Elasticsearch
 
 
@@ -11,7 +11,17 @@ app = bottle.Bottle()
 es = Elasticsearch()
 
 
+@app.get("/branch/<project_id:int>/<id:int>")
+@json_response
+@enable_cors
+def branch_get(project_id, id):
+    branches = dao.get_branches([str(id)])
+    return branches
+
+
 @app.get("/branch/search")
+@json_response
+@enable_cors
 @validate(q=str, project_id=int, start=int, limit=int, locale=str, attrs=str)
 def branch_search(q, project_id, start, limit, locale="pt_Br", attrs=None):
     # todo get index name from db by project id
@@ -40,15 +50,12 @@ def branch_search(q, project_id, start, limit, locale="pt_Br", attrs=None):
         body["size"] = limit
         result_func = prepare_result
 
+    logging.info("Running ES query %s" % body)
     es_result = result_func(es.search(index="florianopolis",
                                       doc_type="branch",
                                       body=body), locale, limit)
-
-    response.content_type = "application/json;charset=UTF8"
-    response.set_header('Access-Control-Allow-Origin', '*')
-    response.set_header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE')
-    response.set_header('Access-Control-Allow-Headers', '*')
-    return json.dumps({"result": es_result}, ensure_ascii=False)
+    logging.info("Got ES result for query %s" % body)
+    return es_result
 
 
 def prepare_full_result(es_result, locale, limit):
@@ -130,5 +137,5 @@ def prepare_result(es_result, locale, limit=None):
 
     return result
 
-#todo get full branch from dao
-#todo cache attributes and rubrics
+# todo get full branch from dao
+# todo cache attributes and rubrics

@@ -23,11 +23,11 @@ $ python main.py
 
 Methods
 --------
-The current API supports a bunch of methods:
+The current API supports a bunch of methods for retrieving catalog information
 
-### Branch search:
+### Branch search
    ```
-   GET http://162.243.233.204:8888/catalog/1.0/branch/search?q=<query>&start=<start>&limit=<limit>&project_id=<project_id>&locale=<locale>
+   curl -X GET http://162.243.233.204:8888/catalog/1.0/branch/search?q=<query>&start=<start>&limit=<limit>&project_id=<project_id>&locale=<locale>
    ```
    Endpoint accepts the following parameters:
    * ```q``` - the request query; mandatory, string
