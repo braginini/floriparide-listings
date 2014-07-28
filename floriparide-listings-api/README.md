@@ -1,11 +1,13 @@
 floriparide-listings-api
 ===========================
 
-__Info:__
+Info
+-----
 
 This is a catalog API which is used by listings client implemented here [floriparide-listings-client](https://github.com/braginini/floriparide-listings-client.git "floriparide-listings-client") client side. 
 
-__Install and run:__
+Installation and first run
+--------------------------
 
 ```sh
 $ git clone git@github.com:braginini/floriparide-listings.git listings
@@ -19,10 +21,11 @@ To run the server use this command:
 $ python main.py
 ```
 
-__Methods:__
+Methods
+--------
 The current API supports a bunch of methods:
 
-1. Branch search:
+### Branch search:
    ```
    GET http://162.243.233.204:8888/catalog/1.0/branch/search?q=<query>&start=<start>&limit=<limit>&project_id=<project_id>&locale=<locale>
    ```
