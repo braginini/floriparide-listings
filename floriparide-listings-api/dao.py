@@ -18,16 +18,67 @@ connection_pool = pool.ThreadedConnectionPool(config.DB.POOL_MIN_CONN,
                                               port=config.DB.PORT)
 
 
-def get_branches(branch_ids):
+def get_branches_full(branch_ids):
     """
-    get all the branches by specified ids
+    get all the branches by specified ids (full version, with attributes and rubrics)
     :param branch_ids: the list of branch ids to return
     :return:
     """
-    if not branch_ids:
+    branches = get_entity("public.branch", branch_ids)
+
+    #get attributes and rubrics
+    attr_ids = set()
+    rubric_ids = set()
+    for b in branches:
+        attrs = b["data"].get("attributes")
+        if attrs:
+            for a in attrs:
+                attr_ids.add(str(a["id"]))
+
+        rubrics = b["data"].get("rubrics")
+        if rubrics:
+            for r in rubrics:
+                rubric_ids.add(str(r["id"]))
+
+    def convert_to_dict(entities):
+        return {e["id"]: e for e in entities}
+
+    attributes = convert_to_dict(get_entity("public.attribute", attr_ids))
+    rubrics = convert_to_dict(get_entity("public.rubric", rubric_ids))
+
+    result = []
+    for b in branches:
+        new_b = b
+        new_b["attributes"] = []
+        new_b["rubrics"] = []
+
+        attrs = b["data"].get("attributes")
+        if attrs:
+            for a in attrs:
+                new_b["attributes"].append(attributes[a["id"]])
+
+        rbrs = b["data"].get("rubrics")
+        if rbrs:
+            for r in rbrs:
+                new_b["rubrics"].append(rubrics[r["id"]])
+
+        result.append(new_b)
+
+    return branches
+
+
+def get_entity(name, ids):
+    """
+    retrieves all the entities by specified name (table with schema) and ids
+    :param name:
+    :param ids:
+    :return:
+    """
+    if not ids:
         return []
+
     with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        query = "SELECT * FROM public.branch as b WHERE b.id in (%s)" % ",".join(branch_ids)
+        query = "SELECT * FROM %s as e WHERE e.id in (%s)" % (name, ",".join(ids))
         logging.info("Running query %s" % query)
         cur.execute(query)
         return cur.fetchall()
