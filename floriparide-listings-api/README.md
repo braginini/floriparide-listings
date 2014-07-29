@@ -116,7 +116,7 @@ The current API supports a bunch of methods for retrieving catalog information
             ]
         }
     }
-```
+    ```
 
 ### Branch get
 
