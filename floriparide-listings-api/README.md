@@ -36,11 +36,14 @@ The current API supports a bunch of methods for retrieving catalog information
    * ```project_id``` - the id of a project to search branches in; mandatory, bigint
    * ```locale``` - the locale of the client; optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
    
-   The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```result``` with the following top level fields:
+   The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
+   and field ```result``` with the following top level fields:
    * ```items``` - the list of branches
    * ```total``` - the total number of results found
    * ```markers``` - the list of coordinates for all results found
    * ```top_rubrics``` - the set of top rubrics(ids) for the current results (rubrics that are present in 30% of all results)
+   
+   Field 
    
    Each ```items``` entry has the following structure:
    * ```attributes``` - the list of attributes with nested ```id``` and ```name```(localized) fields
@@ -114,5 +117,81 @@ The current API supports a bunch of methods for retrieving catalog information
         }
     }
 ```
+
+### Branch get
+
+    Returns a branch object by specified id and project id.
+    
+    ```
+    curl -X GET http://162.243.233.204:8888/catalog/1.0/branch/<project_id>/<branch_id>&locale=<locale>
+    ```
+    
+    Endpoint accepts the following path parameters:
+   * ```project_id``` - the id of a project to search branches in; mandatory, bigint
+   * ```id``` - the id of a branch to search for, bigint
+   
+   And one query parameter ```locale``` which indicates the locale of a client; 
+   optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
+   
+   The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
+   and field ```result``` with the following top level fields:
+   
+   * ```attributes``` - the list of attributes with nested ```id``` and ```name```(localized) fields
+   * ```rubrics``` - the list of rubrics with nested ```id``` and ```name``` (localized) fields
+   * ```name``` - the name of a branch
+   * ```address``` - the address of a branch
+   * ```geometry``` - contains a ```point``` with ```lat``` and ```lon``` of a branch
+   
+   Example request:
+   ``` 
+   http://162.243.233.204:8888/catalog/1.0/branch/1/1?locale=pt_Br
+   ```
+   
+   and corresponding response:
+   ```
+   {
+        "result": {
+            "address": "SC-401, 10954 - Santo Antonio de Lisboa, Ratones, Florianopolis - Santa Catarina, Brazil",
+            "geometry": {
+                "point": {
+                    "lat": -27.5171001,
+                    "lon": -48.5136375
+                }
+            },
+            "rubrics": [
+                {
+                    "name": "Restaurantes",
+                    "id": 16
+                }
+            ],
+            "name": "Meat Shop",
+            "id": 1,
+            "attributes": [
+                {
+                    "name": "Estacionamento",
+                    "id": 13
+                },
+                {
+                    "name": "Tele-entrega",
+                    "id": 15
+                },
+                {
+                    "name": "Ar condicionado",
+                    "id": 12
+                },
+                {
+                    "name": "Aceita Reserva",
+                    "id": 16
+                },
+                {
+                    "name": "Acessibilidade",
+                    "id": 11
+                }
+            ]
+        },
+        "success": true
+    }
+   ``` 
+
    
    
