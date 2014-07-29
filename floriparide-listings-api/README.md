@@ -116,17 +116,16 @@ The current API supports a bunch of methods for retrieving catalog information
             ]
         }
     }
-    ```
+   ```
 
 ### Branch get
 
-    Returns a branch object by specified id and project id.
-    
+   Returns a branch object by specified id and project id    
     ```
     curl -X GET http://162.243.233.204:8888/catalog/1.0/branch/<project_id>/<branch_id>&locale=<locale>
     ```
     
-    Endpoint accepts the following path parameters:
+   Endpoint accepts the following path parameters:
    * ```project_id``` - the id of a project to search branches in; mandatory, bigint
    * ```id``` - the id of a branch to search for, bigint
    
