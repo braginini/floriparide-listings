@@ -45,6 +45,7 @@ def branch_search(q, project_id, start, limit, locale="pt_Br", attrs=None):
         branches = branches[:limit]
 
     result["items"] = branch_response(branches, locale)
+    result["total"] = total
 
     return result
 
