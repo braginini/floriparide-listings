@@ -1,6 +1,6 @@
 import bottle
-import dao
 import service
+from util.controller_utils import HttpException
 from util.controller_utils import validate, json_response, enable_cors
 
 
@@ -10,9 +10,16 @@ app = bottle.Bottle()
 @app.get("/branch/<project_id:int>/<id:int>")
 @json_response
 @enable_cors
-def branch_get(project_id, id):
-    branches = dao.get_branches_full([str(id)])
-    return branches
+@validate(locale=str)
+def branch_get(project_id, id, locale="pt_Br"):
+    branch = service.get_branch(project_id, id)
+    if not branch:
+        raise HttpException(status=404, body="No branch was found for given id=%d and project_id=%d" % (id, project_id))
+
+    #as soon as branch response is built for a list of branches a
+    branch = branch_response([branch], locale)[0]
+
+    return branch
 
 
 @app.get("/branch/search")
@@ -27,14 +34,8 @@ def branch_search(q, project_id, start, limit, locale="pt_Br", attrs=None):
     branches, total = service.branch_search(q, project_id, start, limit, attrs)
        # prepare markers with branch_id, name, lat, lon
     if start == 0:
-        markers = [dict(branch_id=b["id"],
-                        name=b["name"],
-                        lat=b["data"]["geometry"]["point"]["lat"],
-                        lon=b["data"]["geometry"]["point"]["lon"])
-                   for b in branches if b["data"].get("geometry")]
-        top_rubrics = service.get_top_rubrics(branches)
-        result["markers"] = markers
-        result["top_rubrics"] = top_rubrics
+        result["markers"] = service.get_branch_markers(branches)
+        result["top_rubrics"] = service.get_branches_top_rubrics(branches)
 
     # cut the resulting list. Only after we get markers and top rubrics!!!
     # Cuz markers and top rubrics are calculated based on full search result
@@ -46,9 +47,6 @@ def branch_search(q, project_id, start, limit, locale="pt_Br", attrs=None):
     result["items"] = branch_response(branches, locale)
 
     return result
-
-
-
 
 
 def branch_response(branches, locale):

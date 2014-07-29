@@ -8,6 +8,18 @@ __author__ = 'mikhail'
 es = Elasticsearch()
 
 
+def get_branch(project_id, id):
+    """
+    gets the branch by specified project_id and id
+    :param project_id:
+    :param id:
+    :return:
+    """
+    branches = dao.get_branches_full(project_id, [str(id)])
+    if branches:
+        return branches[0]
+
+
 def branch_search(q, project_id, start, limit, attrs=None):
     body = {
         "from": start,
@@ -28,7 +40,7 @@ def branch_search(q, project_id, start, limit, attrs=None):
     else:
         body["size"] = limit
 
-    #search in ES
+    # search in ES
     logging.info("Running ES query %s" % body)
     es_result = es.search(index="florianopolis", doc_type="branch", body=body)
     logging.info("Got ES result for query %s" % body)
@@ -37,13 +49,26 @@ def branch_search(q, project_id, start, limit, attrs=None):
 
     # get the dictionary of branches with corresponding score (key -> branch_id, value -> score)
     ids = {v["_id"]: v["_score"] for v in es_result["hits"]["hits"]}
-    branches = dao.get_branches_full(ids.keys())
+    branches = dao.get_branches_full(project_id, ids.keys())
     #todo pub score to branches and sort by ES score
 
     return branches, total
 
 
-def get_top_rubrics(branches):
+def get_branch_markers(branches):
+    """
+    builds a set of markers for given list of branches
+    :param branches:
+    :return:
+    """
+    return [dict(branch_id=b["id"],
+                 name=b["name"],
+                 lat=b["data"]["geometry"]["point"]["lat"],
+                 lon=b["data"]["geometry"]["point"]["lon"])
+            for b in branches if b["data"].get("geometry")]
+
+
+def get_branches_top_rubrics(branches):
     """
     calculates top rubrics for a given branch list
     top rubric is a rubric that appears in a 30% of branches

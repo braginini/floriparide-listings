@@ -12,19 +12,10 @@ __author__ = 'Mike'
 is_debug = True
 
 
-class JsonResponse(bottle.BaseResponse):
-    def __init__(self, response=None, status=None, headers=None,
-                 mimetype=None, content_type=None, direct_passthrough=False):
-        response = json.dumps(response, ensure_ascii=False)
-        more_headers = {'Content-Type': 'application/json;charset=UTF8',
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'GET,POST,PUT,DELETE',
-                        'Access-Control-Allow-Headers': '*'}
-        super(JsonResponse, self).__init__(response, status, headers, **more_headers)
-
-    @classmethod
-    def force_type(cls, response, environ=None):
-        return JsonResponse(response)
+class HttpException(BaseException):
+    def __init__(self, status=500, body=""):
+        self._status = status
+        super(HttpException, self).__init__(body)
 
 
 def validate(**types):
@@ -68,7 +59,9 @@ def create_response(data):
     if isinstance(data, BaseException):
         # app.log_exception(data)
         status = 500
-        response_error = dict(code=500, message='Internal error')
+        if isinstance(data, HttpException):
+            status = data._status
+        response_error = dict(code=status, message='Internal error')
         if is_debug:
             response_error['message'] = str(data)
             tb = sys.exc_info()[2]

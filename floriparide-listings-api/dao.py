@@ -18,7 +18,7 @@ connection_pool = pool.ThreadedConnectionPool(config.DB.POOL_MIN_CONN,
                                               port=config.DB.PORT)
 
 
-def get_branches_full(branch_ids):
+def get_branches_full(project_id, branch_ids):
     """
     get all the branches by specified ids (full version, with attributes and rubrics)
     :param branch_ids: the list of branch ids to return
