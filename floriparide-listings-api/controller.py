@@ -60,12 +60,17 @@ def branch_response(branches, locale):
         if not_localized:
             return [dict(id=a["id"], name=a["data"]["names"].get(locale)) for a in not_localized]
 
+    def payment_opts(raw_opts):
+        if raw_opts:
+            return [o["option"] for o in raw_opts]
+
     return [dict(id=b["id"],
                  name=b["name"],
                  attributes=localize(b["attributes"]),
                  rubrics=localize(b["rubrics"]),
                  address=b["data"].get("address"),
                  contacts=b["data"].get("contacts"),
+                 payment_options=payment_opts(b["data"].get("payment_options")),
                  schedule=b["data"].get("schedule"),
                  geometry=b["data"].get("geometry"))
             for b in branches]

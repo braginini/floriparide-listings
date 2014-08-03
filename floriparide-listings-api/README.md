@@ -206,8 +206,9 @@ The current API supports a bunch of methods for retrieving catalog information
    * ```name``` - a name of a branch. Required.
    * ```address``` - an address of a branch.Required.
    * ```geometry``` - a geo location of a branch. Contains a ```point``` with ```lat``` and ```lon``` of a branch. Required.
-   * ```contacts``` - an array of contact information of a branch(see [Contact object](#contact_obj)). Required.
-   * ```schedule``` - an array of week days working hours of a branch(see [Schedule object](#schedule_obj)). If no week day specified consider that branch doesn't work this day. Required. 
+   * ```contacts``` - an array of contact information of a branch (see [Contact object](#contact_obj)). Required.
+   * ```schedule``` - an array of week days working hours of a branch (see [Schedule object](#schedule_obj)). If no week day specified consider that branch doesn't work this day. Required. 
+   * ```payment_options``` - an array of payment options accepted by branch(see [Payment options object](#payment_options_obj) for a full list of possible values). Required. 
    
 ### <a name="contact_obj">Contact object 
  
@@ -232,3 +233,15 @@ The current API supports a bunch of methods for retrieving catalog information
    * ```name``` - a name of the marker(branch) to display
    * ```lat``` - a latitude of the marker to display on map
    * ```lon``` - a longitude of the marker to display on map
+   
+### <a name="payment_options_obj">Payment options object 
+   * ```american express```
+   * ```visa```
+   * ```mastercard```
+   * ```diners```
+   * ```redeshop```
+   * ```visa electron```
+   * ```mastercard maestro```
+   * ```visa vale alimentação```
+   
+   //todo complete the list
