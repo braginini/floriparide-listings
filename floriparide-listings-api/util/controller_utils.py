@@ -56,11 +56,13 @@ def create_response(data):
 
     status = 200
 
-    if isinstance(data, BaseException):
+    if isinstance(data, BaseException) or isinstance(data, bottle.HTTPError):
         # app.log_exception(data)
         status = 500
         if isinstance(data, HttpException):
             status = data._status
+        if isinstance(data, bottle.HTTPError):
+            status = data.status
         response_error = dict(code=status, message='Internal error')
         if is_debug:
             response_error['message'] = str(data)

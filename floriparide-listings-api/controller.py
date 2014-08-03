@@ -1,4 +1,5 @@
 import bottle
+from bottle import error
 import service
 from util.controller_utils import HttpException
 from util.controller_utils import validate, json_response, enable_cors
@@ -7,15 +8,30 @@ from util.controller_utils import validate, json_response, enable_cors
 app = bottle.Bottle()
 
 
+@app.get("/branch/list/<project_id:int>/<id:int>")
+@json_response
+@enable_cors
+@validate(locale=str)
+def branch_list(project_id, id, locale="pt_Br"):
+    # branch will be a list of size 1 if the item was found
+    branch = service.get_branch(project_id, id)
+    if not branch:
+        raise HttpException(status=404, body="No branch was found for given id=%d and project_id=%d" % (id, project_id))
+
+    return {"items": branch_response(branch, locale)}
+
+
 @app.get("/branch/<project_id:int>/<id:int>")
 @json_response
 @enable_cors
 @validate(locale=str)
 def branch_get(project_id, id, locale="pt_Br"):
-    #branch will be a list of size 1 if the item was found
+    # branch will be a list of size 1 if the item was found
     branch = service.get_branch(project_id, id)
     if not branch:
-        raise HttpException(status=404, body="No branch was found for given id=%d and project_id=%d" % (id, project_id))
+        #raise HttpException(status=404, body="No branch was found for given id=%d and project_id=%d" % (id, project_id))
+        raise bottle.HTTPError(status=404,
+                               body="No branch was found for given id=%d and project_id=%d" % (id, project_id))
 
     return {"items": branch_response(branch, locale)}
 
@@ -30,7 +46,7 @@ def branch_search(q, project_id, start, limit, locale="pt_Br", attrs=None):
 
     result = {}
     branches, total = service.branch_search(q, project_id, start, limit, attrs)
-       # prepare markers with branch_id, name, lat, lon
+    # prepare markers with branch_id, name, lat, lon
     if start == 0:
         result["markers"] = service.get_branch_markers(branches)
         result["top_rubrics"] = service.get_branches_top_rubrics(branches)
@@ -55,7 +71,7 @@ def branch_response(branches, locale):
     :return:
     """
 
-    #localize attributes and rubrics by specified locale
+    # localize attributes and rubrics by specified locale
     def localize(not_localized):
         if not_localized:
             return [dict(id=a["id"], name=a["data"]["names"].get(locale)) for a in not_localized]
@@ -75,5 +91,9 @@ def branch_response(branches, locale):
                  geometry=b["data"].get("geometry"))
             for b in branches]
 
-# todo get full branch from dao
-# todo cache attributes and rubrics
+
+@app.error(404)
+@json_response
+@enable_cors
+def error404(error):
+    return error
