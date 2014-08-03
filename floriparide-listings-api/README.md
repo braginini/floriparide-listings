@@ -38,9 +38,9 @@ The current API supports a bunch of methods for retrieving catalog information
    
    The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
    and field ```result``` with the following top level fields:
-   * ```items``` - a list of branches (see [link Branch object](#branch_obj)).
+   * ```items``` - a list of branches (see [Branch object](#branch_obj)).
    * ```total``` - the total number of results found
-   * ```markers``` - a list of coordinates for all results found (see [link Marker object](#marker_obj)).
+   * ```markers``` - a list of coordinates for all results found (see [Marker object](#marker_obj)).
    * ```top_rubrics``` - a set of top rubrics(ids) for the current results (rubrics that are present in 30% of all results)
     
    
@@ -119,7 +119,7 @@ The current API supports a bunch of methods for retrieving catalog information
    optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
    
    The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
-   and field ```result``` with a field ```items``` which is an array of branch objects (see [link Branch object](#branch_obj)).
+   and field ```result``` with a field ```items``` which is an array of branch objects (see [Branch object](#branch_obj)).
    
    Example request:
    ``` 
@@ -201,15 +201,14 @@ The current API supports a bunch of methods for retrieving catalog information
    
 ### <a name="branch_obj"></a>Branch object
 
-   * ```attributes``` - an array of attributes (see [link Attribute object](#attribute_obj)). Required.
-   * ```rubrics``` - an array of rubrics (see [link Rubric object](#rubric_obj)). Required.
+   * ```attributes``` - an array of attributes (see [Attribute object](#attribute_obj)). Required.
+   * ```rubrics``` - an array of rubrics (see [Rubric object](#rubric_obj)). Required.
    * ```name``` - a name of a branch. Required.
    * ```address``` - an address of a branch.Required.
    * ```geometry``` - a geo location of a branch. Contains a ```point``` with ```lat``` and ```lon``` of a branch. Required.
-   * ```contacts``` - an array of contact information of a branch(see [link Contact object](#contact_obj)). Required.
-   * ```schedule``` - an array of week days working hours of a branch(see [link Schedule object](#schedule_obj)). 
-        If no week day specified consider that branch doesn't work this day. Required. 
-    
+   * ```contacts``` - an array of contact information of a branch(see [Contact object](#contact_obj)). Required.
+   * ```schedule``` - an array of week days working hours of a branch(see [Schedule object](#schedule_obj)). If no week day specified consider that branch doesn't work this day. Required. 
+   
 ### <a name="contact_obj">Contact object 
  
    * ```contact``` - the type of a contact (could be ```phone```, ```website```, ```email```, ```skype```, ```fax```, ```jabber```, ```twitter```. Required.   
