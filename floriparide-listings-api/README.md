@@ -38,27 +38,13 @@ The current API supports a bunch of methods for retrieving catalog information
    
    The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
    and field ```result``` with the following top level fields:
-   * ```items``` - the list of branches
+   * ```items``` - a list of branches (see [link Branch object](#branch_obj)).
    * ```total``` - the total number of results found
-   * ```markers``` - the list of coordinates for all results found
-   * ```top_rubrics``` - the set of top rubrics(ids) for the current results (rubrics that are present in 30% of all results)
+   * ```markers``` - a list of coordinates for all results found (see [link Marker object](#marker_obj)).
+   * ```top_rubrics``` - a set of top rubrics(ids) for the current results (rubrics that are present in 30% of all results)
+    
    
-   Field 
-   
-   Each ```items``` entry has the following structure:
-   * ```attributes``` - the list of attributes with nested ```id``` and ```name```(localized) fields
-   * ```rubrics``` - the list of rubrics with nested ```id``` and ```name``` (localized) fields
-   * ```name``` - the name of a branch
-   * ```address``` - the address of a branch
-   * ```geometry``` - contains a ```point``` with ```lat``` and ```lon``` of a branch
-   
-   Each ```markers``` entry has the following structure:
-   * ```branch_id``` - the id of a corresponding branch
-   * ```name``` - the name of the marker(branch) to display
-   * ```lat``` - the latitude of the marker to display on map
-   * ```lon``` - the longitude of the marker to display on map
-   
-   Note that ```markers``` and ```top_rubrics``` will be returned only for the first page (if ```start``` = 0).
+   **Note that ```markers``` and ```top_rubrics``` will be returned only for the first page (if ```start``` = 0).**
    
    Example request:
    ``` 
@@ -133,64 +119,117 @@ The current API supports a bunch of methods for retrieving catalog information
    optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
    
    The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
-   and field ```result``` with the following top level fields:
-   
-   * ```attributes``` - the list of attributes with nested ```id``` and ```name```(localized) fields
-   * ```rubrics``` - the list of rubrics with nested ```id``` and ```name``` (localized) fields
-   * ```name``` - the name of a branch
-   * ```address``` - the address of a branch
-   * ```geometry``` - contains a ```point``` with ```lat``` and ```lon``` of a branch
+   and field ```result``` with a field ```items``` which is an array of branch objects (see [link Branch object](#branch_obj)).
    
    Example request:
    ``` 
-   http://162.243.233.204:8888/catalog/1.0/branch/1/1?locale=pt_Br
+   http://162.243.233.204:8888/catalog/1.0/branch/1/2?locale=pt_Br
    ```
    
    and corresponding response:
    ```
    {
+        "success": true,
         "result": {
-            "address": "SC-401, 10954 - Santo Antonio de Lisboa, Ratones, Florianopolis - Santa Catarina, Brazil",
-            "geometry": {
-                "point": {
-                    "lat": -27.5171001,
-                    "lon": -48.5136375
-                }
-            },
-            "rubrics": [
+            "items": [
                 {
-                    "name": "Restaurantes",
-                    "id": 16
-                }
-            ],
-            "name": "Meat Shop",
-            "id": 1,
-            "attributes": [
-                {
-                    "name": "Estacionamento",
-                    "id": 13
-                },
-                {
-                    "name": "Tele-entrega",
-                    "id": 15
-                },
-                {
-                    "name": "Ar condicionado",
-                    "id": 12
-                },
-                {
-                    "name": "Aceita Reserva",
-                    "id": 16
-                },
-                {
-                    "name": "Acessibilidade",
-                    "id": 11
+                    "schedule": {
+                        "tuesday": [
+                            {
+                                "from": "07:00",
+                                "to": "21:30"
+                            }
+                        ],
+                        "friday": [
+                            {
+                                "from": "07:00",
+                                "to": "21:30"
+                            }
+                        ],
+                        "sunday": [
+                            {
+                                "from": "07:00",
+                                "to": "21:30"
+                            }
+                        ],
+                        "monday": [
+                            {
+                                "from": "07:00",
+                                "to": "21:30"
+                            }
+                        ],
+                        "saturday": [
+                            {
+                                "from": "07:00",
+                                "to": "21:30"
+                            }
+                        ],
+                        "thursday": [
+                            {
+                                "from": "07:00",
+                                "to": "21:30"
+                            }
+                        ]
+                    },
+                    "geometry": {
+                        "point": {
+                            "lat": -27.4398227,
+                            "lon": -48.3877566
+                        }
+                    },
+                    "attributes": [
+                        {
+                            "id": 15,
+                            "name": "Tele-entrega"
+                        }
+                    ],
+                    "contacts": null,
+                    "id": 2,
+                    "name": "Mercado Pai e Filho",
+                    "rubrics": [
+                        {
+                            "id": 12,
+                            "name": "Padarias"
+                        }
+                    ],
+                    "address": "Estrada Dom João Becker, 935 - Ingleses do Rio Vermelho, Florianopolis - Santa Catarina, 88058-600, Brazil"
                 }
             ]
-        },
-        "success": true
+        }
     }
    ``` 
+   
+### <a name="branch_obj"></a>Branch object
 
+   * ```attributes``` - an array of attributes (see [link Attribute object](#attribute_obj)). Required.
+   * ```rubrics``` - an array of rubrics (see [link Rubric object](#rubric_obj)). Required.
+   * ```name``` - a name of a branch. Required.
+   * ```address``` - an address of a branch.Required.
+   * ```geometry``` - a geo location of a branch. Contains a ```point``` with ```lat``` and ```lon``` of a branch. Required.
+   * ```contacts``` - an array of contact information of a branch(see [link Contact object](#contact_obj)). Required.
+   * ```schedule``` - an array of week days working hours of a branch(see [link Schedule object](#schedule_obj)). 
+        If no week day specified consider that branch doesn't work this day. Required. 
+    
+### <a name="contact_obj">Contact object 
+ 
+   * ```contact``` - the type of a contact (could be ```phone```, ```website```, ```email```, ```skype```, ```fax```, ```jabber```, ```twitter```. Required.   
+   * ```value``` - the value of the contact (e.g. for type ```phone``` the value could be (48)32349548. Required.
+   * ```comment``` - the additional comment of a contact. Optional.
+ 
+### <a name="attribute_obj">Attribute object 
+   * ```name``` - a name of an attribute (localized by request parameter  ```phone``` locale) .Required.   
+   * ```id``` - a unique id of an attribute
    
+### <a name="rubric_obj">Rubric object 
+   * ```name``` - a name of rubric (localized by request parameter  ```phone``` locale) .Required.   
+   * ```id``` - a unique id of a rubric   
    
+### <a name="schedule_obj">Schedule object 
+   * ```from``` - a time when the branch starts to work on this day ```hh:MM```. Required.   
+   * ```to``` - a time when the branch closes on this day ```hh:MM```. Required.    
+   
+### <a name="marker_obj">Marker object 
+   * ```branch_id``` - an id of a corresponding branch
+   * ```name``` - a name of the marker(branch) to display
+   * ```lat``` - a latitude of the marker to display on map
+   * ```lon``` - a longitude of the marker to display on map

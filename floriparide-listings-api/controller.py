@@ -12,14 +12,12 @@ app = bottle.Bottle()
 @enable_cors
 @validate(locale=str)
 def branch_get(project_id, id, locale="pt_Br"):
+    #branch will be a list of size 1 if the item was found
     branch = service.get_branch(project_id, id)
     if not branch:
         raise HttpException(status=404, body="No branch was found for given id=%d and project_id=%d" % (id, project_id))
 
-    #as soon as branch response is built for a list of branches a
-    branch = branch_response([branch], locale)[0]
-
-    return branch
+    return {"items": branch_response(branch, locale)}
 
 
 @app.get("/branch/search")
@@ -67,6 +65,8 @@ def branch_response(branches, locale):
                  attributes=localize(b["attributes"]),
                  rubrics=localize(b["rubrics"]),
                  address=b["data"].get("address"),
+                 contacts=b["data"].get("contacts"),
+                 schedule=b["data"].get("schedule"),
                  geometry=b["data"].get("geometry"))
             for b in branches]
 

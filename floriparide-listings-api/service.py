@@ -15,9 +15,7 @@ def get_branch(project_id, id):
     :param id:
     :return:
     """
-    branches = dao.get_branches_full(project_id, [str(id)])
-    if branches:
-        return branches[0]
+    return dao.get_branches_full(project_id, [str(id)])
 
 
 def branch_search(q, project_id, start, limit, attrs=None):
