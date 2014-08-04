@@ -111,9 +111,9 @@ The current API supports a bunch of methods for retrieving catalog information
     curl -X GET http://162.243.233.204:8888/catalog/1.0/branch/<project_id>/<branch_id>&locale=<locale>
     ```
     
-   Endpoint accepts the following path parameters:
-   * ```project_id``` - the id of a project to search branches in; mandatory, bigint
-   * ```id``` - the id of a branch to search for, bigint
+   Endpoint accepts the following query parameters:
+   * ```project_id``` - the id of a project to search branches in; required, bigint
+   * ```id``` - the id of a branch to search for, required, bigint
    
    And one query parameter ```locale``` which indicates the locale of a client; 
    optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
@@ -123,7 +123,7 @@ The current API supports a bunch of methods for retrieving catalog information
    
    Example request:
    ``` 
-   http://162.243.233.204:8888/catalog/1.0/branch/1/2?locale=pt_Br
+   http://162.243.233.204:8888:8888/catalog/1.0/branch?project_id=1&id=2
    ```
    
    and corresponding response:

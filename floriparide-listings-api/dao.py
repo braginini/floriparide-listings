@@ -18,13 +18,17 @@ connection_pool = pool.ThreadedConnectionPool(config.DB.POOL_MIN_CONN,
                                               port=config.DB.PORT)
 
 
-def get_branches_full(project_id, branch_ids):
+def get_branches_full(project_id, branch_ids=None, company_id=None, offset=None, limit=None):
     """
     get all the branches by specified ids (full version, with attributes and rubrics)
     :param branch_ids: the list of branch ids to return
     :return:
     """
-    branches = get_entity("public.branch", branch_ids)
+    filters = None
+    if company_id:
+        filters = dict(company_id=company_id)
+
+    branches = get_entity("public.branch", ids=branch_ids, filters=filters, offset=offset, limit=limit)
 
     #get attributes and rubrics
     attr_ids = set()
@@ -67,18 +71,35 @@ def get_branches_full(project_id, branch_ids):
     return branches
 
 
-def get_entity(name, ids):
+def get_entity(name, ids=None, filters=None, offset=None, limit=None):
     """
     retrieves all the entities by specified name (table with schema) and ids
     :param name:
     :param ids:
+    :param filters: a dict who's keys are column name and values are column values. will be put in where clause
     :return:
     """
-    if not ids:
-        return []
 
     with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-        query = "SELECT * FROM %s as e WHERE e.id in (%s)" % (name, ",".join(ids))
+        if not ids:
+            query = "SELECT * FROM %s as e" % name
+        else:
+            query = "SELECT * FROM %s as e WHERE e.id in (%s)" % (name, ",".join(ids))
+
+        if filters:
+            if ids:
+                query += " AND "
+            else:
+                query += " WHERE "
+
+            query += "AND ".join(["%s=%s" % (k, v) for (k, v) in filters.items()])
+
+        if limit:
+            query += " LIMIT %s" % str(limit)
+
+        if offset:
+            query += " OFFSET %s" % str(offset)
+
         logging.info("Running query %s" % query)
         cur.execute(query)
         return cur.fetchall()

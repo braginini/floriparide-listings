@@ -1,35 +1,30 @@
 import bottle
-from bottle import error
 import service
-from util.controller_utils import HttpException
 from util.controller_utils import validate, json_response, enable_cors
 
 
 app = bottle.Bottle()
 
 
-@app.get("/branch/list/<project_id:int>/<id:int>")
+@app.get("/branch/list")
 @json_response
 @enable_cors
-@validate(locale=str)
-def branch_list(project_id, id, locale="pt_Br"):
+@validate(locale=str, project_id=int, company_id=int, start=int, limit=int)
+def branch_list(project_id, company_id, start, limit, locale="pt_Br"):
     # branch will be a list of size 1 if the item was found
-    branch = service.get_branch(project_id, id)
-    if not branch:
-        raise HttpException(status=404, body="No branch was found for given id=%d and project_id=%d" % (id, project_id))
-
-    return {"items": branch_response(branch, locale)}
+    branches = service.get_branches(project_id, company_id, start=start, limit=limit)
+    #todo add count and markers
+    return {"items": branch_response(branches, locale)}
 
 
-@app.get("/branch/<project_id:int>/<id:int>")
+@app.get("/branch")
 @json_response
 @enable_cors
-@validate(locale=str)
+@validate(locale=str, project_id=int, id=int)
 def branch_get(project_id, id, locale="pt_Br"):
     # branch will be a list of size 1 if the item was found
     branch = service.get_branch(project_id, id)
     if not branch:
-        #raise HttpException(status=404, body="No branch was found for given id=%d and project_id=%d" % (id, project_id))
         raise bottle.HTTPError(status=404,
                                body="No branch was found for given id=%d and project_id=%d" % (id, project_id))
 
@@ -90,10 +85,3 @@ def branch_response(branches, locale):
                  schedule=b["data"].get("schedule"),
                  geometry=b["data"].get("geometry"))
             for b in branches]
-
-
-@app.error(404)
-@json_response
-@enable_cors
-def error404(error):
-    return error

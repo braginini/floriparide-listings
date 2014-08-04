@@ -12,12 +12,6 @@ __author__ = 'Mike'
 is_debug = True
 
 
-class HttpException(BaseException):
-    def __init__(self, status=500, body=""):
-        self._status = status
-        super(HttpException, self).__init__(body)
-
-
 def validate(**types):
     def decorate(f):
         farg, _, _, def_params = inspect.getargspec(f)
@@ -51,21 +45,17 @@ def validate(**types):
 
 
 def create_response(data):
-    if isinstance(data, bottle.BaseResponse):
-        return data
-
     status = 200
 
-    if isinstance(data, BaseException) or isinstance(data, bottle.HTTPError):
+    if isinstance(data, (BaseException, bottle.HTTPError)):
         # app.log_exception(data)
         status = 500
-        if isinstance(data, HttpException):
-            status = data._status
-        if isinstance(data, bottle.HTTPError):
-            status = data.status
         response_error = dict(code=status, message='Internal error')
+        if isinstance(data, bottle.HTTPError):
+            status = data.status_code
+            response_error = dict(code=status, message=data.body)
+
         if is_debug:
-            response_error['message'] = str(data)
             tb = sys.exc_info()[2]
             if tb:
                 response_error['trace'] = traceback.format_tb(tb)

@@ -8,14 +8,14 @@ __author__ = 'mikhail'
 es = Elasticsearch()
 
 
-def get_branch(project_id, id):
+def get_branch(project_id, branch_id):
     """
     gets the branch by specified project_id and id
     :param project_id:
-    :param id:
+    :param branch_id:
     :return:
     """
-    return dao.get_branches_full(project_id, [str(id)])
+    return dao.get_branches_full(project_id, branch_ids=[str(branch_id)])
 
 
 def branch_search(q, project_id, start, limit, attrs=None):
@@ -96,3 +96,13 @@ def get_branches_top_rubrics(branches):
         top_rubrics.append(rubrics[0][0])
 
     return top_rubrics
+
+
+def get_branches(project_id, company_id, start=None, limit=None):
+    """
+    gets the list of branch for the given project and company
+    :param project_id: the project to search in
+    :param company_id: the company to search in
+    :return:
+    """
+    return dao.get_branches_full(project_id, company_id=company_id, offset=start, limit=limit)
