@@ -12,9 +12,21 @@ app = bottle.Bottle()
 @validate(locale=str, project_id=int, company_id=int, start=int, limit=int)
 def branch_list(project_id, company_id, start, limit, locale="pt_Br"):
     # branch will be a list of size 1 if the item was found
-    branches = service.get_branches(project_id, company_id, start=start, limit=limit)
-    #todo add count and markers
-    return {"items": branch_response(branches, locale)}
+    branches, total = service.get_branches(project_id, company_id, start=start, limit=limit)
+    result = {
+        "total": total
+    }
+    if start == 0:
+        result["markers"] = service.get_branch_markers(branches)
+
+    if limit:
+        if limit > total:
+            limit = total
+        branches = branches[:limit]
+
+    result["items"] = branch_response(branches, locale)
+
+    return result
 
 
 @app.get("/branch")

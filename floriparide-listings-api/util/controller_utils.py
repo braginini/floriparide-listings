@@ -1,7 +1,7 @@
 import json
 import logging
 import traceback
-from bottle import route, request
+from bottle import route, request, HTTPError
 import functools
 import inspect
 import bottle
@@ -29,13 +29,13 @@ def validate(**types):
                 if not value:  # None or empty str
                     if required:
                         error = "%s() requires the parameter %s" % (wrapper.__name__, par)
-                        raise TypeError(error)
+                        raise HTTPError(error)
                     continue
                 try:
                     kargs[par] = ptype(value)
                 except:
                     error = "Cannot convert parameter %s to %s" % (par, ptype.__name__)
-                    raise ValueError(error)
+                    raise HTTPError(error)
 
             return f(*args, **kargs)
 

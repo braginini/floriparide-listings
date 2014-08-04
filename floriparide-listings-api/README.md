@@ -114,9 +114,7 @@ The current API supports a bunch of methods for retrieving catalog information
    Endpoint accepts the following query parameters:
    * ```project_id``` - the id of a project to search branches in; required, bigint
    * ```id``` - the id of a branch to search for, required, bigint
-   
-   And one query parameter ```locale``` which indicates the locale of a client; 
-   optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
+   * ```locale``` - the locale of the client. Optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
    
    The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
    and field ```result``` with a field ```items``` which is an array of branch objects (see [Branch object](#branch_obj)).
@@ -193,6 +191,135 @@ The current API supports a bunch of methods for retrieving catalog information
                         }
                     ],
                     "address": "Estrada Dom João Becker, 935 - Ingleses do Rio Vermelho, Florianopolis - Santa Catarina, 88058-600, Brazil"
+                }
+            ]
+        }
+    }
+   ``` 
+   
+### Branch get
+
+Returns a list of branch object by specified project id and company 
+    ```
+    curl -X GET http://162.243.233.204:8888/catalog/1.0/branch/list?project_id=<project_id>&company_id=<company_id>&locale=<locale>&start=<start>&limit=<limit>
+    ```
+    
+   Endpoint accepts the following query parameters:
+   * ```project_id``` - the id of a project to search branches in. Required, bigint.
+   * ```company_id``` - the id of a company to search in. Required, bigint.
+   * ```start``` - the start index for paging. Required, int.
+   * ```limit``` - the size of the result to return for paging. Required, int.
+   * ```locale``` - the locale of the client. Optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
+   
+   The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
+   and field ```result``` with the following top level fields:
+   * ```items``` - an array of branches (see [Branch object](#branch_obj)).
+   * ```total``` - the total number of results found
+   * ```markers``` - a list of coordinates for all results found (see [Marker object](#marker_obj)).
+   
+   Example request:
+   ``` 
+   http://162.243.233.204:8888:8888/catalog/1.0/branch/list?project_id=1&company_id=537&start=0&limit=1
+   ```
+   
+   and corresponding response:
+   ```
+   {
+        "success": true,
+        "result": {
+            "total": 12,
+            "items": [
+                {
+                    "id": 575,
+                    "schedule": null,
+                    "name": "Bob's Delivery",
+                    "geometry": {
+                        "point": {
+                            "lat": -27.594444,
+                            "lon": -48.575278
+                        }
+                    },
+                    "rubrics": [
+                        {
+                            "id": 11,
+                            "name": "Lanchonetes / Fast-food"
+                        },
+                        {
+                            "id": 16,
+                            "name": "Restaurantes"
+                        }
+                    ],
+                    "payment_options": null,
+                    "contacts": [
+                        {
+                            "comment": null,
+                            "value": "http://www.bobs.com.br/",
+                            "contact": "website"
+                        }
+                    ],
+                    "address": "Estreito, Florianopolis - Santa Catarina, Brazil",
+                    "attributes": [
+                        {
+                            "id": 15,
+                            "name": "Tele-entrega"
+                        }
+                    ]
+                }
+            ],
+            "markers": [
+                {
+                    "lat": -27.594444,
+                    "name": "Bob's Delivery",
+                    "branch_id": 575,
+                    "lon": -48.575278
+                },
+                {
+                    "lat": -27.5838969,
+                    "name": "Bob's",
+                    "branch_id": 537,
+                    "lon": -48.5448969
+                },
+                {
+                    "lat": -27.5766349,
+                    "name": "Bob's",
+                    "branch_id": 563,
+                    "lon": -48.5312279
+                },
+                {
+                    "lat": -27.5909356,
+                    "name": "Quiosque Bob's",
+                    "branch_id": 593,
+                    "lon": -48.5074708
+                },
+                {
+                    "lat": -27.5965572,
+                    "name": "Quiosque Bob's",
+                    "branch_id": 598,
+                    "lon": -48.5462377
+                },
+                {
+                    "lat": -27.595278,
+                    "name": "Quiosque Bob's",
+                    "branch_id": 599,
+                    "lon": -48.596111
+                },
+                {
+                    "lat": -27.5766349,
+                    "name": "Quiosque Bob's",
+                    "branch_id": 600,
+                    "lon": -48.5312279
+                },
+                {
+                    "lat": -27.5838969,
+                    "name": "Quiosque Bob's",
+                    "branch_id": 724,
+                    "lon": -48.5448969
+                },
+                {
+                    "lat": -27.5966746,
+                    "name": "Bobs",
+                    "branch_id": 863,
+                    "lon": -48.5539083
                 }
             ]
         }

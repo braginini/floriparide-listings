@@ -105,4 +105,9 @@ def get_branches(project_id, company_id, start=None, limit=None):
     :param company_id: the company to search in
     :return:
     """
-    return dao.get_branches_full(project_id, company_id=company_id, offset=start, limit=limit)
+    if not start:
+        limit = 1000
+
+    branches = dao.get_branches_full(project_id, company_id=company_id, offset=start, limit=limit)
+    total = dao.count("public.branch", filters=dict(company_id=company_id))
+    return branches, total

@@ -8,7 +8,6 @@ import logging
 
 __author__ = 'Mike'
 
-
 connection_pool = pool.ThreadedConnectionPool(config.DB.POOL_MIN_CONN,
                                               config.DB.POOL_MAX_CONN,
                                               dbname=config.DB.DB_NAME,
@@ -30,7 +29,7 @@ def get_branches_full(project_id, branch_ids=None, company_id=None, offset=None,
 
     branches = get_entity("public.branch", ids=branch_ids, filters=filters, offset=offset, limit=limit)
 
-    #get attributes and rubrics
+    # get attributes and rubrics
     attr_ids = set()
     rubric_ids = set()
     for b in branches:
@@ -71,6 +70,10 @@ def get_branches_full(project_id, branch_ids=None, company_id=None, offset=None,
     return branches
 
 
+def sql_filters(filters):
+    return "AND ".join(["%s=%s" % (k, v) for (k, v) in filters.items()])
+
+
 def get_entity(name, ids=None, filters=None, offset=None, limit=None):
     """
     retrieves all the entities by specified name (table with schema) and ids
@@ -92,7 +95,7 @@ def get_entity(name, ids=None, filters=None, offset=None, limit=None):
             else:
                 query += " WHERE "
 
-            query += "AND ".join(["%s=%s" % (k, v) for (k, v) in filters.items()])
+            query += sql_filters(filters)
 
         if limit:
             query += " LIMIT %s" % str(limit)
@@ -115,3 +118,19 @@ def get_cursor(cursor_factory=None):
             yield con.cursor()
     finally:
         connection_pool.putconn(con)
+
+
+def count(name, filters=None):
+    """
+    gets the count of a given entity with give filters
+    :param name: the name of the entity with schema (e.g. public.branch)
+    :param filters: the dictionary of filter to apply on entity in WHERE clause
+    :return:
+    """
+    with get_cursor() as cur:
+        query = "SELECT COUNT(1) FROM %s " % name
+        if filters:
+            query = query + "WHERE " + sql_filters(filters)
+        logging.info("Running query %s" % query)
+        cur.execute(query)
+        return cur.fetchone()[0]
