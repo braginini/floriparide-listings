@@ -197,7 +197,7 @@ The current API supports a bunch of methods for retrieving catalog information
     }
    ``` 
    
-### Branch get
+### Branch list
 
 Returns a list of branch object by specified project id and company 
     ```
@@ -219,7 +219,7 @@ Returns a list of branch object by specified project id and company
    
    Example request:
    ``` 
-   http://162.243.233.204:8888:8888/catalog/1.0/branch/list?project_id=1&company_id=537&start=0&limit=1
+   http://162.243.233.204:8888/catalog/1.0/branch/list?project_id=1&company_id=537&start=0&limit=1
    ```
    
    and corresponding response:
