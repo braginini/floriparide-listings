@@ -236,7 +236,7 @@ The current API supports a bunch of methods for retrieving catalog information
 Returns a list of branch object by specified project id and company id and/or rubric id 
 
     ```
-    curl -X GET http://162.243.233.204:8888/catalog/1.0/branch/list?project_id=<project_id>&company_id=<company_id>&locale=<locale>&start=<start>&limit=<limit>
+    curl -X GET http://162.243.233.204:8888/catalog/1.0/branch/list?project_id=<project_id>&company_id=<company_id>&rubric_id=<rubric_id>&locale=<locale>&start=<start>&limit=<limit>
     ```
     
    Endpoint accepts the following query parameters:
