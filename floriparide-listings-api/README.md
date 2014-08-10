@@ -106,94 +106,128 @@ The current API supports a bunch of methods for retrieving catalog information
 
 ### Branch get
 
-   Returns a branch object by specified id and project id    
+   Returns an array of branch object by specified id and project id    
     ```
     curl -X GET http://162.243.233.204:8888/catalog/1.0/branch?project_id=<project_id>&branch_id=<branch_id>&locale=<locale>
     ```
     
    Endpoint accepts the following query parameters:
    * ```project_id``` - the id of a project to search branches in; required, bigint
-   * ```id``` - the id of a branch to search for, required, bigint
+   * ```id``` - a list of comma-separated branch ids
    * ```locale``` - the locale of the client. Optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
    
    The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
-   and field ```result``` with a field ```items``` which is an array of branch objects (see [Branch object](#branch_obj)).
+   and field ```result``` with a field ```items``` which is an array of branch objects (see [Branch object](#branch_obj)) and ```total``` number of results found
    
    Example request:
    ``` 
-   http://162.243.233.204:8888:8888/catalog/1.0/branch?project_id=1&id=2
+   http://162.243.233.204:8888/catalog/1.0/branch?project_id=1&id=22,333
    ```
    
    and corresponding response:
    ```
    {
-        "success": true,
         "result": {
             "items": [
                 {
+                    "name": "Pantumaka",
+                    "geometry": {
+                        "point": {
+                            "lat": -27.6034961,
+                            "lon": -48.4644175
+                        }
+                    },
+                    "schedule": null,
+                    "attributes": null,
+                    "contacts": null,
+                    "payment_options": null,
+                    "id": 22,
+                    "address": "Travessa Leopoldo João Santos, 51 - Lagoa da Conceicao, Florianopolis - Santa Catarina, Brazil",
+                    "rubrics": [
+                        {
+                            "name": "Padarias",
+                            "id": 12
+                        }
+                    ]
+                },
+                {
+                    "name": "Lost Cyber Café",
+                    "geometry": {
+                        "point": {
+                            "lat": -27.5965572,
+                            "lon": -48.5462377
+                        }
+                    },
                     "schedule": {
-                        "tuesday": [
-                            {
-                                "from": "07:00",
-                                "to": "21:30"
-                            }
-                        ],
                         "friday": [
                             {
-                                "from": "07:00",
-                                "to": "21:30"
-                            }
-                        ],
-                        "sunday": [
-                            {
-                                "from": "07:00",
-                                "to": "21:30"
-                            }
-                        ],
-                        "monday": [
-                            {
-                                "from": "07:00",
-                                "to": "21:30"
-                            }
-                        ],
-                        "saturday": [
-                            {
-                                "from": "07:00",
-                                "to": "21:30"
+                                "to": "22:00",
+                                "from": "07:30"
                             }
                         ],
                         "thursday": [
                             {
-                                "from": "07:00",
-                                "to": "21:30"
+                                "to": "22:00",
+                                "from": "07:30"
+                            }
+                        ],
+                        "monday": [
+                            {
+                                "to": "22:00",
+                                "from": "07:30"
+                            }
+                        ],
+                        "tuesday": [
+                            {
+                                "to": "22:00",
+                                "from": "07:30"
+                            }
+                        ],
+                        "sunday": [
+                            {
+                                "to": "22:00",
+                                "from": "07:30"
+                            }
+                        ],
+                        "saturday": [
+                            {
+                                "to": "22:00",
+                                "from": "07:30"
                             }
                         ]
                     },
-                    "geometry": {
-                        "point": {
-                            "lat": -27.4398227,
-                            "lon": -48.3877566
-                        }
-                    },
                     "attributes": [
                         {
-                            "id": 15,
-                            "name": "Tele-entrega"
+                            "name": "Aceita Reserva",
+                            "id": 16
+                        },
+                        {
+                            "name": "Acessibilidade",
+                            "id": 11
                         }
                     ],
                     "contacts": null,
-                    "id": 2,
-                    "name": "Mercado Pai e Filho",
+                    "payment_options": [
+                        "visa",
+                        "mastercard",
+                        "maestro",
+                        "visa electron",
+                        "redeshop",
+                        "mastercard maestro"
+                    ],
+                    "id": 333,
+                    "address": "Centro, Florianopolis - Santa Catarina, Brazil",
                     "rubrics": [
                         {
-                            "id": 12,
-                            "name": "Padarias"
+                            "name": "Cafés / Cafeterias",
+                            "id": 9
                         }
-                    ],
-                    "address": "Estrada Dom João Becker, 935 - Ingleses do Rio Vermelho, Florianopolis - Santa Catarina, 88058-600, Brazil"
+                    ]
                 }
-            ]
-        }
+            ],
+            "total": 2
+        },
+        "success": true
     }
    ``` 
    

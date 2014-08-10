@@ -32,15 +32,22 @@ def branch_list(project_id, company_id, start, limit, locale="pt_Br"):
 @app.get("/branch")
 @json_response
 @enable_cors
-@validate(locale=str, project_id=int, id=int)
+@validate(locale=str, project_id=int, id=str)
 def branch_get(project_id, id, locale="pt_Br"):
+    """
+    gets one or more branches by specified id(ids)
+    :param project_id: project id to search branch in. Required
+    :param id: comma-separated list of branch ids
+    :param locale: locale of a result
+    :return:
+    """
     # branch will be a list of size 1 if the item was found
-    branch = service.get_branch(project_id, id)
-    if not branch:
+    branch_ids = id.split(",")
+    branches = service.get_branch(project_id, branch_ids)
+    if not branches:
         raise bottle.HTTPError(status=404,
-                               body="No branch was found for given id=%d and project_id=%d" % (id, project_id))
-
-    return {"items": branch_response(branch, locale)}
+                               body="No branches were found for given id=%s and project_id=%d" % (id, project_id))
+    return {"items": branch_response(branches, locale), "total": len(branches)}
 
 
 @app.get("/branch/search")

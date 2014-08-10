@@ -8,14 +8,14 @@ __author__ = 'mikhail'
 es = Elasticsearch()
 
 
-def get_branch(project_id, branch_id):
+def get_branch(project_id, branch_ids):
     """
     gets the branch by specified project_id and id
     :param project_id:
-    :param branch_id:
+    :param branch_ids:
     :return:
     """
-    return dao.get_branches_full(project_id, branch_ids=[str(branch_id)])
+    return dao.get_branches_full(project_id, branch_ids=branch_ids)
 
 
 def branch_search(q, project_id, start, limit, attrs=None):
