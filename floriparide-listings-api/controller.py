@@ -9,10 +9,31 @@ app = bottle.Bottle()
 @app.get("/branch/list")
 @json_response
 @enable_cors
-@validate(locale=str, project_id=int, company_id=int, start=int, limit=int)
-def branch_list(project_id, company_id, start, limit, locale="pt_Br"):
+@validate(locale=str, project_id=int, company_id=int, rubric_id=int, start=int, limit=int)
+def branch_list(project_id, start, limit, locale="pt_Br", company_id=None, rubric_id=None):
+    """
+    Gets a set of branches by specified filters - rubric id and company id.
+    :param project_id: project id to search branch in. Required
+    :param start: the start index of result to return from (paging). Required
+    :param limit: the size of results to return (paging). Required
+    :param locale: the localization of a result set. Optional (default=pt_Br)
+    :param company_id: the id of a company to. Optional (if not specified, rubric_id must be specified)
+    :param rubric_id: the id of a rubric to filter out results. Optional (if not, specified company_id must be specified)
+    :return:
+    """
+    # make some validation before
+    if not company_id and not rubric_id:
+        raise bottle.HTTPError(status=400,
+                               body="Either rubric_id or company_id should be specified in request")
+
     # branch will be a list of size 1 if the item was found
-    branches, total = service.get_branches(project_id, company_id, start=start, limit=limit)
+    branches, total = service.get_branches(project_id, company_id=company_id, rubric_id=rubric_id, start=start,
+                                           limit=limit)
+
+    if not branches:
+        raise bottle.HTTPError(status=404,
+                               body="No branches were found for given request")
+
     result = {
         "total": total
     }

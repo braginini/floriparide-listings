@@ -16,16 +16,20 @@ connection_pool = pool.ThreadedConnectionPool(config.DB.POOL_MIN_CONN,
                                               host=config.DB.HOST,
                                               port=config.DB.PORT)
 
+# mapping that helps to determine how to filter by filters in db
+#todo rubric_id filter looks difficult and query will go through all rows
+filters_map = {
+    "rubric_id": "(SELECT json_array_elements(data->'rubrics')->>'id' LIMIT 1)::int",
+    "company_id": "company_id"
+}
 
-def get_branches_full(project_id, branch_ids=None, company_id=None, offset=None, limit=None):
+
+def get_branches_full(project_id, branch_ids=None, offset=None, limit=None, filters=None):
     """
     get all the branches by specified ids (full version, with attributes and rubrics)
     :param branch_ids: the list of branch ids to return
     :return:
     """
-    filters = None
-    if company_id:
-        filters = dict(company_id=company_id)
 
     branches = get_entity("public.branch", ids=branch_ids, filters=filters, offset=offset, limit=limit)
 
@@ -71,7 +75,7 @@ def get_branches_full(project_id, branch_ids=None, company_id=None, offset=None,
 
 
 def sql_filters(filters):
-    return "AND ".join(["%s=%s" % (k, v) for (k, v) in filters.items()])
+    return " AND ".join(["%s=%s" % (filters_map[k], v) for (k, v) in filters.items()])
 
 
 def get_entity(name, ids=None, filters=None, offset=None, limit=None):

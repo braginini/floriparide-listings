@@ -233,14 +233,16 @@ The current API supports a bunch of methods for retrieving catalog information
    
 ### Branch list
 
-Returns a list of branch object by specified project id and company 
+Returns a list of branch object by specified project id and company id and/or rubric id 
+
     ```
     curl -X GET http://162.243.233.204:8888/catalog/1.0/branch/list?project_id=<project_id>&company_id=<company_id>&locale=<locale>&start=<start>&limit=<limit>
     ```
     
    Endpoint accepts the following query parameters:
    * ```project_id``` - the id of a project to search branches in. Required, bigint.
-   * ```company_id``` - the id of a company to search in. Required, bigint.
+   * ```company_id``` - the id of a company to search in. Optional(if not specified, rubric_id must be specified), bigint.
+   * ```rubric_id``` - the id of a rubric to search in. Optional(if not specified company_id must be specified), bigint.
    * ```start``` - the start index for paging. Required, int.
    * ```limit``` - the size of the result to return for paging. Required, int.
    * ```locale``` - the locale of the client. Optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
@@ -253,7 +255,7 @@ Returns a list of branch object by specified project id and company
    
    Example request:
    ``` 
-   http://162.243.233.204:8888/catalog/1.0/branch/list?project_id=1&company_id=537&start=0&limit=1
+   http://162.243.233.204:8888/catalog/1.0/branch/list?project_id=1&start=0&limit=10&rubric_id=16&company_id=1
    ```
    
    and corresponding response:
@@ -261,99 +263,77 @@ Returns a list of branch object by specified project id and company
    {
         "success": true,
         "result": {
-            "total": 12,
+            "total": 1,
+            "markers": [
+                {
+                    "lon": -48.5136375,
+                    "name": "Meat Shop",
+                    "lat": -27.5171001,
+                    "branch_id": 1
+                }
+            ],
             "items": [
                 {
-                    "id": 575,
-                    "schedule": null,
-                    "name": "Bob's Delivery",
+                    "payment_options": [
+                        "american express",
+                        "visa",
+                        "mastercard",
+                        "diners",
+                        "redeshop",
+                        "visa electron",
+                        "mastercard maestro",
+                        "visa vale alimentação"
+                    ],
+                    "address": "SC-401, 10954 - Santo Antonio de Lisboa, Ratones, Florianopolis - Santa Catarina, Brazil",
+                    "contacts": [
+                        {
+                            "contact": "phone",
+                            "comment": null,
+                            "value": "(48)32349548"
+                        },
+                        {
+                            "contact": "phone",
+                            "comment": null,
+                            "value": "(48)99718299"
+                        }
+                    ],
+                    "attributes": [
+                        {
+                            "name": "Estacionamento",
+                            "id": 13
+                        },
+                        {
+                            "name": "Tele-entrega",
+                            "id": 15
+                        },
+                        {
+                            "name": "Ar condicionado",
+                            "id": 12
+                        },
+                        {
+                            "name": "Aceita Reserva",
+                            "id": 16
+                        },
+                        {
+                            "name": "Acessibilidade",
+                            "id": 11
+                        }
+                    ],
                     "geometry": {
                         "point": {
-                            "lat": -27.594444,
-                            "lon": -48.575278
+                            "lon": -48.5136375,
+                            "lat": -27.5171001
                         }
                     },
                     "rubrics": [
                         {
-                            "id": 11,
-                            "name": "Lanchonetes / Fast-food"
-                        },
-                        {
-                            "id": 16,
-                            "name": "Restaurantes"
+                            "name": "Restaurantes",
+                            "id": 16
                         }
                     ],
-                    "payment_options": null,
-                    "contacts": [
-                        {
-                            "comment": null,
-                            "value": "http://www.bobs.com.br/",
-                            "contact": "website"
-                        }
-                    ],
-                    "address": "Estreito, Florianopolis - Santa Catarina, Brazil",
-                    "attributes": [
-                        {
-                            "id": 15,
-                            "name": "Tele-entrega"
-                        }
-                    ]
-                }
-            ],
-            "markers": [
-                {
-                    "lat": -27.594444,
-                    "name": "Bob's Delivery",
-                    "branch_id": 575,
-                    "lon": -48.575278
-                },
-                {
-                    "lat": -27.5838969,
-                    "name": "Bob's",
-                    "branch_id": 537,
-                    "lon": -48.5448969
-                },
-                {
-                    "lat": -27.5766349,
-                    "name": "Bob's",
-                    "branch_id": 563,
-                    "lon": -48.5312279
-                },
-                {
-                    "lat": -27.5909356,
-                    "name": "Quiosque Bob's",
-                    "branch_id": 593,
-                    "lon": -48.5074708
-                },
-                {
-                    "lat": -27.5965572,
-                    "name": "Quiosque Bob's",
-                    "branch_id": 598,
-                    "lon": -48.5462377
-                },
-                {
-                    "lat": -27.595278,
-                    "name": "Quiosque Bob's",
-                    "branch_id": 599,
-                    "lon": -48.596111
-                },
-                {
-                    "lat": -27.5766349,
-                    "name": "Quiosque Bob's",
-                    "branch_id": 600,
-                    "lon": -48.5312279
-                },
-                {
-                    "lat": -27.5838969,
-                    "name": "Quiosque Bob's",
-                    "branch_id": 724,
-                    "lon": -48.5448969
-                },
-                {
-                    "lat": -27.5966746,
-                    "name": "Bobs",
-                    "branch_id": 863,
-                    "lon": -48.5539083
+                    "name": "Meat Shop",
+                    "schedule": null,
+                    "id": 1
                 }
             ]
         }

@@ -47,8 +47,8 @@ def branch_search(q, project_id, start, limit, attrs=None):
 
     # get the dictionary of branches with corresponding score (key -> branch_id, value -> score)
     ids = {v["_id"]: v["_score"] for v in es_result["hits"]["hits"]}
-    branches = dao.get_branches_full(project_id, ids.keys())
-    #todo pub score to branches and sort by ES score
+    branches = dao.get_branches_full(project_id=project_id, branch_ids=ids.keys())
+    # todo pub score to branches and sort by ES score
 
     return branches, total
 
@@ -98,7 +98,7 @@ def get_branches_top_rubrics(branches):
     return top_rubrics
 
 
-def get_branches(project_id, company_id, start=None, limit=None):
+def get_branches(project_id, company_id=None, rubric_id=None, start=None, limit=None):
     """
     gets the list of branch for the given project and company
     :param project_id: the project to search in
@@ -108,6 +108,12 @@ def get_branches(project_id, company_id, start=None, limit=None):
     if not start:
         limit = 1000
 
-    branches = dao.get_branches_full(project_id, company_id=company_id, offset=start, limit=limit)
-    total = dao.count("public.branch", filters=dict(company_id=company_id))
+    filters = {}
+    if company_id:
+        filters["company_id"] = company_id
+    if rubric_id:
+        filters["rubric_id"] = rubric_id
+
+    branches = dao.get_branches_full(project_id, offset=start, limit=limit, filters=filters)
+    total = dao.count("public.branch", filters=filters)
     return branches, total
