@@ -7,18 +7,20 @@ __author__ = 'mikhail'
 
 es = Elasticsearch()
 
+branch_dao = dao.branch_dao
 
-def get_branch(project_id, branch_ids):
+
+def get(project_id, branch_ids):
     """
     gets the branch by specified project_id and id
     :param project_id:
     :param branch_ids:
     :return:
     """
-    return dao.get_branches_full(project_id, branch_ids=branch_ids)
+    return branch_dao.get_full(project_id, branch_ids=branch_ids)
 
 
-def branch_search(q, project_id, start, limit, attrs=None):
+def search(q, project_id, start, limit, attrs=None):
     body = {
         "from": start,
         "query": {
@@ -47,13 +49,13 @@ def branch_search(q, project_id, start, limit, attrs=None):
 
     # get the dictionary of branches with corresponding score (key -> branch_id, value -> score)
     ids = {v["_id"]: v["_score"] for v in es_result["hits"]["hits"]}
-    branches = dao.get_branches_full(project_id=project_id, branch_ids=ids.keys())
+    branches = branch_dao.get_full(project_id=project_id, branch_ids=ids.keys())
     # todo pub score to branches and sort by ES score
 
     return branches, total
 
 
-def get_branch_markers(branches):
+def get_markers(branches):
     """
     builds a set of markers for given list of branches
     :param branches:
@@ -66,7 +68,7 @@ def get_branch_markers(branches):
             for b in branches if b["data"].get("geometry")]
 
 
-def get_branches_top_rubrics(branches):
+def get_top_rubrics(branches):
     """
     calculates top rubrics for a given branch list
     top rubric is a rubric that appears in a 30% of branches
@@ -98,7 +100,7 @@ def get_branches_top_rubrics(branches):
     return top_rubrics
 
 
-def get_branches(project_id, company_id=None, rubric_id=None, start=None, limit=None):
+def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None):
     """
     gets the list of branch for the given project and company
     :param project_id: the project to search in
@@ -114,6 +116,6 @@ def get_branches(project_id, company_id=None, rubric_id=None, start=None, limit=
     if rubric_id:
         filters["rubric_id"] = rubric_id
 
-    branches = dao.get_branches_full(project_id, offset=start, limit=limit, filters=filters)
-    total = dao.count("public.branch", filters=filters)
+    branches = branch_dao.get_full(project_id, offset=start, limit=limit, filters=filters)
+    total = branch_dao.count(filters=filters)
     return branches, total

@@ -1,0 +1,2 @@
+1. collect companies that are advertising in floripa (banners, websites)
+2. create api and offer companies to use our API on their websites - new clients

@@ -1,16 +1,16 @@
 import bottle
-import service
+import branch_service
 from util.controller_utils import validate, json_response, enable_cors
 
 
 app = bottle.Bottle()
 
 
-@app.get("/branch/list")
+@app.get("/list")
 @json_response
 @enable_cors
 @validate(locale=str, project_id=int, company_id=int, rubric_id=int, start=int, limit=int)
-def branch_list(project_id, start, limit, locale="pt_Br", company_id=None, rubric_id=None):
+def get_list(project_id, start, limit, locale="pt_Br", company_id=None, rubric_id=None):
     """
     Gets a set of branches by specified filters - rubric id and company id.
     :param project_id: project id to search branch in. Required
@@ -27,7 +27,7 @@ def branch_list(project_id, start, limit, locale="pt_Br", company_id=None, rubri
                                body="Either rubric_id or company_id should be specified in request")
 
     # branch will be a list of size 1 if the item was found
-    branches, total = service.get_branches(project_id, company_id=company_id, rubric_id=rubric_id, start=start,
+    branches, total = branch_service.get_list(project_id, company_id=company_id, rubric_id=rubric_id, start=start,
                                            limit=limit)
 
     if not branches:
@@ -38,7 +38,7 @@ def branch_list(project_id, start, limit, locale="pt_Br", company_id=None, rubri
         "total": total
     }
     if start == 0:
-        result["markers"] = service.get_branch_markers(branches)
+        result["markers"] = branch_service.get_markers(branches)
 
     if limit:
         if limit > total:
@@ -50,11 +50,11 @@ def branch_list(project_id, start, limit, locale="pt_Br", company_id=None, rubri
     return result
 
 
-@app.get("/branch")
+@app.get("/")
 @json_response
 @enable_cors
 @validate(locale=str, project_id=int, id=str)
-def branch_get(project_id, id, locale="pt_Br"):
+def get(project_id, id, locale="pt_Br"):
     """
     gets one or more branches by specified id(ids)
     :param project_id: project id to search branch in. Required
@@ -64,27 +64,27 @@ def branch_get(project_id, id, locale="pt_Br"):
     """
     # branch will be a list of size 1 if the item was found
     branch_ids = id.split(",")
-    branches = service.get_branch(project_id, branch_ids)
+    branches = branch_service.get(project_id, branch_ids)
     if not branches:
         raise bottle.HTTPError(status=404,
                                body="No branches were found for given id=%s and project_id=%d" % (id, project_id))
     return {"items": branch_response(branches, locale), "total": len(branches)}
 
 
-@app.get("/branch/search")
+@app.get("/search")
 @json_response
 @enable_cors
 @validate(q=str, project_id=int, start=int, limit=int, locale=str, attrs=str)
-def branch_search(q, project_id, start, limit, locale="pt_Br", attrs=None):
+def search(q, project_id, start, limit, locale="pt_Br", attrs=None):
     # todo get index name from db by project id
     # todo get default locale by project id
 
     result = {}
-    branches, total = service.branch_search(q, project_id, start, limit, attrs)
+    branches, total = branch_service.search(q, project_id, start, limit, attrs)
     # prepare markers with branch_id, name, lat, lon
     if start == 0:
-        result["markers"] = service.get_branch_markers(branches)
-        result["top_rubrics"] = service.get_branches_top_rubrics(branches)
+        result["markers"] = branch_service.get_markers(branches)
+        result["top_rubrics"] = branch_service.get_top_rubrics(branches)
 
     # cut the resulting list. Only after we get markers and top rubrics!!!
     # Cuz markers and top rubrics are calculated based on full search result
