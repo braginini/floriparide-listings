@@ -1,6 +1,7 @@
 import logging
 from operator import itemgetter
 from elasticsearch import Elasticsearch
+from tornado.concurrent import Future
 import dao
 
 __author__ = 'mikhail'
@@ -17,7 +18,9 @@ def get(project_id, branch_ids):
     :param branch_ids:
     :return:
     """
-    return branch_dao.get_full(project_id, branch_ids=branch_ids)
+    result_future = Future()
+    result_future.set_result(branch_dao.get_full(project_id, branch_ids=branch_ids))
+    return result_future
 
 
 def search(q, project_id, start, limit, attrs=None):

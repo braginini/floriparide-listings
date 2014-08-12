@@ -1,11 +1,11 @@
 import json
 import logging
 import traceback
-from bottle import route, request, HTTPError
 import functools
 import inspect
-import bottle
 import sys
+from bottle import request
+from tornado.web import HTTPError
 
 __author__ = 'Mike'
 
@@ -44,16 +44,16 @@ def validate(**types):
     return decorate
 
 
-def create_response(data):
+def create_response(data, request):
     status = 200
 
-    if isinstance(data, (BaseException, bottle.HTTPError)):
+    if isinstance(data, (BaseException, HTTPError)):
         # app.log_exception(data)
         status = 500
         response_error = dict(code=status, message='Internal error')
-        if isinstance(data, bottle.HTTPError):
+        if isinstance(data, HTTPError):
             status = data.status_code
-            response_error = dict(code=status, message=data.body)
+            response_error = dict(code=status, message=data.log_message)
 
         if is_debug:
             tb = sys.exc_info()[2]
@@ -64,8 +64,8 @@ def create_response(data):
     else:
         result = dict(success=True, result=data)
     # response = JsonResponse(result, status)
-    bottle.response.headers['Content-Type'] = 'application/json;charset=UTF8'
-    bottle.response.status = status
+    request.set_header('Content-Type', 'application/json;charset=UTF8')
+    request.set_status(status)
     return json.dumps(result, ensure_ascii=False)
 
 
@@ -73,11 +73,14 @@ def json_response(fn):
     @functools.wraps(fn)
     def decorator(*args, **kwargs):
         try:
-            response = fn(*args, **kwargs)
+            #result is wrapped to Future tha is why we need to get the result() and exception()
+            response = fn(*args, **kwargs).result()
+            if not response:
+                response = fn(*args, **kwargs).exception()
         except BaseException as e:
             logging.exception(e)
             response = e
-        return create_response(response)
+        args[0].write(create_response(response, args[0]))
 
     return decorator
 
@@ -85,13 +88,13 @@ def json_response(fn):
 def enable_cors(fn):
     def _enable_cors(*args, **kwargs):
         # set CORS headers
-        bottle.response.headers['Access-Control-Allow-Origin'] = '*'
-        bottle.response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, OPTIONS'
-        bottle.response.headers[
-            'Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
+        args[0].set_header('Access-Control-Allow-Origin', '*')
+        args[0].set_header('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS')
+        args[0].set_header('Access-Control-Allow-Headers',
+                           'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token')
 
-        if bottle.request.method != 'OPTIONS':
-            # actual request; reply with the actual response
-            return fn(*args, **kwargs)
+        # if bottle.request.method != 'OPTIONS':
+        #     # actual request; reply with the actual response
+        return fn(*args, **kwargs)
 
     return _enable_cors

@@ -1,9 +1,88 @@
+import logging
 import bottle
+from tornado import gen
+from tornado.web import RequestHandler, HTTPError
 import branch_service
 from util.controller_utils import validate, json_response, enable_cors
 
 
 app = bottle.Bottle()
+
+
+class BaseHandler(RequestHandler):
+    pass
+
+
+class GetHandler(BaseHandler):
+    @json_response
+    @enable_cors
+    @gen.coroutine
+    def get(self):
+        """
+        gets one or more branches by specified id(ids)
+        :param project_id: project id to search branch in. Required
+        :param id: comma-separated list of branch ids
+        :param locale: locale of a result
+        :return:
+        """
+        # branch will be a list of size 1 if the item was found
+        project_id = self.get_argument('project_id', strip=True)
+        id = self.get_argument('id', strip=True)
+        locale = self.get_argument('locale', 'pt_Br', strip=True)
+
+        branch_ids = id.split(",")
+
+        branches = yield branch_service.get(project_id, branch_ids)
+        if not branches:
+            raise bottle.HTTPError(status=404,
+                                   body="No branches were found for given id=%s and project_id=%d" % (id, project_id))
+        return {"items": branch_response(branches, locale), "total": len(branches)}
+
+    def do(self, project_id, branch_ids, callback):
+        return callback(branch_service.get(project_id, branch_ids))
+
+
+class ListHandler(RequestHandler):
+    @json_response
+    @enable_cors
+    def get(self, project_id, start, limit, locale="pt_Br", company_id=None, rubric_id=None):
+        """
+        Gets a set of branches by specified filters - rubric id and company id.
+        :param project_id: project id to search branch in. Required
+        :param start: the start index of result to return from (paging). Required
+        :param limit: the size of results to return (paging). Required
+        :param locale: the localization of a result set. Optional (default=pt_Br)
+        :param company_id: the id of a company to. Optional (if not specified, rubric_id must be specified)
+        :param rubric_id: the id of a rubric to filter out results. Optional (if not, specified company_id must be specified)
+        :return:
+        """
+        # make some validation before
+        if not company_id and not rubric_id:
+            raise bottle.HTTPError(status=400,
+                                   body="Either rubric_id or company_id should be specified in request")
+
+        # branch will be a list of size 1 if the item was found
+        branches, total = branch_service.get_list(project_id, company_id=company_id, rubric_id=rubric_id, start=start,
+                                                  limit=limit)
+
+        if not branches:
+            raise HTTPError(status=404,
+                            log_message="No branches were found for given request")
+
+        result = {
+            "total": total
+        }
+        if start == 0:
+            result["markers"] = branch_service.get_markers(branches)
+
+        if limit:
+            if limit > total:
+                limit = total
+            branches = branches[:limit]
+
+        result["items"] = branch_response(branches, locale)
+
+        return result
 
 
 @app.get("/list")
@@ -23,16 +102,16 @@ def get_list(project_id, start, limit, locale="pt_Br", company_id=None, rubric_i
     """
     # make some validation before
     if not company_id and not rubric_id:
-        raise bottle.HTTPError(status=400,
-                               body="Either rubric_id or company_id should be specified in request")
+        raise HTTPError(status=400,
+                        log_message="Either rubric_id or company_id should be specified in request")
 
     # branch will be a list of size 1 if the item was found
     branches, total = branch_service.get_list(project_id, company_id=company_id, rubric_id=rubric_id, start=start,
-                                           limit=limit)
+                                              limit=limit)
 
     if not branches:
-        raise bottle.HTTPError(status=404,
-                               body="No branches were found for given request")
+        raise HTTPError(status=404,
+                        log_message="No branches were found for given request")
 
     result = {
         "total": total
@@ -66,8 +145,8 @@ def get(project_id, id, locale="pt_Br"):
     branch_ids = id.split(",")
     branches = branch_service.get(project_id, branch_ids)
     if not branches:
-        raise bottle.HTTPError(status=404,
-                               body="No branches were found for given id=%s and project_id=%d" % (id, project_id))
+        raise HTTPError(status=404,
+                        log_message="No branches were found for given id=%s and project_id=%d" % (id, project_id))
     return {"items": branch_response(branches, locale), "total": len(branches)}
 
 
