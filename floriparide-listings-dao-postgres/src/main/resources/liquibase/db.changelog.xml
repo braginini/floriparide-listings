@@ -1138,4 +1138,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="69" author="mbragin">
+        <addColumn tableName="project" schemaName="public">
+            <column name="data" type="json"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
