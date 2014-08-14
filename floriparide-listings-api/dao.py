@@ -29,14 +29,14 @@ def get_cursor(self, cursor_factory=None):
         connection_pool.putconn(con)
 
 
-class BaseDao(dict):
+class BaseDao(object):
     """
     base class for dao
     """
 
     def __init__(self, table_name, filters_map=None):
-        self["table_name"] = table_name
-        self["filters_map"] = filters_map
+        self.table_name = table_name
+        self.filters_map = filters_map
 
     def get_entity(self, ids=None, filters=None, offset=None, limit=None):
         """
@@ -48,9 +48,9 @@ class BaseDao(dict):
 
         with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             if not ids:
-                query = "SELECT * FROM %s as e" % self["table_name"]
+                query = "SELECT * FROM %s as e" % self.table_name
             else:
-                query = "SELECT * FROM %s as e WHERE e.id in (%s)" % (self["table_name"], ",".join(ids))
+                query = "SELECT * FROM %s as e WHERE e.id in (%s)" % (self.table_name, ",".join(ids))
 
             if filters:
                 if ids:
@@ -58,7 +58,7 @@ class BaseDao(dict):
                 else:
                     query += " WHERE "
 
-                query += sql_filters(filters, self["filters_map"])
+                query += sql_filters(filters, self.filters_map)
 
             if limit:
                 query += " LIMIT %s" % str(limit)
@@ -77,9 +77,9 @@ class BaseDao(dict):
         :return:
         """
         with get_cursor() as cur:
-            query = "SELECT COUNT(1) FROM %s " % self["table_name"]
+            query = "SELECT COUNT(1) FROM %s " % self.table_name
             if filters:
-                query = query + "WHERE " + sql_filters(filters, self["filters_map"])
+                query = query + "WHERE " + sql_filters(filters, self.filters_map)
             logging.info("Running query %s" % query)
             cur.execute(query)
             return cur.fetchone()[0]
@@ -103,8 +103,8 @@ class BranchDao(BaseDao):
                          dict(rubric_id="(SELECT json_array_elements(data->'rubrics')->>'id' LIMIT 1)::int",
                               company_id="company_id"))
 
-        self["attribute_dao"] = attribute_dao
-        self["rubric_dao"] = rubric_dao
+        self.attribute_dao = attribute_dao
+        self.rubric_dao = rubric_dao
 
     def get_full(self, project_id, branch_ids=None, offset=None, limit=None, filters=None):
         """
@@ -132,8 +132,8 @@ class BranchDao(BaseDao):
         def convert_to_dict(entities):
             return {e["id"]: e for e in entities}
 
-        attributes = convert_to_dict(self["attribute_dao"].get_entity(attr_ids))
-        rubrics = convert_to_dict(self["rubric_dao"].get_entity(rubric_ids))
+        attributes = convert_to_dict(self.attribute_dao.get_entity(attr_ids))
+        rubrics = convert_to_dict(self.rubric_dao.get_entity(rubric_ids))
 
         result = []
         for b in branches:
@@ -174,16 +174,4 @@ def sql_filters(filters, filters_map):
     :return:
     """
     return " AND ".join(["%s=%s" % (filters_map[k], v) for (k, v) in filters.items()])
-
-
-@contextmanager
-def get_cursor(cursor_factory=None):
-    con = connection_pool.getconn()
-    try:
-        if cursor_factory:
-            yield con.cursor(cursor_factory=cursor_factory)
-        else:
-            yield con.cursor()
-    finally:
-        connection_pool.putconn(con)
 
