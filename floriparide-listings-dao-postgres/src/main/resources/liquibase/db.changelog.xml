@@ -1144,4 +1144,9 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="70" author="mbragin">
+    <dropColumn columnName="name"
+                tableName="project"/>
+    </changeSet>
+
 </databaseChangeLog>

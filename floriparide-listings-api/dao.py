@@ -18,7 +18,7 @@ connection_pool = pool.ThreadedConnectionPool(config.DB.POOL_MIN_CONN,
 
 
 @contextmanager
-def get_cursor(self, cursor_factory=None):
+def get_cursor(cursor_factory=None):
     con = connection_pool.getconn()
     try:
         if cursor_factory:
@@ -161,9 +161,11 @@ class ProjectDao(BaseDao):
         BaseDao.__init__(self, "public.project")
 
 
+#singletons
 attribute_dao = AttributeDao()
 rubric_dao = RubricDao()
 branch_dao = BranchDao(attribute_dao, rubric_dao)
+project_dao = ProjectDao()
 
 
 def sql_filters(filters, filters_map):
