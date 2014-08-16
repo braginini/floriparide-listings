@@ -15,10 +15,34 @@ def get_list(locale="pt_Br"):
     if locale:
         locale = locale.lower()
 
-    projects = project_service.get_list()
+    projects = project_service.get()
     if not projects:
         raise bottle.HTTPError(status=404,
                                body="No projects were found")
+
+    projects = [project_response(p, locale) for p in projects]
+
+    return {"items": projects, "total": len(projects)}
+
+
+@app.get("/")
+@json_response
+@enable_cors
+@validate(id=str, locale=str)
+def get(id, locale="pt_Br"):
+    """
+    gets a list of projects by specified ids
+    :param id: a comma-separated list of ids to return
+    :param locale:
+    :return:
+    """
+    if locale:
+        locale = locale.lower()
+    project_ids = id.split(",")
+    projects = project_service.get(project_ids=project_ids)
+    if not projects:
+        raise bottle.HTTPError(status=404,
+                               body="No projects were found for given ids=%s" % id)
 
     projects = [project_response(p, locale) for p in projects]
 
