@@ -340,6 +340,71 @@ Returns a list of branch object by specified project id and company id and/or ru
     }
    ``` 
    
+### Project list
+
+Returns a list of project objects
+
+    ```
+    curl -X GET http://162.243.233.204:8888/catalog/1.0/branch/list?project_id=<project_id>&company_id=<company_id>&rubric_id=<rubric_id>&locale=<locale>&start=<start>&limit=<limit>
+    ```
+    
+   Endpoint accepts the following query parameters:
+   * ```locale``` - the locale of the client. Optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
+   
+   The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
+   and field ```result``` with the following top level fields:
+   * ```items``` - an array of projects (see [Project object](#project_obj)).
+   * ```total``` - the total number of results found
+   
+   Example request:
+   ``` 
+   http://floriparide.com.br:8888/catalog/1.0/project/list?locale=pt_br
+   ```
+   
+   and corresponding response:
+   
+   ```
+    {
+        "result": {
+            "items": [
+                {
+                    "name": "Florianópolis",
+                    "language": "pt",
+                    "locale": "pt_br",
+                    "default_position": {
+                        "lat": 43.2384784,
+                        "lon": 76.9452985,
+                        "zoom": 11
+                    },
+                    "time_zone": {
+                        "utc_offset": "-03:00",
+                        "name": "Brasília time"
+                    },
+                    "bounds": "POLYGON((82.5066233234198 55.249037769223,83.3965344871157 55.249037769223,83.3965344871157 54.5530320570113,82.5066233234198 54.5530320570113,82.5066233234198 55.249037769223))",
+                    "id": 0,
+                    "zoom": {
+                        "max": 19,
+                        "min": 11
+                    }
+                }
+            ],
+            "total": 1
+        },
+        "success": true
+    }
+    ```
+
+### <a name="project_obj">Project object 
+   * ```id``` - a unique id of a project
+   * ```language``` - language of a project
+   * ```name``` - name of a project
+   * ```locale``` - locale of a project
+   * ```default_position``` - default position to center map to with a latitude ```lat```, longitude ```lon``` and zoom level ```zoom```
+   * ```time_zone``` - timezone of a project with utc offset ```utc_offset``` and time zone name ```name``` 
+   * ```bounds``` - geometrical bounds of a project in WKT format
+   * ```zoom``` - available zoom levels of a project with min value ```min``` and maximum value ```max```
+   
+   
 ### <a name="branch_obj"></a>Branch object
 
    * ```attributes``` - an array of attributes (see [Attribute object](#attribute_obj)). Required.
