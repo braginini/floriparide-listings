@@ -340,12 +340,37 @@ Returns a list of branch object by specified project id and company id and/or ru
     }
    ``` 
    
+   
+### Project get
+
+Returns a list of project objects by specified ids
+
+    ```
+    curl -X GET http://162.243.233.204:8888/catalog/1.0/project?id=<id>&locale=<locale>
+    ```
+    
+   Endpoint accepts the following query parameters:
+   * ```id``` - comma-separated list of project ids to get 
+   * ```locale``` - the locale of the client. Optional(default pt_Br), string, currently supported values: ru_Ru, pt_Br, en_Us
+   
+   The response Content-Type is ```application/json;charset=UTF8``` and contains a field ```success``` which indicates whether the request was successful or not (boolean) 
+   and field ```result``` with the following top level fields:
+   * ```items``` - an array of projects (see [Project object](#project_obj)).
+   * ```total``` - the total number of results found
+   
+   Example request:
+   ``` 
+   http://floriparide.com.br:8888/catalog/1.0/project/list?id=0&locale=pt_br
+   ```
+   
+   and corresponding response:
+   
 ### Project list
 
 Returns a list of project objects
 
     ```
-    curl -X GET http://162.243.233.204:8888/catalog/1.0/branch/list?project_id=<project_id>&company_id=<company_id>&rubric_id=<rubric_id>&locale=<locale>&start=<start>&limit=<limit>
+    curl -X GET http://162.243.233.204:8888/catalog/1.0/project/list?locale=<locale>
     ```
     
    Endpoint accepts the following query parameters:
@@ -407,38 +432,38 @@ Returns a list of project objects
    
 ### <a name="branch_obj"></a>Branch object
 
-   * ```attributes``` - an array of attributes (see [Attribute object](#attribute_obj)). Required.
-   * ```rubrics``` - an array of rubrics (see [Rubric object](#rubric_obj)). Required.
-   * ```name``` - a name of a branch. Required.
-   * ```address``` - an address of a branch.Required.
-   * ```geometry``` - a geo location of a branch. Contains a ```point``` with ```lat``` and ```lon``` of a branch. Required.
-   * ```contacts``` - an array of contact information of a branch (see [Contact object](#contact_obj)). Required.
-   * ```schedule``` - an array of week days working hours of a branch (see [Schedule object](#schedule_obj)). If no week day specified consider that branch doesn't work this day. Each day can contain multiple schedule objects. Required.  
-   * ```payment_options``` - an array of payment options accepted by branch(see [Payment options object](#payment_options_obj) for a full list of possible values). Required. 
+   * ```attributes``` - array of attributes (see [Attribute object](#attribute_obj)). Required.
+   * ```rubrics``` - array of rubrics (see [Rubric object](#rubric_obj)). Required.
+   * ```name``` - name of a branch. Required.
+   * ```address``` - address of a branch.Required.
+   * ```geometry``` - geo location of a branch. Contains a ```point``` with ```lat``` and ```lon``` of a branch. Required.
+   * ```contacts``` - array of contact information of a branch (see [Contact object](#contact_obj)). Required.
+   * ```schedule``` - array of week days working hours of a branch (see [Schedule object](#schedule_obj)). If no week day specified consider that branch doesn't work this day. Each day can contain multiple schedule objects. Required.  
+   * ```payment_options``` - array of payment options accepted by branch(see [Payment options object](#payment_options_obj) for a full list of possible values). Required. 
    
 ### <a name="contact_obj">Contact object 
  
-   * ```contact``` - the type of a contact (could be ```phone```, ```website```, ```email```, ```skype```, ```fax```, ```jabber```, ```twitter```. Required.   
-   * ```value``` - the value of the contact (e.g. for type ```phone``` the value could be (48)32349548. Required.
-   * ```comment``` - the additional comment of a contact. Optional.
+   * ```contact``` - type of a contact (could be ```phone```, ```website```, ```email```, ```skype```, ```fax```, ```jabber```, ```twitter```. Required.   
+   * ```value``` - value of the contact (e.g. for type ```phone``` the value could be (48)32349548. Required.
+   * ```comment``` - additional comment of a contact. Optional.
  
 ### <a name="attribute_obj">Attribute object 
-   * ```name``` - a name of an attribute (localized by request parameter  ```phone``` locale) .Required.   
-   * ```id``` - a unique id of an attribute
+   * ```name``` - name of an attribute (localized by request parameter  ```phone``` locale) .Required.   
+   * ```id``` - unique id of an attribute
    
 ### <a name="rubric_obj">Rubric object 
-   * ```name``` - a name of rubric (localized by request parameter  ```phone``` locale) .Required.   
-   * ```id``` - a unique id of a rubric   
+   * ```name``` - name of rubric (localized by request parameter  ```phone``` locale) .Required.   
+   * ```id``` - unique id of a rubric   
    
 ### <a name="schedule_obj">Schedule object 
-   * ```from``` - a time when the branch starts to work on this day ```hh:MM```. Required.   
-   * ```to``` - a time when the branch closes on this day ```hh:MM```. Required.    
+   * ```from``` - time when the branch starts to work on this day ```hh:MM```. Required.   
+   * ```to``` - time when the branch closes on this day ```hh:MM```. Required.    
    
 ### <a name="marker_obj">Marker object 
-   * ```branch_id``` - an id of a corresponding branch
-   * ```name``` - a name of the marker(branch) to display
-   * ```lat``` - a latitude of the marker to display on map
-   * ```lon``` - a longitude of the marker to display on map
+   * ```branch_id``` - id of a corresponding branch
+   * ```name``` - name of the marker(branch) to display
+   * ```lat``` - latitude of the marker to display on map
+   * ```lon``` - longitude of the marker to display on map
    
 ### <a name="payment_options_obj">Payment options object 
    * ```american express```
