@@ -92,7 +92,7 @@ class AttributeDao(BaseDao):
 
 class RubricDao(BaseDao):
     def __init__(self):
-        BaseDao.__init__(self, "public.attribute")
+        BaseDao.__init__(self, "public.rubric")
 
 
 class BranchDao(BaseDao):
@@ -115,19 +115,13 @@ class BranchDao(BaseDao):
 
         branches = self.get_entity(ids=branch_ids, filters=filters, offset=offset, limit=limit)
 
-        # get attributes and rubrics
-        attr_ids = set()
-        rubric_ids = set()
-        for b in branches:
-            attrs = b["data"].get("attributes")
-            if attrs:
-                for a in attrs:
-                    attr_ids.add(str(a["id"]))
+        def generate(array):
+            for e in array:
+                yield str(e['id'])
 
-            rubrics = b["data"].get("rubrics")
-            if rubrics:
-                for r in rubrics:
-                    rubric_ids.add(str(r["id"]))
+        # get attributes and rubrics ids
+        attr_ids = set([next(generate(e["data"]["attributes"])) for e in branches if e["data"].get("attributes")])
+        rubric_ids = set([next(generate(e["data"]["rubrics"])) for e in branches if e["data"].get("rubrics")])
 
         def convert_to_dict(entities):
             return {e["id"]: e for e in entities}
@@ -135,25 +129,14 @@ class BranchDao(BaseDao):
         attributes = convert_to_dict(self.attribute_dao.get_entity(attr_ids))
         rubrics = convert_to_dict(self.rubric_dao.get_entity(rubric_ids))
 
-        result = []
-        for b in branches:
-            new_b = b
-            new_b["attributes"] = []
-            new_b["rubrics"] = []
+        def convert_branch(branch):
+            if 'attributes' in branch['data']:
+                branch['data']['attributes'] = [attributes[attr['id']] for attr in branch['data']['attributes']]
+            if 'rubrics' in branch['data']:
+                branch['data']['rubrics'] = [rubrics[ru['id']] for ru in branch['data']['rubrics']]
+            return branch
 
-            attrs = b["data"].get("attributes")
-            if attrs:
-                for a in attrs:
-                    new_b["attributes"].append(attributes[a["id"]])
-
-            rbrs = b["data"].get("rubrics")
-            if rbrs:
-                for r in rbrs:
-                    new_b["rubrics"].append(rubrics[r["id"]])
-
-            result.append(new_b)
-
-        return branches
+        return [convert_branch(b) for b in branches]
 
 
 class ProjectDao(BaseDao):

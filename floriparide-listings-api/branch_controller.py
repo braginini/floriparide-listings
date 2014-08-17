@@ -117,8 +117,8 @@ def branch_response(branches, locale):
 
     return [dict(id=b["id"],
                  name=b["name"],
-                 attributes=localize(b["attributes"]),
-                 rubrics=localize(b["rubrics"]),
+                 attributes=localize(b["data"].get("attributes")),
+                 rubrics=localize(b["data"].get("rubrics")),
                  address=b["data"].get("address"),
                  contacts=b["data"].get("contacts"),
                  payment_options=payment_opts(b["data"].get("payment_options")),
