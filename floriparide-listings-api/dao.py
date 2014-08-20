@@ -113,15 +113,17 @@ class BranchDao(BaseDao):
         :return:
         """
 
+        def solve(n):
+            for i in range(1, n+1):
+                yield i
+                yield i**2
+        ll = list(solve(5))
+
         branches = self.get_entity(ids=branch_ids, filters=filters, offset=offset, limit=limit)
 
-        def generate(array):
-            for e in array:
-                yield str(e['id'])
-
         # get attributes and rubrics ids
-        attr_ids = set([next(generate(e["data"]["attributes"])) for e in branches if e["data"].get("attributes")])
-        rubric_ids = set([next(generate(e["data"]["rubrics"])) for e in branches if e["data"].get("rubrics")])
+        attr_ids = set([str(r['id']) for b in branches if 'attributes' in b['data'] for r in b['data']['attributes']])
+        rubric_ids = set([str(r['id']) for b in branches if 'rubrics' in b['data'] for r in b['data']['rubrics']])
 
         def convert_to_dict(entities):
             return {e["id"]: e for e in entities}
