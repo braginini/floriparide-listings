@@ -471,6 +471,7 @@ Returns a list of project objects
    * ```contacts``` - array of contact information of a branch (see [Contact object](#contact_obj)). Required.
    * ```schedule``` - array of week days working hours of a branch (see [Schedule object](#schedule_obj)). If no week day specified consider that branch doesn't work this day. Each day can contain multiple schedule objects. Required.  
    * ```payment_options``` - array of payment options accepted by branch(see [Payment options object](#payment_options_obj) for a full list of possible values). Required. 
+   * ```description``` - description of a branch. Optional
    
 ### <a name="contact_obj">Contact object 
  
