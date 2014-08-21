@@ -124,5 +124,6 @@ def branch_response(branches, locale):
                  payment_options=payment_opts(b["data"].get("payment_options")),
                  schedule=b["data"].get("schedule"),
                  description=b["data"].get("description"),
+                 article=b["data"].get("article"),
                  geometry=b["data"].get("geometry"))
             for b in branches]
