@@ -39,7 +39,7 @@ public abstract class AbstractParseManager {
 		});
 	}
 
-	public void start() throws IOException, InterruptedException {
+	public void start() throws Exception {
 
 		//shutdown threads if no work
 		shutdownPool.scheduleAtFixedRate(new Runnable() {

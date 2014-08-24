@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class AbraselParserMain {
 
-	public static void main(String[] args) throws IOException, InterruptedException {
+	public static void main(String[] args) throws Exception {
 
 		ParseResultArchiveWorker archiveWorker = new ParseResultArchiveWorker(args[1]);
 		AbraselProfileWorker profileWorker = new AbraselProfileWorker(archiveWorker);

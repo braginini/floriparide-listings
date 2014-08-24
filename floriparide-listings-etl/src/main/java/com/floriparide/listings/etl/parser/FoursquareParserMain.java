@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 public class FoursquareParserMain {
 
-	public static void main(String[] args) throws IOException, InterruptedException {
+	public static void main(String[] args) throws Exception {
 
 		Worker archiveWorker = new ParseResultArchiveWorker(args[0]);
 		FoursquareClient foursquareClient = FoursquareClient.getInstance(args[1], args[2], null);

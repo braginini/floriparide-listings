@@ -23,7 +23,7 @@ public class HagahParseManager extends AbstractParseManager {
 		this.categoryPageUrl = categoryPageUrl;
 	}
 
-	public void start() throws IOException, InterruptedException {
+	public void start() throws Exception {
 		super.start();
 
 		String resource = null;

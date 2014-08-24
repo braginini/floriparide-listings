@@ -11,7 +11,7 @@ import java.io.IOException;
  */
 public class HagahParserMain {
 
-	public static void main(String[] args) throws IOException, InterruptedException {
+	public static void main(String[] args) throws Exception {
 
 		ParseResultArchiveWorker archiveWorker = new ParseResultArchiveWorker(args[1]);
 		HagahProfileWorker profileWorker = new HagahProfileWorker(archiveWorker);

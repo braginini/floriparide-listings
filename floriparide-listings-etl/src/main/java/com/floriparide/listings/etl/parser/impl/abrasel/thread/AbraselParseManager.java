@@ -33,7 +33,7 @@ public class AbraselParseManager extends AbstractParseManager {
 		this.startUrl = startUrl;
 	}
 
-	public void start() throws IOException, InterruptedException {
+	public void start() throws Exception {
 		super.start();
 
 		for (int i = 0; i < getPageNumber(); i++)
