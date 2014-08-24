@@ -105,6 +105,8 @@ def branch_response(branches, locale):
     :param branches:
     :return:
     """
+    if not branches:
+        return []
 
     # localize attributes and rubrics by specified locale
     def localize(not_localized):

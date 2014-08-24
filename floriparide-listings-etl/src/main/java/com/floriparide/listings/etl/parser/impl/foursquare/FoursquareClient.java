@@ -13,6 +13,7 @@ public class FoursquareClient {
 
 	protected FoursquareClient(String clientId, String clientSecret, String callbackUrl) {
 		this.api = new FoursquareApi(clientId, clientSecret, callbackUrl);
+        this.api.setVersion("20140823");
 	}
 
 	public static FoursquareClient getInstance(String clientId, String clientSecret, String callbackUrl) {

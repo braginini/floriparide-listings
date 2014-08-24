@@ -17,15 +17,15 @@
 		<json.simple.version>1.1.1</json.simple.version>
 		<jsoup.version>1.7.3</jsoup.version>
 		<apache.httpclient.version>4.3.3</apache.httpclient.version>
-		<foursquare.api.version>1.0.2</foursquare.api.version>
+		<foursquare.api.version>1.0.3-SNAPSHOT</foursquare.api.version>
 	</properties>
 
 	<repositories>
-		<repository>
-			<id>foursquareapijava</id>
-			<name>Foursquare V2 API for Java Repository</name>
-			<url>http://foursquare-api-java.googlecode.com/svn/repository</url>
-		</repository>
+        <repository>
+            <id>foursquareapijava</id>
+            <name>Foursquare V2 API for Java Repository</name>
+            <url>http://foursquare-api-java.googlecode.com/svn/repository</url>
+        </repository>
 	</repositories>
 
 	<build>

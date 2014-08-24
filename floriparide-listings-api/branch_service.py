@@ -48,6 +48,9 @@ def search(q, project_id, start, limit, attrs=None):
     total = es_result["hits"]["total"]
 
     # get the dictionary of branches with corresponding score (key -> branch_id, value -> score)
+    if not total:
+        return [], total
+    
     ids = {v["_id"]: v["_score"] for v in es_result["hits"]["hits"]}
     branches = branch_dao.get_full(project_id=project_id, branch_ids=ids.keys())
     # todo pub score to branches and sort by ES score

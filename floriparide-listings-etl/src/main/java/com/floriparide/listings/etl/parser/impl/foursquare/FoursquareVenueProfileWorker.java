@@ -13,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -27,93 +30,109 @@ import fi.foyt.foursquare.api.entities.CompleteVenue;
  */
 public class FoursquareVenueProfileWorker implements Worker<CompactVenue> {
 
-	private static final Logger log = LoggerFactory.getLogger(FoursquareVenueListWorker.class);
+    private static final Logger log = LoggerFactory.getLogger(FoursquareVenueListWorker.class);
 
-	FoursquareClient foursquareClient;
+    FoursquareClient foursquareClient;
 
-	ExecutorService executorService;
+    ExecutorService executorService;
 
-	Worker archiveWorker;
+    Worker archiveWorker;
 
-	ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
-	static final int poolSize = 10;
+    static final Set<String> done = Collections.synchronizedSet(new HashSet<String>());
 
-	public FoursquareVenueProfileWorker(FoursquareClient foursquareClient, Worker archiveWorker) {
-		this.objectMapper = new ObjectMapper();
-		this.foursquareClient = foursquareClient;
-		this.archiveWorker = archiveWorker;
-		this.executorService = Executors.newFixedThreadPool(poolSize, new ThreadFactory() {
-			@Override
-			public Thread newThread(Runnable r) {
-				return new Thread(r, "4square-profile-worker");
-			}
-		});
-	}
+    static final int poolSize = 10;
 
-	@Override
-	public void addTask(final Task<CompactVenue> task) {
+    public FoursquareVenueProfileWorker(FoursquareClient foursquareClient, Worker archiveWorker) {
+        this.objectMapper = new ObjectMapper();
+        this.foursquareClient = foursquareClient;
+        this.archiveWorker = archiveWorker;
+        this.executorService = Executors.newFixedThreadPool(poolSize, new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                return new Thread(r, "4square-profile-worker");
+            }
+        });
+    }
 
-		executorService.submit(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					Result<CompleteVenue> result = foursquareClient.getApi().venue(task.taskObject().getId());
-					if (result.getMeta().getCode() == 200) {
-						CompleteVenue venue = result.getResult();
-						try {
-							String json = objectMapper.writeValueAsString(venue);
-							final JsonNode node = objectMapper.readValue(json, JsonNode.class);
+    @Override
+    public void addTask(final Task<CompactVenue> task) {
+        if (done.contains(task.taskObject().getId())) {
+            log.info("Duplicate id=" + task.taskObject().getId());
+            return;
+        }
 
-							archiveWorker.addTask(new Task<ArchiveTask>() {
-								@Override
-								public ArchiveTask taskObject() {
-									return new ArchiveTask(RawData.Source.FOURSQUARE, node);
-								}
-							});
+        final FoursquareVenueProfileWorker instance = this;
 
-						} catch (JsonProcessingException e) {
-							log.error("Error while converting venue to JSON id=" + task.taskObject().getId(), e);
-						} catch (IOException e) {
-							log.error("Error while converting venue to JSON id=" + task.taskObject().getId(), e);
-						}
+        done.add(task.taskObject().getId());
 
-					} else {
-						log.error("Error while getting venue id=" + task.taskObject().getId() + " " +
-								"code=" + result.getMeta().getCode() + " " +
-								"type=" + result.getMeta().getErrorType() + " " +
-								"detail=" + result.getMeta().getErrorDetail());
-					}
-				} catch (FoursquareApiException e) {
-					log.error("Error while getting venue info venueId=" + task.taskObject().getId(), e);
-				}
-			}
-		});
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Result<CompleteVenue> result = foursquareClient.getApi().venue(task.taskObject().getId());
+                    if (result.getMeta().getCode() == 200) {
+                        CompleteVenue venue = result.getResult();
+                        try {
+                            String json = objectMapper.writeValueAsString(venue);
+                            final JsonNode node = objectMapper.readValue(json, JsonNode.class);
 
-	}
+                            archiveWorker.addTask(new Task<ArchiveTask>() {
+                                @Override
+                                public ArchiveTask taskObject() {
+                                    return new ArchiveTask(RawData.Source.FOURSQUARE, node);
+                                }
+                            });
 
-	@Override
-	public void shutdown() {
+                        } catch (JsonProcessingException e) {
+                            log.error("Error while converting venue to JSON id=" + task.taskObject().getId(), e);
+                        } catch (IOException e) {
+                            log.error("Error while converting venue to JSON id=" + task.taskObject().getId(), e);
+                        }
 
-	}
+                    } else {
+                        log.error("Error while getting venue id=" + task.taskObject().getId() + " " +
+                                "code=" + result.getMeta().getCode() + " " +
+                                "type=" + result.getMeta().getErrorType() + " " +
+                                "detail=" + result.getMeta().getErrorDetail());
+                        done.remove(task.taskObject().getId());
+                        instance.addTask(task);
+                    }
+                } catch (FoursquareApiException e) {
+                    log.error("Error while getting venue info venueId=" + task.taskObject().getId(), e);
+                    done.remove(task.taskObject().getId());
+                    instance.addTask(task);
+                }
+            }
 
-	@Override
-	public boolean shouldShutdown() {
-		return false;
-	}
 
-	@Override
-	public boolean isStopped() {
-		return false;
-	}
+        });
 
-	@Override
-	public int getSubmitted() {
-		return 0;
-	}
+    }
 
-	@Override
-	public int getDone() {
-		return 0;
-	}
+    @Override
+    public void shutdown() {
+
+    }
+
+    @Override
+    public boolean shouldShutdown() {
+        return false;
+    }
+
+    @Override
+    public boolean isStopped() {
+        return false;
+    }
+
+    @Override
+    public int getSubmitted() {
+        return 0;
+    }
+
+    @Override
+    public int getDone() {
+        return 0;
+    }
 }
