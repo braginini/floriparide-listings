@@ -148,8 +148,8 @@ public class ParseResultArchiveWorker implements Worker<ArchiveTask> {
 
 	public boolean shouldShutdown() {
 		//checks if the worker has no work for last 2 minutes
-		if (noWork.get() * period >= 2 * 60)
-			return true;
+		/*if (noWork.get() * period >= 2 * 60)
+			return true;*/
 
 		return false;
 	}

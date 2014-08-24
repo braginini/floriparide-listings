@@ -127,5 +127,6 @@ def branch_response(branches, locale):
                  schedule=b["data"].get("schedule"),
                  description=b["data"].get("description"),
                  article=b["data"].get("article"),
+                 photos=b["data"].get("photos"),
                  geometry=b["data"].get("geometry"))
             for b in branches]

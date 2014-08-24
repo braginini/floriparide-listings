@@ -3,16 +3,9 @@ package com.floriparide.listings.etl.parser.impl.foursquare;
 import com.floriparide.listings.etl.parser.AbstractParseManager;
 import com.floriparide.listings.etl.parser.model.Task;
 import com.floriparide.listings.etl.parser.model.Worker;
-import com.vividsolutions.jts.geom.Coordinate;
-import org.geotools.geometry.jts.JTS;
-import org.geotools.referencing.CRS;
-import org.geotools.referencing.GeodeticCalculator;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +18,7 @@ public class FoursquareParseManager extends AbstractParseManager {
 
     int levelThreshold = 5;
 
-    double diagonalThreshold = 3.0; //km
+    double diagonalThreshold = 2.0; //km
 
     DecimalFormat df = new DecimalFormat("#.#");
 

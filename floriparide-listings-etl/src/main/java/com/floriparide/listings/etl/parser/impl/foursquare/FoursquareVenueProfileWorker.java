@@ -59,7 +59,6 @@ public class FoursquareVenueProfileWorker implements Worker<CompactVenue> {
     @Override
     public void addTask(final Task<CompactVenue> task) {
         if (done.contains(task.taskObject().getId())) {
-            log.info("Duplicate id=" + task.taskObject().getId());
             return;
         }
 
@@ -98,11 +97,15 @@ public class FoursquareVenueProfileWorker implements Worker<CompactVenue> {
                                 "detail=" + result.getMeta().getErrorDetail());
                         done.remove(task.taskObject().getId());
                         instance.addTask(task);
+
+                        Thread.sleep(30 * 60 * 1000); //due to foursquare limits
                     }
                 } catch (FoursquareApiException e) {
                     log.error("Error while getting venue info venueId=" + task.taskObject().getId(), e);
                     done.remove(task.taskObject().getId());
                     instance.addTask(task);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
 

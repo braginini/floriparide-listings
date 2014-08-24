@@ -30,7 +30,7 @@ public class FoursquareVenueListWorker implements Worker<Map<String, String>> {
 
 	ExecutorService executorService;
 
-	static final int poolSize = 1;
+	static final int poolSize = 3;
 
 	public FoursquareVenueListWorker(FoursquareClient foursquareClient, Worker profileWorker) {
 		this.foursquareClient = foursquareClient;
@@ -64,12 +64,15 @@ public class FoursquareVenueListWorker implements Worker<Map<String, String>> {
 						log.error("Error while getting venue list code=" + result.getMeta().getCode() +
 								" type=" + result.getMeta().getErrorType() + " " +
 								"detail=" + result.getMeta().getErrorDetail());
+                        Thread.sleep(30 * 60 * 1000); //due to foursquare limits
 					}
 
 				} catch (FoursquareApiException e) {
 					log.error("Error while getting venues list", e);
-				}
-			}
+				} catch (InterruptedException e) {
+                    log.error("Interrupted exception", e);
+                }
+            }
 		});
 	}
 
