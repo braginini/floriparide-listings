@@ -36,7 +36,7 @@ public class FoursquareParseManager extends AbstractParseManager {
     @Override
     public void start() throws Exception {
         super.start();
-        List<Double[]> result = splitBounds(0, -27.8, -48.7, -27.2, -48.3);
+        List<Double[]> result = splitBounds(-27.8, -48.7, -27.2, -48.3);
         for (final Double[] d : result) {
 
             profileListWorker.addTask(new Task() {
@@ -56,7 +56,7 @@ public class FoursquareParseManager extends AbstractParseManager {
         }
     }
 
-    private List<Double[]> splitBounds(int level, double minLat, double minLng, double maxLat, double maxLng) throws FactoryException, TransformException {
+    private List<Double[]> splitBounds(double minLat, double minLng, double maxLat, double maxLng) throws FactoryException, TransformException {
         List<Double[]> result = new ArrayList<>();
         //if we reach a threshold (limit), we return current result
         double diagonal = distance(minLat, minLng, maxLat, maxLng, 'K');
@@ -69,14 +69,13 @@ public class FoursquareParseManager extends AbstractParseManager {
         double newLat = (minLat + maxLat) / 2;
         double newLng = (minLng + maxLng) / 2;
 
-        level++;
-        result.addAll(splitBounds(level, newLat, minLng, maxLat, newLng));
+        result.addAll(splitBounds(newLat, minLng, maxLat, newLng));
 
-        result.addAll(splitBounds(level, newLat, newLng, maxLat, maxLng));
+        result.addAll(splitBounds(newLat, newLng, maxLat, maxLng));
 
-        result.addAll(splitBounds(level, minLat, minLng, newLat, newLng));
+        result.addAll(splitBounds(minLat, minLng, newLat, newLng));
 
-        result.addAll(splitBounds(level, minLat, newLng, newLat, maxLng));
+        result.addAll(splitBounds(minLat, newLng, newLat, maxLng));
 
         return result;
     }
