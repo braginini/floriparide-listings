@@ -474,6 +474,8 @@ Returns a list of project objects
    * ```description``` - description of a branch. Optional
    * ```photo``` - array of photo urls. Optional
    * ```company``` - company simple object that branch belongs to (see [Simple company object](#simple_company_obj)). Required.
+   * ```rating``` - rating of a branch. Float, max = 5.0. Optional
+   * ```comments``` - array of branch comment objects made by users. (see [User comment object](#user_comment_obj)). Optional.
    
 ### <a name="contact_obj">Contact object 
  
@@ -503,6 +505,18 @@ Returns a list of project objects
    * ```id``` - id of a company
    * ```name``` - name of a company
    * ```branch_count``` - number of branches that belong to the company
+   
+### <a name="user_comment_obj">User comment object 
+   * ```id``` - id of a comment
+   * ```text``` - actual content of a comment
+   * ```rating``` - rating of a comment. Up to 5.
+   * ```user``` - user who made a comment (see [Simple user object](#simple_user_obj)).
+   * ```created``` - timestamp in milliseconds when a comment was created
+   
+### <a name="simple_user_obj">Simple user object 
+   * ```id``` - id of a user.
+   * ```name``` - name of a user.
+   * ```photo``` - avatar of a user.
    
 ### <a name="payment_options_obj">Payment options object 
    * ```american express```

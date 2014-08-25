@@ -134,5 +134,53 @@ def branch_response(branches, locale):
                  article=b["data"].get("article"),
                  photos=b["data"].get("photos"),
                  company=company(b["data"].get("company")),
+                 comments=hardcoded_comments(),
+                 rating=3.4,
                  geometry=b["data"].get("geometry"))
             for b in branches]
+
+
+def hardcoded_comments():
+    """
+    returns a hardcoded comments object
+    get rid of this shit later
+    :return:
+    """
+
+    return {'total': 3,
+            'items': [
+                {
+                    'user': {
+                        'id': 1,
+                        'name': 'John Biscuit',
+                        'photo':
+                            'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpf1/t1.0-1/c0.3.50.50/p50x50/970996_10152319709875309_746275031_n.jpg'
+                    },
+                    'rating': 5.0,
+                    'created': 1408977990000,
+                    'text': 'O melhor lugar no mundo! Mt barato.',
+                    'id': 1
+                },
+                {
+                    'user': {
+                        'id': 2.0,
+                        'name': 'Angelica Rating',
+                        'photo': 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpf1/v/t1.0-1/p50x50/10492361_10201567545070520_9154432532799480615_n.jpg?oh=cfb33694f694d2032b37e432c86ad1fb&oe=545D1296&__gda__=1417326448_3959e97f905e7d4590d39026277d4114'
+                    },
+                    'rating': 4.0,
+                    'created': 1393857990000,
+                    'text': 'Mt bom! Vou voltar mais',
+                    'id': 2
+                },
+                {
+                    'user': {
+                        'id': 3.0,
+                        'name': 'Bad guy',
+                        'photo': 'https://fbcdn-profile-a.akamaihd.net/hprofile-ak-xpf1/v/t1.0-1/p50x50/10492361_10201567545070520_9154432532799480615_n.jpg?oh=cfb33694f694d2032b37e432c86ad1fb&oe=545D1296&__gda__=1417326448_3959e97f905e7d4590d39026277d4114'
+                    },
+                    'rating': 1.0,
+                    'created': 1407077190000,
+                    'text': 'Que isso porra!? Nao quero voltar mais por que esse lygar e foda!',
+                    'id': 3
+                }
+            ]}
