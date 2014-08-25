@@ -472,6 +472,8 @@ Returns a list of project objects
    * ```schedule``` - array of week days working hours of a branch (see [Schedule object](#schedule_obj)). If no week day specified consider that branch doesn't work this day. Each day can contain multiple schedule objects. Required.  
    * ```payment_options``` - array of payment options accepted by branch(see [Payment options object](#payment_options_obj) for a full list of possible values). Required. 
    * ```description``` - description of a branch. Optional
+   * ```photo``` - array of photo urls. Optional
+   * ```company``` - company simple object that branch belongs to (see [Simple company object](#simple_company_obj)). Required.
    
 ### <a name="contact_obj">Contact object 
  
@@ -496,6 +498,11 @@ Returns a list of project objects
    * ```name``` - name of the marker(branch) to display
    * ```lat``` - latitude of the marker to display on map
    * ```lon``` - longitude of the marker to display on map
+   
+### <a name="simple_company_obj">Simple company object 
+   * ```id``` - id of a company
+   * ```name``` - name of a company
+   * ```branch_count``` - number of branches that belong to the company
    
 ### <a name="payment_options_obj">Payment options object 
    * ```american express```
