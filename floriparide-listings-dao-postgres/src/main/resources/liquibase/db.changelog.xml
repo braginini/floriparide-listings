@@ -1149,4 +1149,18 @@
                 tableName="project"/>
     </changeSet>
 
+    <changeSet id="71" author="mbragin">
+        <addColumn tableName="company" schemaName="public">
+            <column name="data" type="json"/>
+        </addColumn>
+        <dropColumn columnName="description"
+                    tableName="company"/>
+        <dropColumn columnName="promo"
+                    tableName="company"/>
+    </changeSet>
+
+    <changeSet id="72" author="mbragin">
+        <sql>UPDATE public.company SET data = '{ "description": null, "promo": null, "branch_count": 1 }'::json;</sql>
+    </changeSet>
+
 </databaseChangeLog>

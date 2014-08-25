@@ -96,7 +96,7 @@ class RubricDao(BaseDao):
 
 
 class BranchDao(BaseDao):
-    def __init__(self, attribute_dao, rubric_dao):
+    def __init__(self, attribute_dao, rubric_dao, company_dao):
         # mapping that helps to determine how to filter by filters in db
         # todo rubric_id filter looks difficult and query will go through all rows
         BaseDao.__init__(self, "public.branch",
@@ -105,6 +105,7 @@ class BranchDao(BaseDao):
 
         self.attribute_dao = attribute_dao
         self.rubric_dao = rubric_dao
+        self.company_dao = company_dao
 
     def get_full(self, project_id, branch_ids=None, offset=None, limit=None, filters=None):
         """
@@ -118,18 +119,24 @@ class BranchDao(BaseDao):
         # get attributes and rubrics ids
         attr_ids = set([str(r['id']) for b in branches if 'attributes' in b['data'] for r in b['data']['attributes']])
         rubric_ids = set([str(r['id']) for b in branches if 'rubrics' in b['data'] for r in b['data']['rubrics']])
+        company_ids = set(str(b['company_id']) for b in branches)
 
         def convert_to_dict(entities):
             return {e["id"]: e for e in entities}
 
         attributes = convert_to_dict(self.attribute_dao.get_entity(attr_ids))
         rubrics = convert_to_dict(self.rubric_dao.get_entity(rubric_ids))
+        companies = convert_to_dict(self.company_dao.get_entity(company_ids))
 
         def convert_branch(branch):
             if 'attributes' in branch['data']:
                 branch['data']['attributes'] = [attributes[attr['id']] for attr in branch['data']['attributes']]
+
             if 'rubrics' in branch['data']:
                 branch['data']['rubrics'] = [rubrics[ru['id']] for ru in branch['data']['rubrics']]
+
+            branch['data']['company'] = companies[branch['company_id']]
+
             return branch
 
         return [convert_branch(b) for b in branches]
@@ -140,10 +147,15 @@ class ProjectDao(BaseDao):
         BaseDao.__init__(self, "public.project")
 
 
+class CompanyDao(BaseDao):
+    def __init__(self):
+        BaseDao.__init__(self, "public.company")
+
 #singletons
 attribute_dao = AttributeDao()
 rubric_dao = RubricDao()
-branch_dao = BranchDao(attribute_dao, rubric_dao)
+company_dao = CompanyDao()
+branch_dao = BranchDao(attribute_dao, rubric_dao, company_dao)
 project_dao = ProjectDao()
 
 

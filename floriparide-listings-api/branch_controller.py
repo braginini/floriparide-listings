@@ -28,7 +28,7 @@ def get_list(project_id, start, limit, locale="pt_Br", company_id=None, rubric_i
 
     # branch will be a list of size 1 if the item was found
     branches, total = branch_service.get_list(project_id, company_id=company_id, rubric_id=rubric_id, start=start,
-                                           limit=limit)
+                                              limit=limit)
 
     if not branches:
         raise bottle.HTTPError(status=404,
@@ -117,6 +117,11 @@ def branch_response(branches, locale):
         if raw_opts:
             return [o["option"] for o in raw_opts]
 
+    def company(raw_company):
+        if raw_company:
+            return dict(id=raw_company['id'], name=raw_company['name'],
+                        branch_count=raw_company['data']['branch_count'])
+
     return [dict(id=b["id"],
                  name=b["name"],
                  attributes=localize(b["data"].get("attributes")),
@@ -128,5 +133,6 @@ def branch_response(branches, locale):
                  description=b["data"].get("description"),
                  article=b["data"].get("article"),
                  photos=b["data"].get("photos"),
+                 company=company(b["data"].get("company")),
                  geometry=b["data"].get("geometry"))
             for b in branches]
