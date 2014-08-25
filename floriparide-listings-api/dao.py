@@ -20,6 +20,7 @@ connection_pool = pool.ThreadedConnectionPool(config.DB.POOL_MIN_CONN,
 @contextmanager
 def get_cursor(cursor_factory=None):
     con = connection_pool.getconn()
+    con.autocommit = True
     try:
         if cursor_factory:
             yield con.cursor(cursor_factory=cursor_factory)
@@ -140,6 +141,14 @@ class BranchDao(BaseDao):
             return branch
 
         return [convert_branch(b) for b in branches]
+
+    def update(self, entity_id, field, value, is_json=False):
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            query = "UPDATE %s SET %s = '%s'" % (self.table_name, field, value)
+            if is_json:
+                query += '::json'
+            query += ' WHERE id=%s' % entity_id
+            cur.execute(query)
 
 
 class ProjectDao(BaseDao):
