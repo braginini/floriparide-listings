@@ -67,7 +67,7 @@ def get_markers(branches):
     return [dict(branch_id=b["id"],
                  name=b["name"],
                  lat=b["data"]["geometry"]["point"]["lat"],
-                 lon=b["data"]["geometry"]["point"]["lon"])
+                 lon=b["data"]["geometry"]["point"]["lng"])
             for b in branches if b["data"].get("geometry")]
 
 
