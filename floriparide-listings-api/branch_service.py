@@ -45,7 +45,9 @@ def search(q, project_id, start, limit, attrs=None):
     es_result = es.search(index="florianopolis", doc_type="branch", body=body)
     logging.info("Got ES result for query %s" % body)
 
-    total = es_result["hits"]["total"]
+    total = es_result['hits']['total']
+    #dictionary with branch id as a key and score as a value
+    es_scores = {e['_id']: e['_score'] for e in es_result['hits']['hits']}
 
     # get the dictionary of branches with corresponding score (key -> branch_id, value -> score)
     if not total:
@@ -53,7 +55,8 @@ def search(q, project_id, start, limit, attrs=None):
 
     ids = {v["_id"]: v["_score"] for v in es_result["hits"]["hits"]}
     branches = branch_dao.get_full(project_id=project_id, branch_ids=ids.keys())
-    # todo pub score to branches and sort by ES score
+
+    branches = sorted(branches, key=lambda branch: es_scores[str(branch['id'])], reverse=True)
 
     return branches, total
 
@@ -119,6 +122,6 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
     if rubric_id:
         filters["rubric_id"] = rubric_id
 
-    branches = branch_dao.get_full(project_id, offset=start, limit=limit, filters=filters)
+    branches = branch_dao.get_full(project_id, offset=start, limit=limit, filters=filters, order='id')
     total = branch_dao.count(filters=filters)
     return branches, total

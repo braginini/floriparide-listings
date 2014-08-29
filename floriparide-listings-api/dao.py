@@ -39,7 +39,7 @@ class BaseDao(object):
         self.table_name = table_name
         self.filters_map = filters_map
 
-    def get_entity(self, ids=None, filters=None, offset=None, limit=None):
+    def get_entity(self, ids=None, filters=None, offset=None, limit=None, order=None):
         """
         retrieves all the entities by specified name (table with schema) and ids
         :param ids:
@@ -66,6 +66,9 @@ class BaseDao(object):
 
             if offset:
                 query += " OFFSET %s" % str(offset)
+
+            if order:
+                query += " ORDER BY %s" % str(order)
 
             logging.info("Running query %s" % query)
             cur.execute(query)
@@ -108,14 +111,14 @@ class BranchDao(BaseDao):
         self.rubric_dao = rubric_dao
         self.company_dao = company_dao
 
-    def get_full(self, project_id, branch_ids=None, offset=None, limit=None, filters=None):
+    def get_full(self, project_id, branch_ids=None, offset=None, limit=None, filters=None, order=None):
         """
         get all the branches by specified ids (full version, with attributes and rubrics)
         :param branch_ids: the list of branch ids to return
         :return:
         """
 
-        branches = self.get_entity(ids=branch_ids, filters=filters, offset=offset, limit=limit)
+        branches = self.get_entity(ids=branch_ids, filters=filters, offset=offset, limit=limit, order=order)
 
         # get attributes and rubrics ids
         attr_ids = set([str(r['id']) for b in branches if 'attributes' in b['data'] for r in b['data']['attributes']])
