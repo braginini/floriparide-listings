@@ -1,3 +1,4 @@
+import random
 import bottle
 import branch_service
 from util.controller_utils import validate, json_response, enable_cors
@@ -135,7 +136,7 @@ def branch_response(branches, locale):
                  photos=b["data"].get("photos"),
                  company=company(b["data"].get("company")),
                  comments=hardcoded_comments(),
-                 rating=3.4,
+                 rating=round(random.uniform(0, 5), 1),
                  geometry=b["data"].get("geometry"))
             for b in branches]
 
