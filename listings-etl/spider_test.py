@@ -1,4 +1,5 @@
 import logging
+import re
 from spider import Parser, Engine
 
 __author__ = 'mikhail'
@@ -6,14 +7,13 @@ __author__ = 'mikhail'
 logging.basicConfig(format=u'[%(asctime)s] %(levelname)s %(filename)s:%(lineno)d# %(message)s',
                     level=logging.DEBUG)
 
+re_digits = re.compile('\d+')
+
 
 class HagahCategoriesPageParser(Parser):
     """
 
     """
-
-    def __init__(self,):
-        super().__init__('HagahCategoriesPageParser')
 
     def test(self, url):
         """
@@ -23,7 +23,7 @@ class HagahCategoriesPageParser(Parser):
         """
         return url.endswith('/guia/')
 
-    def parse(self, soup, engine):
+    def parse(self, soup, engine, url):
         links = soup.find_all('a')
         for link in links:
             logging.info("Found link %s" % str(link))
@@ -32,10 +32,45 @@ class HagahCategoriesPageParser(Parser):
 
         logging.info("Links count %d" % len(links))
 
+
+class HagahCompanyListPageParser(Parser):
+    """
+
+    """
+
+    def __init__(self):
+        super().__init__(pattern_string='.+hagah\.com\.br\/\w+\/\w+\/guia\/\w+\?q=.+')
+
+    def parse(self, soup, engine, url):
+        links = soup.find_all('a')
+        for link in links:
+            logging.info("Found link %s" % str(link))
+            if 'href' in link:
+                engine.submit(link.get('href'))
+
+        logging.info("Links count %d" % len(links))
+
+        if '&p=' in url:
+            return
+
+        #get the number of results to build paging urls
+        for span in soup.find_all('span', class_='spanResultado'):
+            m = re_digits.match(span.text)
+            if m:
+                result_num = int(m.group())
+                break
+
+        if result_num:
+            page_num = int(result_num / 20 + 1)
+            for i in range(2, page_num + 1):
+                new_url = url + '&p=%d' % i
+                engine.submit(new_url)
+
+
 if __name__ == "__main__":
-    parser = HagahCategoriesPageParser()
-    engine = Engine([parser])
-    engine.submit('http://www.hagah.com.br/sc/florianopolis/guia/')
+    engine = Engine([
+        HagahCategoriesPageParser(),
+        HagahCompanyListPageParser()
+    ])
+    engine.submit('http://www.hagah.com.br/sc/florianopolis/guia/acougues?q=;;c1400')
     engine.wait()
-
-

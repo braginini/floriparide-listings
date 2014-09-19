@@ -66,7 +66,7 @@ class Engine(object):
                         return
 
                     soup = BeautifulSoup(html)
-                    parser.parse(soup, self)
+                    parser.parse(soup, self, url)
                     break
 
         for p in self._parsers:
@@ -90,8 +90,8 @@ class Parser(object):
     base class for all parsers
     """
 
-    def __init__(self, name, pattern_string=None):
-        self._name = name
+    def __init__(self, name=None, pattern_string=None):
+        self._name = name if name else self.__class__.__name__
         if pattern_string:
             self._pattern = re.compile(pattern_string)
         super(Parser, self).__init__()
@@ -108,7 +108,7 @@ class Parser(object):
         """
         return self._pattern.match(url)
 
-    def parse(self, soup, engine):
+    def parse(self, soup, engine, url):
         """
         :param soup: BeautifulSoup
         :param engine: Engine
