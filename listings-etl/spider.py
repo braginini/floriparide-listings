@@ -79,8 +79,7 @@ class Engine(object):
         """
         waits until all threads are complete
         """
-        for future in self._futures.values():
-            future.result()
+        self._thread_pool.shutdown(True)
 
         logging.info("Processed %d pages" % len(self._futures))
 
