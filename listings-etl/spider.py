@@ -1,9 +1,10 @@
 from concurrent import futures
 import logging
 import re
+from threading import Lock
 from time import sleep
-import requests
 
+import requests
 from bs4 import BeautifulSoup
 
 
@@ -18,6 +19,9 @@ class Engine(object):
     def __init__(self, parsers=None, thread_pool_size=1):
         self._parsers = parsers if parsers else []
         self._thread_pool = futures.ThreadPoolExecutor(max_workers=thread_pool_size)
+        #key - url, value - result future
+        self._futures = {}
+        self._lock = Lock()
         super(Engine, self).__init__()
 
     def add_parser(self, parser):
@@ -34,6 +38,8 @@ class Engine(object):
         :param url: the  url to submit
         :return:
         """
+        if url in self._futures:
+            return
 
         def download_page(url, parser):
             """
@@ -44,27 +50,39 @@ class Engine(object):
             :return:
             """
 
-            for i in range(5):
-                try:
-                    logging.info("Starting download of url %s attempt %d" % (url, i))
-                    html = requests.get(url).text
-                    logging.info("Successfully downloaded page for url %s " % url)
-                except requests.exceptions.HTTPError as e:
-                    logging.error("Error fetching url %s" % url, e)
-                    sleep(5)
-                    continue
-                if not html:
-                    logging.error("Strange response %s" % url)
-                    return
+            with self._lock:
 
-                soup = BeautifulSoup(html)
-                parser.parse(soup, self)
+                for i in range(5):
+                    try:
+                        logging.info("Starting download of url %s attempt %d" % (url, i))
+                        html = requests.get(url).text
+                        logging.info("Successfully downloaded page for url %s " % url)
+                    except requests.exceptions.HTTPError as e:
+                        logging.error("Error fetching url %s" % url, e)
+                        sleep(5)
+                        continue
+                    if not html:
+                        logging.error("Strange response %s" % url)
+                        return
+
+                    soup = BeautifulSoup(html)
+                    parser.parse(soup, self)
+                    break
 
         for p in self._parsers:
             if p.test(url):
                 logging.info("Found proper parser %s and submitting url %s for processing" % (p.name, url))
-                self._thread_pool.submit(download_page, url, p)
+                self._futures[url] = self._thread_pool.submit(download_page, url, p)
                 break
+
+    def wait(self):
+        """
+        waits until all threads are complete
+        """
+        for future in self._futures.values():
+            future.result()
+
+        logging.info("Processed %d pages" % len(self._futures))
 
 
 class Parser(object):

@@ -24,13 +24,18 @@ class HagahCategoriesPageParser(Parser):
         return url.endswith('/guia/')
 
     def parse(self, soup, engine):
-        for link in soup.find_all('a'):
+        links = soup.find_all('a')
+        for link in links:
+            logging.info("Found link %s" % str(link))
             if 'href' in link:
                 engine.submit(link.get('href'))
+
+        logging.info("Links count %d" % len(links))
 
 if __name__ == "__main__":
     parser = HagahCategoriesPageParser()
     engine = Engine([parser])
     engine.submit('http://www.hagah.com.br/sc/florianopolis/guia/')
+    engine.wait()
 
 
