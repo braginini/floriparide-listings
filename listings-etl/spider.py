@@ -14,11 +14,16 @@ __author__ = 'mikhail'
 class Engine(object):
     """
     core spider stuff
+    Engine has a list of parsers and a pipeline (list of pipes).
+    Each url (parse candidate) is testes by Parser.test(url) method and if success the page is downloaded and parsed
+    Each parse result (Item) is processed in each pipe of a pipeline in order they were added (pipes).
     """
 
-    def __init__(self, parsers=None, thread_pool_size=1):
+    def __init__(self, parsers=None, pipeline=None, parse_pool_size=1, pipeline_pool_size=1):
         self._parsers = parsers if parsers else []
-        self._thread_pool = futures.ThreadPoolExecutor(max_workers=thread_pool_size)
+        self._pipeline = pipeline if pipeline else []
+        self._parse_pool = futures.ThreadPoolExecutor(max_workers=parse_pool_size)
+        self._pipeline_pool = futures.ThreadPoolExecutor(max_workers=pipeline_pool_size)
         #key - url, value - result future
         self._futures = {}
         self._lock = Lock()
@@ -31,6 +36,20 @@ class Engine(object):
         :return:
         """
         self._parsers.append(parser)
+
+    def pipeline(self, item):
+        """
+        goes through all defined pipes in a pipeline(_pipeline) in order pipes were added to engine and executes Item.pipe(item)
+        :param item: Item the item to process in a pipeline
+        :return:
+        """
+        def go_pipeline():
+            if self._pipeline:
+                for pipe in self._pipeline:
+                    pipe.pipe(item)
+
+        logging.info("Processing item %s in a pipeline" % str(item))
+        self._pipeline_pool.submit(go_pipeline)
 
     def submit(self, url):
         """
@@ -50,36 +69,35 @@ class Engine(object):
             :return:
             """
 
-            with self._lock:
+            for i in range(5):
+                try:
+                    logging.info("Starting download of url %s attempt %d" % (url, i))
+                    html = requests.get(url).text
+                    logging.info("Successfully downloaded page for url %s " % url)
+                except requests.exceptions.HTTPError as e:
+                    logging.error("Error fetching url %s" % url, e)
+                    sleep(5)
+                    continue
+                if not html:
+                    logging.error("Strange response %s" % url)
+                    return
 
-                for i in range(5):
-                    try:
-                        logging.info("Starting download of url %s attempt %d" % (url, i))
-                        html = requests.get(url).text
-                        logging.info("Successfully downloaded page for url %s " % url)
-                    except requests.exceptions.HTTPError as e:
-                        logging.error("Error fetching url %s" % url, e)
-                        sleep(5)
-                        continue
-                    if not html:
-                        logging.error("Strange response %s" % url)
-                        return
-
-                    soup = BeautifulSoup(html)
-                    parser.parse(soup, self, url)
-                    break
+                soup = BeautifulSoup(html)
+                parser.parse(soup, self, url)
+                break
 
         for p in self._parsers:
             if p.test(url):
                 logging.info("Found proper parser %s and submitting url %s for processing" % (p.name, url))
-                self._futures[url] = self._thread_pool.submit(download_page, url, p)
+                self._futures[url] = self._parse_pool.submit(download_page, url, p)
                 break
 
     def wait(self):
         """
         waits until all threads are complete
         """
-        self._thread_pool.shutdown(True)
+        self._parse_pool.shutdown(True)
+        self._pipeline_pool.shutdown(True)
 
         logging.info("Processed %d pages" % len(self._futures))
 
@@ -114,4 +132,33 @@ class Parser(object):
         :return:
         """
         pass
+
+
+class Pipe(object):
+    """
+    basic class for processing parsed result (Item object)
+    classes that extend this class should override pipe() method
+    Can be used for validating, saving results
+    """
+
+    def __init__(self):
+        super(Pipe, self).__init__()
+
+    def pipe(self, item):
+        """
+
+        :param item: Item to process in a pipe
+        :return:
+        """
+        logging.info("Item %s in a pipe %s" % (self.__class__.__name__, str(item)))
+        pass
+
+
+class Item(object):
+    """
+    basic class for storing parse results.
+    """
+
+    def __init__(self):
+        super(Item, self).__init__()
 

@@ -1,6 +1,6 @@
 import logging
 import re
-from spider import Parser, Engine
+from spider import Parser, Engine, Pipe, Item
 
 __author__ = 'mikhail'
 
@@ -8,6 +8,17 @@ logging.basicConfig(format=u'[%(asctime)s] %(levelname)s %(filename)s:%(lineno)d
                     level=logging.DEBUG)
 
 re_digits = re.compile('\d+')
+
+
+class TestPipe(Pipe):
+    def pipe(self, item):
+        logging.info('GOT U %s' % str(item))
+
+
+class TestItem(Item):
+    def __init__(self, name):
+        self.name = name
+        super().__init__()
 
 
 class HagahCategoriesPageParser(Parser):
@@ -47,13 +58,14 @@ class HagahCompanyListPageParser(Parser):
             logging.info("Found link %s" % str(link))
             if 'href' in link:
                 engine.submit(link.get('href'))
+                engine.pipeline(TestItem(link.get('href')))
 
         logging.info("Links count %d" % len(links))
 
         if '&p=' in url:
             return
 
-        #get the number of results to build paging urls
+        # get the number of results to build paging urls
         for span in soup.find_all('span', class_='spanResultado'):
             m = re_digits.match(span.text)
             if m:
@@ -68,9 +80,12 @@ class HagahCompanyListPageParser(Parser):
 
 
 if __name__ == "__main__":
-    engine = Engine([
-        HagahCategoriesPageParser(),
-        HagahCompanyListPageParser()
-    ])
+    engine = Engine(
+        parsers=[
+            HagahCategoriesPageParser(),
+            HagahCompanyListPageParser()
+        ], pipeline=[
+            TestPipe
+        ])
     engine.submit('http://www.hagah.com.br/sc/florianopolis/guia/acougues?q=;;c1400')
     engine.wait()
