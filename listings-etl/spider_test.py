@@ -11,6 +11,7 @@ re_digits = re.compile('\d+')
 
 
 class TestPipe(Pipe):
+
     def pipe(self, item):
         logging.info('GOT U %s' % str(item))
 
@@ -58,7 +59,6 @@ class HagahCompanyListPageParser(Parser):
             logging.info("Found link %s" % str(link))
             if 'href' in link:
                 engine.submit(link.get('href'))
-                engine.pipeline(TestItem(link.get('href')))
 
         logging.info("Links count %d" % len(links))
 
@@ -78,14 +78,13 @@ class HagahCompanyListPageParser(Parser):
                 new_url = url + '&p=%d' % i
                 engine.submit(new_url)
 
-
 if __name__ == "__main__":
     engine = Engine(
         parsers=[
             HagahCategoriesPageParser(),
             HagahCompanyListPageParser()
         ], pipeline=[
-            TestPipe
+            TestPipe()
         ])
     engine.submit('http://www.hagah.com.br/sc/florianopolis/guia/acougues?q=;;c1400')
     engine.wait()

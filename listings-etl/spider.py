@@ -43,13 +43,13 @@ class Engine(object):
         :param item: Item the item to process in a pipeline
         :return:
         """
-        def go_pipeline():
+        def go_pipeline(pipeline_item):
             if self._pipeline:
                 for pipe in self._pipeline:
-                    pipe.pipe(item)
+                    pipe.pipe(pipeline_item)
 
         logging.info("Processing item %s in a pipeline" % str(item))
-        self._pipeline_pool.submit(go_pipeline)
+        self._pipeline_pool.submit(go_pipeline, item)
 
     def submit(self, url):
         """
