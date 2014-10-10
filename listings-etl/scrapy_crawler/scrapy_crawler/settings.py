@@ -15,3 +15,8 @@ NEWSPIDER_MODULE = 'scrapy_crawler.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'scrapy_crawler (+http://www.yourdomain.com)'
+
+########### Item pipeline
+ITEM_PIPELINES = [
+                  "scrapy_crawler.pipelines.JsonPaidItemPipeline",
+]

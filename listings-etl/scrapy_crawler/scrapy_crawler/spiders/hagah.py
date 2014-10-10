@@ -3,7 +3,8 @@ import scrapy
 from scrapy.contrib.spiders import Rule, CrawlSpider
 from scrapy.contrib.linkextractors import LinkExtractor
 from scrapy.shell import inspect_response
-from scrapy_crawler.items import HighlightedCompany
+from scrapy_crawler import items
+from scrapy_crawler.items import *
 
 __author__ = 'mikhail'
 
