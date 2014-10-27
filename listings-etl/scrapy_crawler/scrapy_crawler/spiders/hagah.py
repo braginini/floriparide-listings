@@ -59,16 +59,37 @@ class HagahSpider(CrawlSpider):
         if google_maps_link:
             google_maps_link = google_maps_link[0]
 
+        address = None
+        phones = None
+        for sel in response.css('div.infoDetalhe > ul > li').extract():
+            if sel.xpath('contains(@class, link-endereco)'):
+                # street address
+                address = sel.css('a.link-endereco::text').extract()
+                if sel.xpath('text()').extract():
+                    # number
+                    address += ' '
+                    address += sel.xpath('text()').extract()[0]
+                if sel.xpath('contains(@class, link-bairro)'):
+                    # naeighbourhood
+                    address += ' '
+                    address += sel.css('a.link-bairro::text').extract()
+
+            elif sel.xpath('contains(@class, region)'):
+                if sel.xpath('text()').extract():
+                    # city
+                    address += ' '
+                    address += sel.xpath('text()')[0].extract()
+                address += ' '
+                # state
+                address += sel.css('span.region::text')[0].extract()
+            elif sel.xpath('contains(@class, telefones)'):
+                phones = [p.strip('\t\n') for p in sel.xpath('span/text()').extract()]
+
         url = response.xpath('//*[@id="miolo"]/div[2]/div[3]/div[1]/div[2]/div[2]/ul[1]/li[3]/a/text()').extract()
         if url:
             url = [2].css('a::text').extract()
             if url:
                 url = url[0]
-
-        phones = response.xpath('//*[@id="miolo"]/div[2]/div[4]/div[1]/div[2]/div[3]/ul[1]/li[3]/span/text()').extract()
-        if phones:
-            #todo remove all /n and /t symbols - clear out phone
-            phones = [p for p in phones]
 
         short_desc = response.xpath('//*[@id="corpo-abas"]/section/article/h3/text()').extract()
         if short_desc:
@@ -78,20 +99,53 @@ class HagahSpider(CrawlSpider):
         if full_desc:
             full_desc = full_desc[0]
 
+        working_hours = None
+        attributes = None
+        capacity = None
+        credit_card = None
+        debit_card = None
+        food_card = None
+        opened = None
+        other_payment_methods = None
+
+        def parse_item(selector):
+            item = selector.xpath('span/text()').extract()
+            if item and len(item) == 1:
+                return item[0]
+
+        def parse_list_item(selector):
+            return selector.xpath('ul/li/span/text()').extract()
+
+
         item_infoes = response.css('#corpo-abas > section > div.itemInfo')
         if item_infoes:
             for i in item_infoes:
-                h3 = item_infoes.xpath('h3/text()').extract()
+                h3 = i.xpath('h3/text()').extract()
                 if h3:
-                    if 'Horário de atendimento'.lower() in h3[0].lower():
-                        working_hours = response.css('#corpo-abas > section > div.itemInfo')[0].xpath(
-                            'span/text()').extract()
-                        if working_hours:
-                            working_hours = working_hours[0]
+                    h3 = h3[0].lower()
+                    if 'Horário de atendimento'.lower() in h3:
+                        working_hours = parse_item(i)
+                    elif 'Capacidade'.lower() in h3:
+                        capacity = parse_item(i)
+                    elif 'Características'.lower():
+                        attributes = parse_list_item(i)
+                    elif 'Aceita Cartão de Crédito'.lower():
+                        credit_card = i.xpath('ul/li/img/@title').extract()
+                    elif 'Aceita Cartão de Débito'.lower():
+                        debit_card = i.xpath('ul/li/img/@title').extract()
+                    elif 'Aceita Tíquetes'.lower():
+                        food_card = i.xpath('ul/li/img/@title').extract()
+                    elif 'Mais Formas de Pagamento'.lower():
+                        other_payment_methods = parse_list_item(i)
+                    elif 'Aberto desde':
+                        opened = parse_item(i)
 
-
-        attributes = response.css(
-            '#corpo-abas > section > div.itemInfo.caract > ul.listaCaract > li > span::text').extract()
+        return items.CompanyProfileItem(name=name, url=url, categories=categories, address=address, capacity=capacity,
+                                        phones=phones, short_description=short_descr, full_description=full_desc,
+                                        attributes=attributes,
+                                        working_hours=working_hours, credit_cards=credit_card, debit_cards=debit_card,
+                                        food_cards=food_card, other_payment_methods=other_payment_methods,
+                                        opened_from=opened)
 
     def parse_company_list_page(self, response):
         """
@@ -111,9 +165,9 @@ class HagahSpider(CrawlSpider):
 
         # response.xpath('//div[@class="item destacado"]//h2')
         # CSS equivalent response.css('div[class="item destacado"] h2')
-        #to get selected items
-        #name: response.css('div.item.destacado h2 a::text').extract()
-        #url: response.css('div.item.destacado h2 a').xpath('@href').extract()
+        # to get selected items
+        # name: response.css('div.item.destacado h2 a::text').extract()
+        # url: response.css('div.item.destacado h2 a').xpath('@href').extract()
 
         for n in response.css('div.item.destacado h2 a::text').extract():
             yield items.HighlightedCompany(name=n)
