@@ -14,8 +14,7 @@ class HagahSpider(CrawlSpider):
     name = 'hagah'
     # allowed_domains = ['hagah.com.br']
     start_urls = [
-        # 'http://www.hagah.com.br/sc/grande-florianopolis/guia/'
-        'http://www.hagah.com.br/sc/florianopolis/local/22541,2,fedoca-by-cuca-restaurante.html'
+        'http://www.hagah.com.br/sc/grande-florianopolis/guia/'
     ]
 
     ITEM_PIPELINES = {
@@ -142,25 +141,28 @@ class HagahSpider(CrawlSpider):
                     elif u'Aberto desde' in h3:
                         opened = parse_item(sel)
 
-        def map_utf_list(ll):
+        def map_utf_strip(ll):
             if ll:
-                return [field_strip(e.encode('utf-8')) for e in ll]
+                if isinstance(ll, list) or isinstance(ll, tuple):
+                    return [field_strip(e.encode('utf-8')) for e in ll]
+                else:
+                    return field_strip(ll)
 
         def field_strip(field):
             if field:
-                return field.strip(' \t\n\r\s')
+                return field.strip(' \t\n\r')
 
-        return items.CompanyProfileItem(name=field_strip(name), url=field_strip(url),
-                                        categories=map_utf_list(categories), address=field_strip(address),
-                                        capacity=field_strip(capacity),
-                                        phones=map_utf_list(phones), short_description=field_strip(short_desc),
-                                        full_description=field_strip(full_desc),
-                                        attributes=map_utf_list(attributes),
-                                        working_hours=map_utf_list(working_hours),
-                                        credit_cards=map_utf_list(credit_card), debit_cards=map_utf_list(debit_card),
-                                        food_cards=map_utf_list(food_card),
-                                        other_payment_methods=map_utf_list(other_payment_methods),
-                                        opened_from=field_strip(opened))
+        return items.CompanyProfileItem(name=map_utf_strip(name), url=map_utf_strip(url),
+                                        categories=map_utf_strip(categories), address=map_utf_strip(address),
+                                        capacity=map_utf_strip(capacity),
+                                        phones=map_utf_strip(phones), short_description=map_utf_strip(short_desc),
+                                        full_description=map_utf_strip(full_desc),
+                                        attributes=map_utf_strip(attributes),
+                                        working_hours=map_utf_strip(working_hours),
+                                        credit_cards=map_utf_strip(credit_card), debit_cards=map_utf_strip(debit_card),
+                                        food_cards=map_utf_strip(food_card),
+                                        other_payment_methods=map_utf_strip(other_payment_methods),
+                                        opened_from=map_utf_strip(opened))
 
     def parse_company_list_page(self, response):
         """
