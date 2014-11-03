@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import scrapy
 
 from scrapy.contrib.spiders import Rule, CrawlSpider
@@ -13,11 +14,12 @@ class HagahSpider(CrawlSpider):
     name = 'hagah'
     # allowed_domains = ['hagah.com.br']
     start_urls = [
-        'http://www.hagah.com.br/sc/florianopolis/guia/'
+        # 'http://www.hagah.com.br/sc/grande-florianopolis/guia/'
+        'http://www.hagah.com.br/sc/florianopolis/local/22541,2,fedoca-by-cuca-restaurante.html'
     ]
 
     ITEM_PIPELINES = {
-        'listings-etl.scrapy_crawler.pipelines.JsonPaidItemPipeline': 300
+        'listings-etl.scrapy_crawler.pipelines.JsonPaidItemPipeline': 100
     }
 
     rules = (
@@ -61,39 +63,38 @@ class HagahSpider(CrawlSpider):
 
         address = None
         phones = None
-        for sel in response.css('div.infoDetalhe > ul > li').extract():
-            if sel.xpath('contains(@class, link-endereco)'):
+        url = None
+        for info in response.css('div.infoDetalhe > ul > li'):
+            if info.css('.link-endereco').extract():
                 # street address
-                address = sel.css('a.link-endereco::text').extract()
-                if sel.xpath('text()').extract():
+                address = info.css('.link-endereco::text').extract()[0]
+                if info.xpath('text()').extract():
                     # number
                     address += ' '
-                    address += sel.xpath('text()').extract()[0]
-                if sel.xpath('contains(@class, link-bairro)'):
+                    address += info.xpath('text()').extract()[0]
+                if info.css('.link-bairro').extract():
                     # naeighbourhood
                     address += ' '
-                    address += sel.css('a.link-bairro::text').extract()
+                    address += info.css('.link-bairro::text').extract()[0]
 
-            elif sel.xpath('contains(@class, region)'):
-                if sel.xpath('text()').extract():
+            elif info.css('.region').extract():
+                if info.xpath('text()').extract():
                     # city
                     address += ' '
-                    address += sel.xpath('text()')[0].extract()
+                    address += info.xpath('text()').extract()[0]
                 address += ' '
                 # state
-                address += sel.css('span.region::text')[0].extract()
-            elif sel.xpath('contains(@class, telefones)'):
-                phones = [p.strip('\t\n') for p in sel.xpath('span/text()').extract()]
-
-        url = response.xpath('//*[@id="miolo"]/div[2]/div[3]/div[1]/div[2]/div[2]/ul[1]/li[3]/a/text()').extract()
-        if url:
-            url = [2].css('a::text').extract()
-            if url:
-                url = url[0]
+                address += info.css('.region::text').extract()[0]
+            elif info.css('.telefones'):
+                phones = [p.strip('\t\n') for p in info.xpath('span/text()').extract()]
+            elif info.css('.url'):
+                url = info.css('.url::text').extract()
+                if url:
+                    url = url[0]
 
         short_desc = response.xpath('//*[@id="corpo-abas"]/section/article/h3/text()').extract()
         if short_desc:
-            short_descr = short_desc[0]
+            short_desc = short_desc[0]
 
         full_desc = response.xpath('//*[@id="corpo-abas"]/section/article/p/text()').extract()
         if full_desc:
@@ -112,40 +113,54 @@ class HagahSpider(CrawlSpider):
             item = selector.xpath('span/text()').extract()
             if item and len(item) == 1:
                 return item[0]
+            else:
+                return item
 
         def parse_list_item(selector):
             return selector.xpath('ul/li/span/text()').extract()
 
-
-        item_infoes = response.css('#corpo-abas > section > div.itemInfo')
-        if item_infoes:
-            for i in item_infoes:
-                h3 = i.xpath('h3/text()').extract()
+        item_details = response.css('#corpo-abas > section > div.itemInfo')
+        if item_details:
+            for sel in item_details:
+                h3 = sel.xpath('h3/text()').extract()
                 if h3:
                     h3 = h3[0].lower()
-                    if 'Horário de atendimento'.lower() in h3:
-                        working_hours = parse_item(i)
-                    elif 'Capacidade'.lower() in h3:
-                        capacity = parse_item(i)
-                    elif 'Características'.lower():
-                        attributes = parse_list_item(i)
-                    elif 'Aceita Cartão de Crédito'.lower():
-                        credit_card = i.xpath('ul/li/img/@title').extract()
-                    elif 'Aceita Cartão de Débito'.lower():
-                        debit_card = i.xpath('ul/li/img/@title').extract()
-                    elif 'Aceita Tíquetes'.lower():
-                        food_card = i.xpath('ul/li/img/@title').extract()
-                    elif 'Mais Formas de Pagamento'.lower():
-                        other_payment_methods = parse_list_item(i)
-                    elif 'Aberto desde':
-                        opened = parse_item(i)
+                    if u'Horário de atendimento'.lower() in h3:
+                        working_hours = parse_item(sel)
+                    elif u'Capacidade'.lower() in h3:
+                        capacity = parse_item(sel)
+                    elif u'Características'.lower() in h3:
+                        attributes = parse_list_item(sel)
+                    elif u'Aceita Cartão de Crédito'.lower() in h3:
+                        credit_card = sel.xpath('ul/li/img/@title').extract()
+                    elif u'Aceita Cartão de Débito'.lower() in h3:
+                        debit_card = sel.xpath('ul/li/img/@title').extract()
+                    elif u'Aceita Tíquetes'.lower() in h3:
+                        food_card = sel.xpath('ul/li/img/@title').extract()
+                    elif u'Mais Formas de Pagamento'.lower() in h3:
+                        other_payment_methods = parse_list_item(sel)
+                    elif u'Aberto desde' in h3:
+                        opened = parse_item(sel)
 
-        return items.CompanyProfileItem(name=name, url=url, categories=categories, address=address, capacity=capacity,
-                                        phones=phones, short_description=short_descr, full_description=full_desc,
-                                        attributes=attributes,
-                                        working_hours=working_hours, credit_cards=credit_card, debit_cards=debit_card,
-                                        food_cards=food_card, other_payment_methods=other_payment_methods,
-                                        opened_from=opened)
+        def map_utf_list(ll):
+            if ll:
+                return [field_strip(e.encode('utf-8')) for e in ll]
+
+        def field_strip(field):
+            if field:
+                return field.strip(' \t\n\r\s')
+
+        return items.CompanyProfileItem(name=field_strip(name), url=field_strip(url),
+                                        categories=map_utf_list(categories), address=field_strip(address),
+                                        capacity=field_strip(capacity),
+                                        phones=map_utf_list(phones), short_description=field_strip(short_desc),
+                                        full_description=field_strip(full_desc),
+                                        attributes=map_utf_list(attributes),
+                                        working_hours=map_utf_list(working_hours),
+                                        credit_cards=map_utf_list(credit_card), debit_cards=map_utf_list(debit_card),
+                                        food_cards=map_utf_list(food_card),
+                                        other_payment_methods=map_utf_list(other_payment_methods),
+                                        opened_from=field_strip(opened))
 
     def parse_company_list_page(self, response):
         """
@@ -169,8 +184,8 @@ class HagahSpider(CrawlSpider):
         # name: response.css('div.item.destacado h2 a::text').extract()
         # url: response.css('div.item.destacado h2 a').xpath('@href').extract()
 
-        for n in response.css('div.item.destacado h2 a::text').extract():
-            yield items.HighlightedCompany(name=n)
+        # for n in response.css('div.item.destacado h2 a::text').extract():
+        # yield items.HighlightedCompany(name=n)
 
         if raw_result_num:
             self.log('Got %s-paged paging' % str(raw_result_num[0]))

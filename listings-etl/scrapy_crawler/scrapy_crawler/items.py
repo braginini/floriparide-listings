@@ -7,6 +7,7 @@
 
 import scrapy
 
+
 class HighlightedCompany(scrapy.Item):
     """
     class that represents companies that are highlighted in a list - paid companies

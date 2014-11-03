@@ -13,7 +13,8 @@ class JsonPaidItemPipeline(object):
         return pipeline
 
     def open_spider(self, spider):
-        file = open('/home/mike/parse_result/%s_paid_companies.json' % spider.name, 'w+b')
+        #file = open('/home/mike/parse_result/%s_paid_companies.json' % spider.name, 'w+b')
+        file = open('/home/mike/parse_result/%s_companies.json' % spider.name, 'w+b')
         self.files[spider] = file
         self.exporter = JsonLinesItemExporter(file, ensure_ascii=False)
         self.exporter.start_exporting()
