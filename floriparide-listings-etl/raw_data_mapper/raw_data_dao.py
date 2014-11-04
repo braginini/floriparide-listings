@@ -9,6 +9,7 @@ class RawData:
     (CATEGORIES, FACILITIES, PAYMEN_OPTIONS) = ("categories", "facilities", "payment_options")
     (HAGAH, FOUR_SQUARE) = ("hagah", "4square")
 
+
 def get_by_value_list(field, in_list):
     """
     Selects all rows bu specified json field
