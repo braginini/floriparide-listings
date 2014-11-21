@@ -1,3 +1,73 @@
+confeitarias
+fast-food e lancheria
+bebidas
+padarias e confeitarias
+bolos
+lanchonetes, casas de chá e de sucos
+grelhados
+cozinha brasileira
+cozinha vegetariana
+alimentos
+esporte
+alimentos prontos
+doces
+floriculturas
+sopas
+bistrô
+alimentos congelados
+cozinha internacional
+entregas
+salgadinhos
+diversão
+cursos
+gaúcha
+natural e light
+cestas de presente
+mercearias
+cozinha indiana
+churrascaria
+restaurantes
+açougues
+alimentos dietéticos
+sorveterias
+cozinha árabe
+cozinha tailandesa
+alimentos orgânicos
+cozinha francesa
+cozinha japonesa
+café colonial
+mate
+frutos do mar
+pizzarias
+bufê
+cozinha espanhola
+cozinha regional
+supermercados
+artigos para bebês
+eventos
+fornecedores de refeições coletivas
+feijoada
+bares
+desentupidora
+dedetização
+peixarias
+empresas de mudanças
+lojas
+cozinha variada
+cozinha chinesa
+cozinha italiana
+galeterias
+produtos naturais
+cafés e casas de chá
+distribuidoras de gás
+cestas de alimentos
+quitandas
+artigos e equipamentos para churrasco
+autopeças
+cozinha industrial
+suplementos alimentares
+
+
 00000001 Açougues
 00000002 Alimentos Congelados
 00000003 Alimentos Dietéticos

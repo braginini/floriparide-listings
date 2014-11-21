@@ -2,14 +2,14 @@ from time import sleep
 from geopy import geocoders
 from geopy.exc import GeocoderServiceError
 import sys
+from mapper import raw_data_dao
+from mapper import mappings_reader
+from mapper import model_convertor
+from mapper import webapi_access
 
 __author__ = 'Mike'
-import raw_data_dao
-import mappings_reader
 import traceback
 import os
-import model_convertor
-import webapi_access
 
 rootPath = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 rubrics_path = rootPath + r"\data\final_lists\mappings\rubric_hagah_mapping.md"
