@@ -56,6 +56,6 @@ def project_response(project, locale):
                 language=project["data"]["language"],
                 time_zone=project["data"]["time_zone"],
                 zoom=project["data"]["zoom"],
-                bounds=project["data"]["bounds"],
-                #default_position=project["data"]["default_position"] todo use from DB
-                default_position=[[-27.982, -48.893], [-27.229, -48.088]])
+                #bounds=project["data"]["bounds"],  todo use from DB
+                bounds=[[-27.229, -48.088], [-27.982, -48.893]],
+                default_position=project["data"]["default_position"])
