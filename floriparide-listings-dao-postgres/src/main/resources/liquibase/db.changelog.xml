@@ -1163,4 +1163,10 @@
         <sql>UPDATE public.company SET data = '{ "description": null, "promo": null, "branch_count": 1 }'::json;</sql>
     </changeSet>
 
+    <changeSet id="73" author="mbragin">
+        <addColumn tableName="branch">
+            <column name="draft" type="json"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

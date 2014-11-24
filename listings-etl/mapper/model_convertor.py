@@ -7,21 +7,21 @@ import unicodedata
 check_is_hour_pattern = re.compile('\d')
 week_days_pattern = 'segunda|terca|quinta|quarta|sexta|sabado|domingo'
 
-week_days = ["segunda",
-             "terca",
-             "quarta",
-             "quinta",
-             "sexta",
-             "sabado",
-             "domingo"]
+week_days = ['segunda',
+             'terca',
+             'quarta',
+             'quinta',
+             'sexta',
+             'sabado',
+             'domingo']
 
-days_mapping = {"segunda": "monday",
-                "terca": "tuesday",
-                "quarta": "wednesday",
-                "quinta": "thursday",
-                "sexta": "friday",
-                "sabado": "saturday",
-                "domingo": "sunday"}
+days_mapping = {'segunda': 'monday',
+                'terca': 'tuesday',
+                'quarta': 'wednesday',
+                'quinta': 'thursday',
+                'sexta': 'friday',
+                'sabado': 'saturday',
+                'domingo': 'sunday'}
 
 
 def convert_raw_branch(raw_branch, mapping, rubrics_map, attrs_map):
@@ -34,8 +34,8 @@ def convert_raw_branch(raw_branch, mapping, rubrics_map, attrs_map):
     :return: returns a json object for a rubric to be ready to be sent to admin api
     """
 
-    if raw_branch.get("source") == "hagah":
-        return hagah_raw_branch(raw_branch.get("data"), mapping, rubrics_map, attrs_map)
+    if raw_branch.get('source') == 'hagah':
+        return hagah_raw_branch(raw_branch.get('data'), mapping, rubrics_map, attrs_map)
 
 
 def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
@@ -51,29 +51,43 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
     # print(data)
     # print(json.dumps(data))
     result = {}
+    if '\'' in data['name']:
+        data['name'] = data['name'].replace('\'', '\'\'')
     for k in mapping.keys():
         if k in data:
-            if k == "attributes":
+            if k == 'attributes' and data.get('attributes'):
                 # We use regexp here to filter out unnecessary characters in facilities names e.g.
                 # Tele-entrega(blablabla). In this case regexp will return just Tele-enterga
                 attributes = map(lambda v: dict(id=attrs_map.get(re.sub('(\(.*\))', '', v)), value=True), data[k])
                 # filter out None
-                attributes = {a["id"]: a for a in attributes if a["id"]}
+                attributes = {a['id']: a for a in attributes if a['id']}
                 result[mapping[k]] = list(attributes.values())
-            elif k == "categories":
+            elif k == 'categories' and data.get('categories'):
                 rubrics = map(lambda v: dict(id=rubrics_map.get(v)), data[k])
-                rubrics = {a["id"]: a for a in rubrics if a["id"]}
+                rubrics = {a['id']: a for a in rubrics if a['id']}
                 result[mapping[k]] = list(rubrics.values())
             else:
-                result[mapping[k]] = data[k]
+                result[mapping[k]] = data.get(k)
 
     # print(json.dumps(result))
-    result["raw_schedule"] = result.get("working_hours")
-    result["schedule"] = parse_hours(result.get("working_hours"))
-    return result
+    result['schedule'] = parse_hours(data.get('working_hours'))
+
+    if not result['schedule'] and data.get('working_hours'):
+        logging.warning('No working hours parsed: \'%s\'' % str(data.get('working_hours')))
+
+    result['raw'] = data
+    result['payment_options'] = dict(credit_cards=result.get('credit_cards'),
+                                     debit_cards=result.get('debit_cards'), food_cards=result.get('food_cards'),
+                                     other=result.get('other_payment_methods'))
+
+    del result['credit_cards']
+    del result['debit_cards']
+    del result['food_cards']
+    del result['other_payment_methods']
+
+    return result  # De segunda a sexta, 9h às 20h. Sábado, das 9h às 19h.
 
 
-# De segunda a sexta, 9h às 20h. Sábado, das 9h às 19h.
 def parse_hours(string):
     days = []
     hours = []
@@ -112,16 +126,25 @@ def parse_hours(string):
                 for d in day_interval_iterator(tmp_days[0], tmp_days[1]):
                     days.append(d)
             else:
-                logging.warning('crazy line %s' % str(tmp_days))
+                if 'diariamente' == g:
+                    for d in day_interval_iterator('segunda', 'domingo'):
+                        days.append(d)
+                else:
+                    pass
+                    # logging.warning('crazy line %s %s' % (str(string), str(tmp_days)))
         else:
             g = g.replace(':', '').replace('h', '')
             tmp_hours = re.findall('\d+', g)
             tmp_hours = list(map(format_hours, tmp_hours))
+            if g.startswith('a partir') and len(tmp_hours) == 1:
+                tmp_hours.append('00:00')
             hours += tmp_hours
 
-            print(tmp_hours)
-
     flush()
+
+    # remove empty days (non working)
+    result = {d: h for d, h in result.items() if h}
+
     return result
 
 
@@ -174,16 +197,17 @@ def parse_hours_group(string):
     if not string:
         return None
 
-    # sometimes we have already splited groups, but sometimes not - have to split
+    # sometimes we have already splitted groups, but sometimes not - have to split
     if isinstance(string, list):
         for g in map(parse_hours_group, string):
             yield from g
     else:
         # normalize to ASCII characters
+        string = string.strip('Â ')
         string = string.replace('ç', 'c')
+        string = string.replace('à', 'a')
         string = unicodedata.normalize('NFKD', string).encode('ASCII', 'ignore').decode(encoding='UTF-8').lower()
         string = string.replace(' e ', ',')
-        print(string)
 
         string = re.split('\r\n|\.', string)
 
@@ -195,5 +219,5 @@ def parse_hours_group(string):
 
 
 parse_hours(
-    "De segunda a sexta, das 9h às 12h e das 13h30 às 18h30.\r\nSábado, das 9h às 12h.")
+    'De segunda a sexta, das 10h às 23h. ')
 

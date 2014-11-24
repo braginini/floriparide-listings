@@ -6,10 +6,13 @@ from mapper import raw_data_dao
 from mapper import mappings_reader
 from mapper import model_convertor
 from mapper import webapi_access
+from mapper import branch_dao
 
-__author__ = 'Mike'
+
 import traceback
 import os
+
+__author__ = 'Mike'
 
 rootPath = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 rubrics_path = rootPath + r"\data\final_lists\mappings\rubric_hagah_mapping.md"
@@ -17,8 +20,8 @@ attrs_path = rootPath + r"\data\final_lists\mappings\attribute_hagah_mapping.md"
 
 hagah_map_path = rootPath + r"\data\final_lists\mappings\branch_model_hagha_model_mapping.md"
 
-rubrics_map = mappings_reader.getmap(rubrics_path)
-attrs_map = mappings_reader.getmap(attrs_path)
+rubrics_map = mappings_reader.get_map(rubrics_path)
+attrs_map = mappings_reader.get_map(attrs_path)
 
 print("Rubrics map %s" % rubrics_map)
 print("Attributes map map %s" % attrs_map)
@@ -30,7 +33,7 @@ except:
     print(traceback.format_exc())
 
 if branches:
-    mapping = mappings_reader.getmap(hagah_map_path)
+    mapping = mappings_reader.get_map(hagah_map_path)
     branches = [model_convertor.convert_raw_branch(b, mapping, rubrics_map, attrs_map) for b in branches if b]
     print(len(branches))
 
@@ -42,7 +45,6 @@ if branches:
 
     f = open("geocoded", "ab")
     for b in branches:
-        b["raw_address"] = b.get("address")
         if b.get("address"):
             #get the geocoding info for an address
             g = geocoders.GoogleV3(api_key="AIzaSyArI9wIPFW9iaMJHxdPzh7bGceb6C3Oef8", timeout=300)
@@ -53,10 +55,10 @@ if branches:
                 try:
                     loc = g.geocode(b["address"])
                     if loc:
-                        place, (lat, lon) = str(loc), (loc.latitude, loc.longitude)
+                        place, (lat, lng) = str(loc), (loc.latitude, loc.longitude)
                         b["address"] = place
                         b["lat"] = lat
-                        b["lon"] = lon
+                        b["lng"] = lng
                         print(loc)
                     done = True
                 except GeocoderServiceError:
@@ -65,17 +67,28 @@ if branches:
                         raise GeocoderServiceError(sys.exc_info()[0])
             key = b["name"] + b["address"]
             if key not in branch_set:
-                branch_id = webapi_access.create_branch(b)
+                company = branch_dao.get_company(b['name'])
+                if company:
+                    b['company_id'] = company['id']
+                else:
+                    b['company_id'] = branch_dao.create_company(b)
+
+                branch_id = branch_dao.create(b)
                 branch_set.add(key)
                 #write to file to save the state
                 line = "%s;%s;%s;%s;%s;%s\n" % (b.get("name"), str(branch_id), b.get("address"), b.get("raw_address"),
-                                                b.get("lat"), b.get("lon"))
+                                                b.get("lat"), b.get("lng"))
                 f.write(line.encode("utf-8"))
                 f.flush()
             else:
                 dup += 1
         else:
-            webapi_access.create_branch(b)
+            company = branch_dao.get_company(b['name'])
+            if company:
+                b['company_id'] = company['id']
+            else:
+                b['company_id'] = branch_dao.create_company(b)
+            branch_dao.create(b)
 
     f.close()
     print(dup)

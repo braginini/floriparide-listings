@@ -1,0 +1,12 @@
+branch_model_field;hagah_field
+name;name
+description;description
+address;address
+contacts;contacts
+attributes;attributes
+debit_cards;debit_cards
+credit_cards;credit_cards
+food_cards;food_cards
+other_payment_methods;other_payment_methods
+rubrics;categories
+schedule;working_hours

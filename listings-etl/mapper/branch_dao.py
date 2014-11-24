@@ -1,10 +1,49 @@
+import json
+import logging
 import psycopg2
-import base_dao
+from mapper import base_dao
+
 __author__ = 'Mike'
+
+logging.basicConfig(level=logging.DEBUG)
+
+
+def get_company(name):
+    with psycopg2.connect(
+            "dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432") as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = 'SELECT * FROM public.company WHERE name = \'%s\';' % name.replace('\'', '\'\'')
+            logging.debug('Running query %s' % sql)
+            cur.execute(sql)
+            return cur.fetchone()
+
+
+def create(branch):
+    with psycopg2.connect(
+            "dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432") as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            j = json.dumps(branch, ensure_ascii=False).replace('\'', '\'\'')
+            sql = 'INSERT INTO public.branch (name, company_id, draft) VALUES (\'%s\', %d, \'%s\'::json) ' \
+                  'RETURNING id;' % (branch['name'], branch['company_id'], j)
+            logging.debug('Running query %s' % sql)
+            cur.execute(sql)
+            return cur.fetchone()['id']
+
+
+def create_company(branch):
+    with psycopg2.connect(
+            "dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432") as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = 'INSERT INTO public.company (name, project_id) VALUES (\'%s\', %d) RETURNING id;' % (
+                branch['name'].replace('\'', '\'\''), 0)
+            logging.debug('Running query %s' % sql)
+            cur.execute(sql)
+            return cur.fetchone()['id']
 
 
 def get_all():
     return base_dao("public.branch", cursor_factory=psycopg2.extras.RealDictCursor)
+
 
 def get_all_full():
     """
@@ -68,8 +107,8 @@ def get_by_attrs_rubrics(attribute_ids=None, rubric_ids=None, exclude_ids=None):
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
         query = "SELECT b.* FROM branch b, " \
-                        "json_array_elements((data->>'attributes')::json) as a, " \
-                        "json_array_elements((data->>'rubrics')::json) as r"
+                "json_array_elements((data->>'attributes')::json) as a, " \
+                "json_array_elements((data->>'rubrics')::json) as r"
 
         if exclude_ids:
             query += " WHERE id NOT IN (%s)" % ",".join(str(x) for x in exclude_ids)
@@ -102,5 +141,3 @@ def get_by_attrs_rubrics(attribute_ids=None, rubric_ids=None, exclude_ids=None):
 
 def enum(**enums):
     return type('Enum', (), enums)
-
-
