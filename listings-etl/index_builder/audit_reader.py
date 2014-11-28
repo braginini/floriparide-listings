@@ -1,7 +1,7 @@
-import audit_dao
-import base_dao
+from mapper import audit_dao
+from mapper import base_dao
 import json
-import branch_dao
+from mapper import branch_dao
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
 __author__ = 'Mike'
@@ -37,8 +37,8 @@ rubric_history_set = set(r["data"]["id"] for r in audit_dao.get_history(old_time
                          if r["operation_type"] is 'U')
 
 #get the set of current rubrics and attributes
-rubrics = {r[0]: r for r in base_dao.get_all("public.rubric")}
-attributes = {r[0]: r for r in base_dao.get_all("public.attribute")}
+rubrics = {str(r[0]): r for r in base_dao.get_all("public.rubric")}
+attributes = {str(r[0]): r for r in base_dao.get_all("public.attribute")}
 
 other_branches = branch_dao.get_by_attrs_rubrics(attribute_history_set, rubric_history_set, branch_history_map.keys())
 
@@ -56,19 +56,19 @@ for k, v in branch_history_map.items():
     else:
         #bulding up document for index
         #first take all fields from data
-        data = {key: value for key, value in v["data"]["data"].items() if key == "address" or key == "payment_options"
+        data = {key: value for key, value in v["data"]["draft"].items() if key == "address" or key == "payment_options"
                 or key == "description"}
         #add name
         data["name"] = v["data"]["name"]
 
         #add rubrics and attributes names
-        data["rubrics"] = [{"names": rubrics[k["id"]][2]["names"], "id": k["id"]}
-                           for k in v["data"]["data"].get("rubrics")]
+        data["rubrics"] = [{"names": rubrics[str(k["id"])][2]["names"], "id": str(k["id"])}
+                           for k in v["data"]["draft"].get("rubrics")]
 
-        curr_attributes = v["data"]["data"].get("attributes")
+        curr_attributes = v["data"]["draft"].get("attributes")
         if curr_attributes:
-            curr_attributes = [{"names": attributes[key["id"]][1]["names"], "id": key["id"]}
-                               for key in v["data"]["data"].get("attributes")]
+            curr_attributes = [{"names": attributes[str(key["id"])][1]["names"], "id": str(key["id"])}
+                               for key in v["data"]["draft"].get("attributes")]
         data["attributes"] = curr_attributes
         action = {
             '_op_type': 'index',
@@ -107,7 +107,7 @@ if other_branches:
 
 #update ES index and DB timestamp
 if es_actions:
-    es = Elasticsearch()
+    es = Elasticsearch(hosts=['107.170.149.118:9200'])
     print(helpers.bulk(es, es_actions))
     print(new_timestamp)
     audit_dao.update_timestamp(new_timestamp)

@@ -1,6 +1,7 @@
 import json
 import logging
 import psycopg2
+from psycopg2 import extras
 from mapper import base_dao
 
 __author__ = 'Mike'
@@ -52,7 +53,7 @@ def create_company(branch):
 
 
 def get_all():
-    return base_dao("public.branch", cursor_factory=psycopg2.extras.RealDictCursor)
+    return base_dao.get_all("public.branch", cursor_factory=psycopg2.extras.RealDictCursor)
 
 
 def get_all_full():
