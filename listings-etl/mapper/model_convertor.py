@@ -51,8 +51,11 @@ def hagah_raw_branch(data, mapping, rubrics_map, attrs_map):
     # print(data)
     # print(json.dumps(data))
     result = {}
-    if '\'' in data['name']:
-        data['name'] = data['name'].replace('\'', '\'\'')
+    result['contacts'] = []
+    if data.get('phones'):
+        result['contacts'] += [dict(contact='phone', value=c) for c in data['phones']]
+    if data.get('url'):
+        result['contacts'].append(dict(contact='website', value=data['url']))
     for k in mapping.keys():
         if k in data:
             if k == 'attributes' and data.get('attributes'):

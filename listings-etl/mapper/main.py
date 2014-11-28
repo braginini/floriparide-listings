@@ -1,3 +1,4 @@
+import json
 from time import sleep
 from geopy import geocoders
 from geopy.exc import GeocoderServiceError
@@ -5,12 +6,54 @@ import sys
 from mapper import raw_data_dao
 from mapper import mappings_reader
 from mapper import model_convertor
-from mapper import webapi_access
 from mapper import branch_dao
 
 
 import traceback
 import os
+
+g = geocoders.GoogleV3(api_key="AIzaSyDRaIPpzAJu0qubHJ_LMuhH6kM00ocGECM", timeout=300)
+
+
+def geocode_branch(branch):
+    done = False
+    attempt = 0
+    while not done:
+        attempt += 1
+        try:
+
+            loc = g.geocode(branch['address'])
+            new_address = {}
+            # loc2 = g.reverse((b['geometry']['point']['lat'], b['geometry']['point']['lon']))
+            if loc:
+                if loc.raw['address_components']:
+                    for c in loc.raw['address_components']:
+                        if 'street_number' in c['types']:
+                            new_address['street_number'] = c['long_name']
+                        elif 'route' in c['types']:
+                            new_address['street'] = c['long_name']
+                        elif 'neighborhood' in c['types']:
+                            new_address['neighborhood'] = c['long_name']
+                        elif 'country' in c['types']:
+                            new_address['country'] = c['long_name']
+                        elif 'administrative_area_level_1' in c['types']:
+                            new_address['state'] = c['long_name']
+                        elif 'administrative_area_level_2' in c['types']:
+                           new_address['city'] = c['long_name']
+                branch['geometry'] = dict(point=loc.raw['geometry']['location'])
+                new_address['formatted'] = loc.raw['formatted_address']
+                branch['address'] = new_address
+            done = True
+        except GeocoderServiceError as e:
+            print(e)
+            sleep(60)
+            if attempt >= 3:
+                raise GeocoderServiceError(sys.exc_info()[0])
+        except Exception as e:
+            print(e)
+            print(json.dumps(branch, ensure_ascii=False))
+
+    return branch
 
 __author__ = 'Mike'
 
@@ -37,61 +80,28 @@ if branches:
     branches = [model_convertor.convert_raw_branch(b, mapping, rubrics_map, attrs_map) for b in branches if b]
     print(len(branches))
 
-    branch_set = set()
+    branch_set = {}
     dup = 0
 
-    #geo_map = geocoded_reader.getmap("C://Users//mikhail//Documents//IdeaProjects//floriparide-listings//"
-    #                                "floriparide-listings-etl//raw_data_mapper//geocoded")
-
-    f = open("geocoded", "ab")
     for b in branches:
-        if b.get("address"):
-            #get the geocoding info for an address
-            g = geocoders.GoogleV3(api_key="AIzaSyArI9wIPFW9iaMJHxdPzh7bGceb6C3Oef8", timeout=300)
-            done = False
-            attempt = 0
-            while not done:
-                attempt += 1
-                try:
-                    loc = g.geocode(b["address"])
-                    if loc:
-                        place, (lat, lng) = str(loc), (loc.latitude, loc.longitude)
-                        b["address"] = place
-                        b["lat"] = lat
-                        b["lng"] = lng
-                        print(loc)
-                    done = True
-                except GeocoderServiceError:
-                    sleep(60)
-                    if attempt >= 3:
-                        raise GeocoderServiceError(sys.exc_info()[0])
-            key = b["name"] + b["address"]
-            if key not in branch_set:
+
+        if not branch_dao.get_branch(b['name']):
+            b = geocode_branch(b)
+            if b.get('address'):
                 company = branch_dao.get_company(b['name'])
                 if company:
                     b['company_id'] = company['id']
                 else:
                     b['company_id'] = branch_dao.create_company(b)
 
-                branch_id = branch_dao.create(b)
-                branch_set.add(key)
-                #write to file to save the state
-                line = "%s;%s;%s;%s;%s;%s\n" % (b.get("name"), str(branch_id), b.get("address"), b.get("raw_address"),
-                                                b.get("lat"), b.get("lng"))
-                f.write(line.encode("utf-8"))
-                f.flush()
+                    branch_id = branch_dao.create(b)
             else:
-                dup += 1
-        else:
-            company = branch_dao.get_company(b['name'])
-            if company:
-                b['company_id'] = company['id']
-            else:
-                b['company_id'] = branch_dao.create_company(b)
-            branch_dao.create(b)
-
-    f.close()
-    print(dup)
+                company = branch_dao.get_company(b['name'])
+                if company:
+                    b['company_id'] = company['id']
+                else:
+                    b['company_id'] = branch_dao.create_company(b)
+                branch_dao.create(b)
 
 
 

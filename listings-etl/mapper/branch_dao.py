@@ -12,9 +12,21 @@ def get_company(name):
     with psycopg2.connect(
             "dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432") as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = 'SELECT * FROM public.company WHERE name = \'%s\';' % name.replace('\'', '\'\'')
+            sql = 'SELECT * FROM public.company WHERE name = %s'
             logging.debug('Running query %s' % sql)
-            cur.execute(sql)
+            name = name.replace('\'', '\'\'')
+            cur.execute(sql, (name,))
+            return cur.fetchone()
+
+
+def get_branch(name):
+    with psycopg2.connect(
+            "dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432") as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            sql = 'SELECT * FROM public.branch WHERE name = %s'
+            logging.debug('Running query %s' % sql)
+            name = name.replace('\'', '\'\'')
+            cur.execute(sql, (name,))
             return cur.fetchone()
 
 
@@ -23,10 +35,9 @@ def create(branch):
             "dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432") as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             j = json.dumps(branch, ensure_ascii=False).replace('\'', '\'\'')
-            sql = 'INSERT INTO public.branch (name, company_id, draft) VALUES (\'%s\', %d, \'%s\'::json) ' \
-                  'RETURNING id;' % (branch['name'], branch['company_id'], j)
+            sql = 'INSERT INTO public.branch (name, company_id, draft) VALUES (%s, %s, %s::json) RETURNING id;'
             logging.debug('Running query %s' % sql)
-            cur.execute(sql)
+            cur.execute(sql, (branch['name'], branch['company_id'], j))
             return cur.fetchone()['id']
 
 
@@ -34,10 +45,9 @@ def create_company(branch):
     with psycopg2.connect(
             "dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432") as conn:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            sql = 'INSERT INTO public.company (name, project_id) VALUES (\'%s\', %d) RETURNING id;' % (
-                branch['name'].replace('\'', '\'\''), 0)
+            sql = 'INSERT INTO public.company (name, project_id) VALUES (%s, %s) RETURNING id;'
             logging.debug('Running query %s' % sql)
-            cur.execute(sql)
+            cur.execute(sql, (branch['name'].replace('\'', '\'\''), 0))
             return cur.fetchone()['id']
 
 
@@ -81,9 +91,9 @@ def get_branch_rubrics(branch_id):
     try:
         conn = psycopg2.connect("dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432")
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT r.id FROM rubric r, branch_rubrics br WHERE r.id = br.rubric_id AND br.branch_id = %s" % branch_id
+        query = "SELECT r.id FROM rubric r, branch_rubrics br WHERE r.id = br.rubric_id AND br.branch_id = %s"
         print("Running query %s" % query)
-        cur.execute(query)
+        cur.execute(query, (branch_id,))
         result = cur.fetchall()
     finally:
         if cur is not None:

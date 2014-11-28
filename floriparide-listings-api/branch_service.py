@@ -67,10 +67,17 @@ def get_markers(branches):
     :param branches:
     :return:
     """
+
+    def is_paid(branch):
+        if branch["data"].get("paid"):
+            return True
+        return False
+
     return [dict(branch_id=b["id"],
                  name=b["name"],
                  lat=b["data"]["geometry"]["point"]["lat"],
-                 lon=b["data"]["geometry"]["point"]["lng"])
+                 lon=b["data"]["geometry"]["point"]["lng"],
+                 paid=is_paid(b))
             for b in branches if b["data"].get("geometry")]
 
 
