@@ -121,8 +121,8 @@ class BranchDao(BaseDao):
         branches = self.get_entity(ids=branch_ids, filters=filters, offset=offset, limit=limit, order=order)
 
         # get attributes and rubrics ids
-        attr_ids = set([str(r['id']) for b in branches if 'attributes' in b['draft'] for r in b['draft']['attributes']])
-        rubric_ids = set([str(r['id']) for b in branches if 'rubrics' in b['draft'] for r in b['draft']['rubrics']])
+        attr_ids = set([str(r['id']) for b in branches if b['draft'].get('attributes') in b['draft'] for r in b['draft']['attributes']])
+        rubric_ids = set([str(r['id']) for b in branches if b['draft'].get('rubrics') in b['draft'] for r in b['draft']['rubrics']])
         company_ids = set(str(b['company_id']) for b in branches)
 
         def convert_to_dict(entities):
