@@ -121,23 +121,24 @@ def branch_response(branches, locale):
     def company(raw_company):
         if raw_company:
             return dict(id=raw_company['id'], name=raw_company['name'],
-                        branch_count=raw_company['data']['branch_count'])
+                        branch_count=1)
+                        #branch_count=raw_company.get('data', {}).get('branch_count', 0))
 
     return [dict(id=b["id"],
                  name=b["name"],
-                 attributes=localize(b["data"].get("attributes")),
-                 rubrics=localize(b["data"].get("rubrics")),
-                 address=b["data"].get("address"),
-                 contacts=b["data"].get("contacts"),
-                 payment_options=payment_opts(b["data"].get("payment_options")),
-                 schedule=b["data"].get("schedule"),
-                 description=b["data"].get("description"),
-                 article=b["data"].get("article"),
-                 photos=b["data"].get("photos"),
-                 company=company(b["data"].get("company")),
+                 attributes=localize(b["draft"].get("attributes")),
+                 rubrics=localize(b["draft"].get("rubrics")),
+                 address=b["draft"].get("address"),
+                 contacts=b["draft"].get("contacts"),
+                 payment_options=b["draft"].get("payment_options"),
+                 schedule=b["draft"].get("schedule"),
+                 description=b["draft"].get("description"),
+                 article=b["draft"].get("article"),
+                 photos=b["draft"].get("photos"),
+                 company=company(b["draft"].get("company")),
                  comments=hardcoded_comments(),
                  rating=round(random.uniform(0, 5), 1),
-                 geometry=b["data"].get("geometry"))
+                 geometry=b["draft"].get("geometry"))
             for b in branches]
 
 

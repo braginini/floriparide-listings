@@ -51,7 +51,7 @@ class BaseDao(object):
             if not ids:
                 query = "SELECT * FROM %s as e" % self.table_name
             else:
-                query = "SELECT * FROM %s as e WHERE e.id in (%s)" % (self.table_name, ",".join(ids))
+                query = "SELECT * FROM %s as e WHERE e.id in (%s)" % (self.table_name, ",".join(map(str, ids)))
 
             if filters:
                 if ids:
@@ -121,9 +121,9 @@ class BranchDao(BaseDao):
         branches = self.get_entity(ids=branch_ids, filters=filters, offset=offset, limit=limit, order=order)
 
         # get attributes and rubrics ids
-        attr_ids = set([str(r['id']) for b in branches if b['draft'].get('attributes') in b['draft'] for r in b['draft']['attributes']])
-        rubric_ids = set([str(r['id']) for b in branches if b['draft'].get('rubrics') in b['draft'] for r in b['draft']['rubrics']])
-        company_ids = set(str(b['company_id']) for b in branches)
+        attr_ids = {r['id'] for b in branches if b['draft'].get('attributes') for r in b['draft']['attributes']}
+        rubric_ids = {r['id'] for b in branches if b['draft'].get('rubrics') for r in b['draft']['rubrics']}
+        company_ids = {b['company_id'] for b in branches}
 
         def convert_to_dict(entities):
             return {e["id"]: e for e in entities}
@@ -133,11 +133,11 @@ class BranchDao(BaseDao):
         companies = convert_to_dict(self.company_dao.get_entity(company_ids))
 
         def convert_branch(branch):
-            if 'attributes' in branch['draft']:
-                branch['draft']['attributes'] = [attributes[attr['id']] for attr in branch['draft']['attributes']]
+            if branch['draft'].get('attributes'):
+                branch['draft']['attributes'] = [attributes[int(attr['id'])] for attr in branch['draft']['attributes']]
 
-            if 'rubrics' in branch['draft']:
-                branch['draft']['rubrics'] = [rubrics[ru['id']] for ru in branch['draft']['rubrics']]
+            if branch['draft'].get('rubrics'):
+                branch['draft']['rubrics'] = [rubrics[int(ru['id'])] for ru in branch['draft']['rubrics']]
 
             branch['draft']['company'] = companies[branch['company_id']]
 

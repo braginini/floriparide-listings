@@ -5,7 +5,7 @@ import dao
 
 __author__ = 'mikhail'
 
-es = Elasticsearch()
+es = Elasticsearch(hosts=['107.170.149.118:9200'])
 
 branch_dao = dao.branch_dao
 
@@ -69,16 +69,16 @@ def get_markers(branches):
     """
 
     def is_paid(branch):
-        if branch["data"].get("paid"):
+        if branch["draft"].get("paid"):
             return True
         return False
 
     return [dict(branch_id=b["id"],
                  name=b["name"],
-                 lat=b["data"]["geometry"]["point"]["lat"],
-                 lon=b["data"]["geometry"]["point"]["lng"],
+                 lat=b["draft"]["geometry"]["point"]["lat"],
+                 lon=b["draft"]["geometry"]["point"]["lng"],
                  paid=is_paid(b))
-            for b in branches if b["data"].get("geometry")]
+            for b in branches if b["draft"].get("geometry")]
 
 
 def get_top_rubrics(branches):
@@ -93,8 +93,8 @@ def get_top_rubrics(branches):
     # key - id, value number of times appeared
     rubrics = {}
     for b in branches:
-        if b["data"].get("rubrics"):
-            for r in b["data"]["rubrics"]:
+        if b["draft"].get("rubrics"):
+            for r in b["draft"]["rubrics"]:
                 r_id = r["id"]
                 if r_id in rubrics:
                     rubrics[r_id] += 1
