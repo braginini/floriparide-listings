@@ -104,7 +104,7 @@ class BranchDao(BaseDao):
         # mapping that helps to determine how to filter by filters in db
         # todo rubric_id filter looks difficult and query will go through all rows
         BaseDao.__init__(self, "public.branch",
-                         dict(rubric_id="(SELECT json_array_elements(data->'rubrics')->>'id' LIMIT 1)::int",
+                         dict(rubric_id="(SELECT json_array_elements(draft->'rubrics')->>'id' LIMIT 1)::int",
                               company_id="company_id"))
 
         self.attribute_dao = attribute_dao
@@ -121,8 +121,8 @@ class BranchDao(BaseDao):
         branches = self.get_entity(ids=branch_ids, filters=filters, offset=offset, limit=limit, order=order)
 
         # get attributes and rubrics ids
-        attr_ids = set([str(r['id']) for b in branches if 'attributes' in b['data'] for r in b['data']['attributes']])
-        rubric_ids = set([str(r['id']) for b in branches if 'rubrics' in b['data'] for r in b['data']['rubrics']])
+        attr_ids = set([str(r['id']) for b in branches if 'attributes' in b['draft'] for r in b['draft']['attributes']])
+        rubric_ids = set([str(r['id']) for b in branches if 'rubrics' in b['draft'] for r in b['draft']['rubrics']])
         company_ids = set(str(b['company_id']) for b in branches)
 
         def convert_to_dict(entities):
@@ -133,13 +133,13 @@ class BranchDao(BaseDao):
         companies = convert_to_dict(self.company_dao.get_entity(company_ids))
 
         def convert_branch(branch):
-            if 'attributes' in branch['data']:
-                branch['data']['attributes'] = [attributes[attr['id']] for attr in branch['data']['attributes']]
+            if 'attributes' in branch['draft']:
+                branch['draft']['attributes'] = [attributes[attr['id']] for attr in branch['draft']['attributes']]
 
-            if 'rubrics' in branch['data']:
-                branch['data']['rubrics'] = [rubrics[ru['id']] for ru in branch['data']['rubrics']]
+            if 'rubrics' in branch['draft']:
+                branch['draft']['rubrics'] = [rubrics[ru['id']] for ru in branch['draft']['rubrics']]
 
-            branch['data']['company'] = companies[branch['company_id']]
+            branch['draft']['company'] = companies[branch['company_id']]
 
             return branch
 

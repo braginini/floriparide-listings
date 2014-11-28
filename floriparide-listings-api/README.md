@@ -366,34 +366,36 @@ Returns a list of project objects by specified ids
    and corresponding response:
    
    ```
-    {
-        "result": {
-            "items": [
-                {
-                    "name": "Florianópolis",
-                    "language": "pt",
-                    "locale": "pt_br",
-                    "default_position": {
-                        "lat": 43.2384784,
-                        "lon": 76.9452985,
-                        "zoom": 11
-                    },
-                    "time_zone": {
-                        "utc_offset": "-03:00",
-                        "name": "Brasília time"
-                    },
-                    "bounds": "POLYGON((82.5066233234198 55.249037769223,83.3965344871157 55.249037769223,83.3965344871157 54.5530320570113,82.5066233234198 54.5530320570113,82.5066233234198 55.249037769223))",
-                    "id": 0,
-                    "zoom": {
-                        "max": 19,
-                        "min": 11
-                    }
-                }
-            ],
-            "total": 1
+   {
+        "names": {
+            "pt_Br": "Florianópolis"
         },
-        "success": true
-    }
+        "language": "pt",
+        "locale": "pt_br",
+        "default_position": {
+            "lat": -27.595378,
+            "lng": -48.54805,
+            "zoom": 11
+        },
+        "time_zone": {
+            "utc_offset": "-03:00",
+            "name": "Brasília time"
+        },
+        "bounds": [
+            [
+                -27.229,
+                -48.088
+            ],
+            [
+                -27.982,
+                -48.893
+            ]
+        ],
+        "zoom": {
+            "max": 19,
+            "min": 11
+        }
+   }
     ```
    
 ### Project list
