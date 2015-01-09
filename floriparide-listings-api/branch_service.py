@@ -8,6 +8,7 @@ __author__ = 'mikhail'
 es = Elasticsearch(hosts=['107.170.149.118:9200'])
 
 branch_dao = dao.branch_dao
+rubric_dao = dao.rubric_dao
 
 
 def get(project_id, branch_ids):
@@ -36,14 +37,15 @@ def search(q, project_id, start, limit, attrs=None):
 
     if start == 0:
         # we need to take all the results (internal limit is 1k) to be able to return markers and rubrics
-        body["size"] = 1000
+        body['size'] = 1000
     else:
-        body["size"] = limit
+        body['size'] = limit
 
     # search in ES
-    logging.info("Running ES query %s" % body)
-    es_result = es.search(index="florianopolis", doc_type="branch", body=body)
-    logging.info("Got ES result for query %s" % body)
+    logging.info('Running ES query %s' % body)
+    #todo remove hardcoded florianopolis index name
+    es_result = es.search(index="florianopolis", doc_type='branch', body=body)
+    logging.info('Got ES result for query %s' % body)
 
     total = es_result['hits']['total']
     #dictionary with branch id as a key and score as a value
@@ -53,7 +55,7 @@ def search(q, project_id, start, limit, attrs=None):
     if not total:
         return [], total
 
-    ids = {v["_id"]: v["_score"] for v in es_result["hits"]["hits"]}
+    ids = {v['_id']: v['_score'] for v in es_result['hits']['hits']}
     branches = branch_dao.get_full(project_id=project_id, branch_ids=ids.keys())
 
     branches = sorted(branches, key=lambda branch: es_scores[str(branch['id'])], reverse=True)
@@ -69,16 +71,16 @@ def get_markers(branches):
     """
 
     def is_paid(branch):
-        if branch["draft"].get("paid"):
+        if branch['draft'].get('paid'):
             return True
         return False
 
-    return [dict(branch_id=b["id"],
-                 name=b["name"],
-                 lat=b["draft"]["geometry"]["point"]["lat"],
-                 lon=b["draft"]["geometry"]["point"]["lng"],
+    return [dict(branch_id=b['id'],
+                 name=b['name'],
+                 lat=b['draft']['geometry']['point']['lat'],
+                 lon=b['draft']['geometry']['point']['lng'],
                  paid=is_paid(b))
-            for b in branches if b["draft"].get("geometry")]
+            for b in branches if b['draft'].get('geometry')]
 
 
 def get_top_rubrics(branches):
@@ -93,9 +95,9 @@ def get_top_rubrics(branches):
     # key - id, value number of times appeared
     rubrics = {}
     for b in branches:
-        if b["draft"].get("rubrics"):
-            for r in b["draft"]["rubrics"]:
-                r_id = r["id"]
+        if b['draft'].get('rubrics'):
+            for r in b['draft']['rubrics']:
+                r_id = r['id']
                 if r_id in rubrics:
                     rubrics[r_id] += 1
                 else:
@@ -109,6 +111,10 @@ def get_top_rubrics(branches):
     if not top_rubrics and rubrics:
         # take top rubric if no rubric had survived a threshold
         top_rubrics.append(rubrics[0][0])
+
+    #add attribute groups to each rubric
+    for r in top_rubrics:
+        attributes
 
     return top_rubrics
 
@@ -125,9 +131,9 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
 
     filters = {}
     if company_id:
-        filters["company_id"] = company_id
+        filters['company_id'] = company_id
     if rubric_id:
-        filters["rubric_id"] = rubric_id
+        filters['rubric_id'] = rubric_id
 
     branches = branch_dao.get_full(project_id, offset=start, limit=limit, filters=filters, order='id')
     total = branch_dao.count(filters=filters)

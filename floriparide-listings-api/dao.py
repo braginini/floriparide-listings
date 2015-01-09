@@ -80,7 +80,7 @@ class BaseDao(object):
         :param filters: the dictionary of filter to apply on entity in WHERE clause
         :return:
         """
-        with get_cursor() as cur:
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             query = "SELECT COUNT(1) FROM %s " % self.table_name
             if filters:
                 query = query + "WHERE " + sql_filters(filters, self.filters_map)
@@ -91,21 +91,36 @@ class BaseDao(object):
 
 class AttributeDao(BaseDao):
     def __init__(self):
-        BaseDao.__init__(self, "public.attribute")
+        BaseDao.__init__(self, 'public.attribute')
 
 
 class RubricDao(BaseDao):
     def __init__(self):
-        BaseDao.__init__(self, "public.rubric")
+        BaseDao.__init__(self, 'public.rubric')
+
+    def get_attributes(self, rubric_id):
+        '''
+        returns a list of attributes along with attribute_group data for a given rubric.
+        :param rubric_id:
+        :return:
+        '''
+        with get_cursor() as cur:
+            query = 'SELECT a.id attribute_id, ag.id group_id, a.data attribute_data, ag.data group_data ' \
+                    'FROM public.attribute a ' \
+                    'JOIN public.attributes_group ag ON a.group_id = ag.id ' \
+                    'WHERE a.group_id ' \
+                    'IN (SELECT attributes_group_id FROM public.rubric_attributes_group WHERE rubric_id = %s);'
+            cur.execute(query, (str(rubric_id),))
+            return cur.fetchall()
 
 
 class BranchDao(BaseDao):
     def __init__(self, attribute_dao, rubric_dao, company_dao):
         # mapping that helps to determine how to filter by filters in db
         # todo rubric_id filter looks difficult and query will go through all rows
-        BaseDao.__init__(self, "public.branch",
-                         dict(rubric_id="(SELECT json_array_elements(draft->'rubrics')->>'id' LIMIT 1)::int",
-                              company_id="company_id"))
+        BaseDao.__init__(self, 'public.branch',
+                         dict(rubric_id='(SELECT json_array_elements(draft->\'rubrics\')->>\'id\' LIMIT 1)::int',
+                              company_id='company_id'))
 
         self.attribute_dao = attribute_dao
         self.rubric_dao = rubric_dao
@@ -126,7 +141,7 @@ class BranchDao(BaseDao):
         company_ids = {b['company_id'] for b in branches}
 
         def convert_to_dict(entities):
-            return {e["id"]: e for e in entities}
+            return {e['id']: e for e in entities}
 
         attributes = convert_to_dict(self.attribute_dao.get_entity(attr_ids))
         rubrics = convert_to_dict(self.rubric_dao.get_entity(rubric_ids))
@@ -163,7 +178,7 @@ class CompanyDao(BaseDao):
     def __init__(self):
         BaseDao.__init__(self, "public.company")
 
-#singletons
+# singletons
 attribute_dao = AttributeDao()
 rubric_dao = RubricDao()
 company_dao = CompanyDao()
