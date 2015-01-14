@@ -93,15 +93,36 @@ class AttributeDao(BaseDao):
     def __init__(self):
         BaseDao.__init__(self, 'public.attribute')
 
+    def get_attributes(self, group_id):
+        with get_cursor() as cur:
+            query = 'SELECT id, group_id, ' \
+                    'data->>(\'names\') as names,  ' \
+                    'data->>(\'input_type\') as input_type, ' \
+                    'data->>(\'filter_type\') as filter_type ' \
+                    'FROM public.attribute WHERE group_id = %d'
+            cur.execute(query, (group_id,))
+            return cur.fetchall()
+
 
 class RubricDao(BaseDao):
     def __init__(self):
         BaseDao.__init__(self, 'public.rubric')
 
-    def get_attributes(self, rubric_id):
+    def get_attribute_groups(self, rubric_ids):
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            query = 'SELECT id, ' \
+                    'data->>(\'names\') as names, ' \
+                    'data->>(\'description\') as description ' \
+                    'FROM public.attributes_group ' \
+                    'WHERE id IN (SELECT attributes_group_id FROM public.rubric_attributes_group ' \
+                    'WHERE rubric_id in (%d))'
+            cur.execute(query, (rubric_ids,))
+            return cur.fetchall()
+
+    def get_attributes(self, rubric_ids):
         '''
         returns a list of attributes along with attribute_group data for a given rubric.
-        :param rubric_id:
+        :param rubric_ids:
         :return:
         '''
         with get_cursor() as cur:
@@ -109,8 +130,8 @@ class RubricDao(BaseDao):
                     'FROM public.attribute a ' \
                     'JOIN public.attributes_group ag ON a.group_id = ag.id ' \
                     'WHERE a.group_id ' \
-                    'IN (SELECT attributes_group_id FROM public.rubric_attributes_group WHERE rubric_id = %s);'
-            cur.execute(query, (str(rubric_id),))
+                    'IN (SELECT attributes_group_id FROM public.rubric_attributes_group WHERE rubric_id IN (%d));'
+            cur.execute(query, (rubric_ids,))
             return cur.fetchall()
 
 

@@ -9,6 +9,7 @@ es = Elasticsearch(hosts=['107.170.149.118:9200'])
 
 branch_dao = dao.branch_dao
 rubric_dao = dao.rubric_dao
+attribute_dao = dao.attribute_dao
 
 
 def get(project_id, branch_ids):
@@ -43,7 +44,7 @@ def search(q, project_id, start, limit, attrs=None):
 
     # search in ES
     logging.info('Running ES query %s' % body)
-    #todo remove hardcoded florianopolis index name
+    # todo remove hardcoded florianopolis index name
     es_result = es.search(index="florianopolis", doc_type='branch', body=body)
     logging.info('Got ES result for query %s' % body)
 
@@ -85,7 +86,7 @@ def get_markers(branches):
 
 def get_top_rubrics(branches):
     """
-    calculates top rubrics for a given branch list
+    calculates top rubrics and top attributes for a given branch list
     top rubric is a rubric that appears in a 30% of branches
     Note, if no rubric found that match 30% threshold - the rubric with the highest count will be returned
     :param branches:
@@ -112,11 +113,12 @@ def get_top_rubrics(branches):
         # take top rubric if no rubric had survived a threshold
         top_rubrics.append(rubrics[0][0])
 
-    #add attribute groups to each rubric
-    for r in top_rubrics:
-        attributes
+    attribute_groups = rubric_dao.get_attribute_groups(top_rubrics)
+    for ag in attribute_groups:
+        attributes = attribute_dao.get_attributes(ag['id'])
+        ag['attributes'] = attributes
 
-    return top_rubrics
+    return top_rubrics, attribute_groups
 
 
 def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None):
