@@ -1,3 +1,4 @@
+import json
 import random
 import bottle
 import branch_service
@@ -96,7 +97,9 @@ def search(q, project_id, start, limit, locale='pt_Br', attrs=None):
     if start == 0:
         result['markers'] = branch_service.get_markers(branches)
         result['top_rubrics'], top_attributes = branch_service.get_top_rubrics(branches)
-        result['top_attributes'] = map(localize_names, top_attributes)
+        for a in top_attributes:
+            a['attributes'] = list(map(localize_names, a['attributes']))
+        result['top_attributes'] = list(map(localize_names, top_attributes))
     # cut the resulting list. Only after we get markers and top rubrics!!!
     # Cuz markers and top rubrics are calculated based on full search result
     if limit:

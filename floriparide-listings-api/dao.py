@@ -94,12 +94,12 @@ class AttributeDao(BaseDao):
         BaseDao.__init__(self, 'public.attribute')
 
     def get_attributes(self, group_id):
-        with get_cursor() as cur:
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             query = 'SELECT id, group_id, ' \
-                    'data->>(\'names\') as names,  ' \
+                    'cast(data->>(\'names\') as json) as names,  ' \
                     'data->>(\'input_type\') as input_type, ' \
                     'data->>(\'filter_type\') as filter_type ' \
-                    'FROM public.attribute WHERE group_id = %d'
+                    'FROM public.attribute WHERE group_id = %s'
             cur.execute(query, (group_id,))
             return cur.fetchall()
 
@@ -110,13 +110,15 @@ class RubricDao(BaseDao):
 
     def get_attribute_groups(self, rubric_ids):
         with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            str_ids = [str(r) for r in rubric_ids]
             query = 'SELECT id, ' \
-                    'data->>(\'names\') as names, ' \
+                    'cast(data->>(\'names\') as json) as names, ' \
                     'data->>(\'description\') as description ' \
                     'FROM public.attributes_group ' \
                     'WHERE id IN (SELECT attributes_group_id FROM public.rubric_attributes_group ' \
-                    'WHERE rubric_id in (%d))'
-            cur.execute(query, (rubric_ids,))
+                    'WHERE rubric_id in %s)'
+
+            cur.execute(query, (tuple(rubric_ids),))
             return cur.fetchall()
 
     def get_attributes(self, rubric_ids):
