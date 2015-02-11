@@ -7,7 +7,6 @@ from util.controller_utils import validate, json_response, enable_cors
 
 app = bottle.Bottle()
 
-
 @app.get("/list")
 @json_response
 @enable_cors
@@ -40,7 +39,7 @@ def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_i
         'total': total
     }
     if start == 0:
-        result['markers'] = branch_service.get_markers(branches)
+        result['markers'] = markers_response(branch_service.get_markers(branches), locale)
 
     if limit:
         if limit > total:
@@ -95,7 +94,7 @@ def search(q, project_id, start, limit, locale='pt_Br', attrs=None):
 
     # prepare markers with branch_id, name, lat, lon
     if start == 0:
-        result['markers'] = branch_service.get_markers(branches)
+        result['markers'] = markers_response(branch_service.get_markers(branches), locale)
         result['top_rubrics'], top_attributes = branch_service.get_top_rubrics(branches)
         for a in top_attributes:
             a['attributes'] = list(map(localize_names, a['attributes']))
@@ -113,6 +112,30 @@ def search(q, project_id, start, limit, locale='pt_Br', attrs=None):
     return result
 
 
+def markers_response(markers, locale):
+    """
+    prepares markers to be sent to client
+    :param markers:
+    :return:
+    """
+    if not markers:
+        return []
+
+    return [dict(branch_id=b['branch_id'],
+                 name=b['name'],
+                 lat=b['lat'],
+                 lng=b['lng'],
+                 paid=b['paid'],
+                 attributes=localize_attrs_rubrics(b.get('attributes'), locale))
+            for b in markers]
+
+
+# localize attributes and rubrics by specified locale
+def localize_attrs_rubrics(not_localized, locale):
+    if not_localized:
+        return [dict(id=a["id"], name=a["data"]["names"].get(locale)) for a in not_localized]
+
+
 def branch_response(branches, locale):
     """
     prepares branches to be sent to client
@@ -121,11 +144,6 @@ def branch_response(branches, locale):
     """
     if not branches:
         return []
-
-    # localize attributes and rubrics by specified locale
-    def localize(not_localized):
-        if not_localized:
-            return [dict(id=a["id"], name=a["data"]["names"].get(locale)) for a in not_localized]
 
     def payment_opts(raw_opts):
         if raw_opts:
@@ -144,8 +162,8 @@ def branch_response(branches, locale):
 
     return [dict(id=b["id"],
                  name=b["name"],
-                 attributes=localize(b["draft"].get("attributes")),
-                 rubrics=localize(b["draft"].get("rubrics")),
+                 attributes=localize_attrs_rubrics(b["draft"].get("attributes"), locale),
+                 rubrics=localize_attrs_rubrics(b["draft"].get("rubrics"), locale),
                  address=b["draft"].get("address"),
                  contacts=b["draft"].get("contacts"),
                  payment_options=payment_opts(b["draft"].get("payment_options")),

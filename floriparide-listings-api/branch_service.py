@@ -79,8 +79,9 @@ def get_markers(branches):
     return [dict(branch_id=b['id'],
                  name=b['name'],
                  lat=b['draft']['geometry']['point']['lat'],
-                 lon=b['draft']['geometry']['point']['lng'],
-                 paid=is_paid(b))
+                 lng=b['draft']['geometry']['point']['lng'],
+                 paid=is_paid(b),
+                 attributes=b['draft'].get('attributes'))
             for b in branches if b['draft'].get('geometry')]
 
 
