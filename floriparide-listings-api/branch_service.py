@@ -5,7 +5,7 @@ import dao
 
 __author__ = 'mikhail'
 
-es = Elasticsearch(hosts=['107.170.149.118:9200'])
+es = Elasticsearch(hosts=['107.170.149.118:9992'])
 
 branch_dao = dao.branch_dao
 rubric_dao = dao.rubric_dao

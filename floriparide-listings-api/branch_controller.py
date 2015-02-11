@@ -129,13 +129,18 @@ def branch_response(branches, locale):
 
     def payment_opts(raw_opts):
         if raw_opts:
-            return [o["option"] for o in raw_opts]
+            opts = []
+            for k, v in raw_opts.items():
+                if v:
+                    opts += v
+            opts.sort()
+            return opts
 
     def company(raw_company):
         if raw_company:
             return dict(id=raw_company['id'], name=raw_company['name'],
                         branch_count=1)
-                        #branch_count=raw_company.get('data', {}).get('branch_count', 0))
+            # branch_count=raw_company.get('data', {}).get('branch_count', 0))
 
     return [dict(id=b["id"],
                  name=b["name"],
@@ -143,7 +148,7 @@ def branch_response(branches, locale):
                  rubrics=localize(b["draft"].get("rubrics")),
                  address=b["draft"].get("address"),
                  contacts=b["draft"].get("contacts"),
-                 payment_options=b["draft"].get("payment_options"),
+                 payment_options=payment_opts(b["draft"].get("payment_options")),
                  schedule=b["draft"].get("schedule"),
                  description=b["draft"].get("description"),
                  article=b["draft"].get("article"),
