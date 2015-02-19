@@ -24,7 +24,20 @@ def get(project_id, branch_ids):
     :param branch_ids:
     :return:
     """
-    return branch_dao.get_full(project_id, branch_ids=branch_ids)
+
+    ids = []
+    branches = []
+    for i in branch_ids:
+        cached = cache.branch_cache.get(key=int(i))
+        if cached:
+            branches.append(cached)
+        else:
+            ids.append(i)
+            
+    if ids:
+        branches += branch_dao.get_full(project_id=project_id, branch_ids=ids)
+
+    return branches
 
 
 def search(q, project_id, start, limit, attrs=None):
