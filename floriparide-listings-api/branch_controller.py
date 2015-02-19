@@ -7,6 +7,7 @@ from util.controller_utils import validate, json_response, enable_cors
 
 app = bottle.Bottle()
 
+
 @app.get("/list")
 @json_response
 @enable_cors

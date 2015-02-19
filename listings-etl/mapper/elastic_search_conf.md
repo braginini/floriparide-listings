@@ -12,6 +12,10 @@ PUT florianopolis/
                     "filter": ["standard", "lowercase", "stop", "asciifolding", "porter_stem"]
                 }
             }
+        },
+        "index" : {
+            "number_of_shards" : 1,
+            "number_of_replicas" : 1
         }
     }
 }

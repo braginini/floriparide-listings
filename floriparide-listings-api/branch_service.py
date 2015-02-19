@@ -1,15 +1,20 @@
 import logging
 from operator import itemgetter
 from elasticsearch import Elasticsearch
+import cache
 import dao
 
 __author__ = 'mikhail'
 
-es = Elasticsearch(hosts=['107.170.149.118:9992'])
+es = Elasticsearch(hosts=['104.131.54.232:9992'])
 
 branch_dao = dao.branch_dao
 rubric_dao = dao.rubric_dao
 attribute_dao = dao.attribute_dao
+
+#initialize branch cache
+for b in branch_dao.get_full(0):
+    cache.branch_cache.put(b['id'], b)
 
 
 def get(project_id, branch_ids):
@@ -56,8 +61,16 @@ def search(q, project_id, start, limit, attrs=None):
     if not total:
         return [], total
 
-    ids = {v['_id']: v['_score'] for v in es_result['hits']['hits']}
-    branches = branch_dao.get_full(project_id=project_id, branch_ids=ids.keys())
+    branches = []
+    ids = []
+    for v in es_result['hits']['hits']:
+        cached = cache.branch_cache.get(key=int(v['_id']))
+        if cached:
+            branches.append(cached)
+        else:
+            ids.append(v['_id'])
+    if ids:
+        branches += branch_dao.get_full(project_id=project_id, branch_ids=ids)
 
     branches = sorted(branches, key=lambda branch: es_scores[str(branch['id'])], reverse=True)
 
@@ -70,6 +83,9 @@ def get_markers(branches):
     :param branches:
     :return:
     """
+
+    if not branches:
+        return {}
 
     def is_paid(branch):
         if branch['draft'].get('paid'):
@@ -93,6 +109,10 @@ def get_top_rubrics(branches):
     :param branches:
     :return:
     """
+
+    if not branches:
+        return [], []
+
     # prepare top rubrics. minimum = 1 rubric and 30% threshold
     # key - id, value number of times appeared
     rubrics = {}
