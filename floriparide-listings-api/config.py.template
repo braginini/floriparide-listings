@@ -20,8 +20,15 @@ class WEB():
     PORT = 8888
 
 
+class CACHE():
+    CACHE_OPTS = {
+        'cache.type': 'memory'
+    }
+
+
 DB = DB()
 WEB = WEB()
+CACHE = CACHE()
 
 
 def read_config_file(config_file):

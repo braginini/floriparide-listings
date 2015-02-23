@@ -33,7 +33,7 @@ def get(project_id, branch_ids):
             branches.append(cached)
         else:
             ids.append(i)
-            
+
     if ids:
         branches += branch_dao.get_full(project_id=project_id, branch_ids=ids)
 

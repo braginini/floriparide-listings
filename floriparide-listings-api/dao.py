@@ -61,14 +61,14 @@ class BaseDao(object):
 
                 query += sql_filters(filters, self.filters_map)
 
+            if order:
+                query += " ORDER BY %s" % str(order)
+
             if limit:
                 query += " LIMIT %s" % str(limit)
 
             if offset:
                 query += " OFFSET %s" % str(offset)
-
-            if order:
-                query += " ORDER BY %s" % str(order)
 
             logging.info("Running query %s" % query)
             cur.execute(query)
@@ -80,7 +80,7 @@ class BaseDao(object):
         :param filters: the dictionary of filter to apply on entity in WHERE clause
         :return:
         """
-        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+        with get_cursor() as cur:
             query = "SELECT COUNT(1) FROM %s " % self.table_name
             if filters:
                 query = query + "WHERE " + sql_filters(filters, self.filters_map)
