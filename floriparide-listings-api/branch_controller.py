@@ -96,10 +96,11 @@ def search(q, project_id, start, limit, locale='pt_Br', attrs=None):
     # prepare markers with branch_id, name, lat, lon
     if start == 0:
         result['markers'] = markers_response(branch_service.get_markers(branches), locale)
-        result['top_rubrics'], top_attributes = branch_service.get_top_rubrics(branches)
-        for a in top_attributes:
+        result['top_rubrics'], top_attributes_group = branch_service.get_top_rubrics(branches)
+        for a in top_attributes_group:
             a['attributes'] = list(map(localize_names, a['attributes']))
-        result['top_attributes'] = list(map(localize_names, top_attributes))
+            localize_names(a)
+        result['top_attributes'] = top_attributes_group
     # cut the resulting list. Only after we get markers and top rubrics!!!
     # Cuz markers and top rubrics are calculated based on full search result
     if limit:
