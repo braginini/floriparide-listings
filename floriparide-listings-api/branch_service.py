@@ -12,7 +12,7 @@ branch_dao = dao.branch_dao
 rubric_dao = dao.rubric_dao
 attribute_dao = dao.attribute_dao
 
-#initialize branch cache
+# initialize branch cache
 for b in branch_dao.get_full(0):
     cache.branch_cache.put(b['id'], b)
 
@@ -67,13 +67,13 @@ def search(q, project_id, start, limit, attrs=None):
     logging.info('Got ES result for query %s' % body)
 
     total = es_result['hits']['total']
-    #dictionary with branch id as a key and score as a value
+    # dictionary with branch id as a key and score as a value
     es_scores = {e['_id']: e['_score'] for e in es_result['hits']['hits']}
 
-    # get the dictionary of branches with corresponding score (key -> branch_id, value -> score)
     if not total:
         return [], total
 
+    # get the dictionary of branches with corresponding score (key -> branch_id, value -> score)
     branches = []
     ids = []
     for v in es_result['hits']['hits']:
@@ -162,8 +162,36 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
     :param company_id: the company to search in
     :return:
     """
-    if not start:
-        limit = 1000
+
+    root_filter = []
+
+    if rubric_id:
+        root_filter.append({
+            "term": {
+                "rubrics.id": rubric_id
+            }
+        })
+
+    #todo add attribute filters
+
+    body = {
+        "from": start,
+        "filter": {
+            "and": root_filter
+        }
+    }
+
+    if start == 0:
+        # we need to take all the results (internal limit is 1k) to be able to return markers and rubrics
+        body['size'] = 1000
+    else:
+        body['size'] = limit
+
+    es_result = es.search(index="florianopolis", doc_type='branch', body=body)
+
+    total = es_result['hits']['total']
+    # dictionary with branch id as a key and score as a value
+    es_scores = {e['_id']: e['_score'] for e in es_result['hits']['hits']}
 
     filters = {}
     if company_id:
@@ -171,6 +199,19 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
     if rubric_id:
         filters['rubric_id'] = rubric_id
 
-    branches = branch_dao.get_full(project_id, offset=start, limit=limit, filters=filters, order='id')
-    total = branch_dao.count(filters=filters)
+    if not total:
+        return [], total
+
+    # get the dictionary of branches with corresponding score (key -> branch_id, value -> score)
+    branches = []
+    ids = []
+    for v in es_result['hits']['hits']:
+        cached = cache.branch_cache.get(key=int(v['_id']))
+        if cached:
+            branches.append(cached)
+        else:
+            ids.append(v['_id'])
+    if ids:
+        branches += branch_dao.get_full(project_id=project_id, branch_ids=ids)
+
     return branches, total

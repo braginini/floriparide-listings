@@ -60,6 +60,7 @@ for k, v in branch_history_map.items():
         data = {key: value for key, value in v["data"]["draft"].items() if key == "address" or key == "description"}
         #add name
         data["name"] = v["data"]["name"]
+        data["company_id"] = v["data"]["company_id"]
 
         #add payment options
         payment_options = v["data"]["draft"].get("payment_options")
@@ -102,16 +103,17 @@ for k, v in branch_history_map.items():
 #add branches who's attributes or rubrics were updated
 if other_branches:
     for b in other_branches:
-        data = {key: value for key, value in b["data"].items() if key == "address" or key == "payment_options"
+        data = {key: value for key, value in b["draft"].items() if key == "address" or key == "payment_options"
                 or key == "description"}
         data["name"] = b["name"]
+        data["company_id"] = b["company_id"]
 
         #add location lat, lng
-        if v["data"]["draft"].get("geometry"):
-            data["point"] = v["data"]["draft"]["geometry"].get("point")
+        if b["draft"].get("geometry"):
+            data["point"] = b["draft"]["geometry"].get("point")
 
         #add payment options
-        payment_options = v["data"]["draft"].get("payment_options")
+        payment_options = b["draft"].get("payment_options")
         if payment_options:
             es_p_opts = []
             if payment_options.get("credit_cards"):
@@ -128,10 +130,10 @@ if other_branches:
         data["rubrics"] = [{"names": rubrics[key["id"]][2]["names"], "id": key["id"]}
                            for key in b["data"].get("rubrics")]
 
-        curr_attributes = b["data"].get("attributes")
+        curr_attributes = b["draft"].get("attributes")
         if curr_attributes:
             curr_attributes = [{"names": attributes[key["id"]][1]["names"], "id": key["id"], "value": key["value"]}
-                               for key in b["data"].get("attributes")]
+                               for key in b["draft"].get("attributes")]
         data["attributes"] = curr_attributes
         action = {
             '_op_type': 'index',

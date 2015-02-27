@@ -74,6 +74,9 @@ class BaseDao(object):
             cur.execute(query)
             return cur.fetchall()
 
+    def sql_filters(self, filters):
+        pass
+
     def count(self, filters=None):
         """
         gets the count of a given entity with give filters
@@ -143,11 +146,23 @@ class BranchDao(BaseDao):
         # todo rubric_id filter looks difficult and query will go through all rows
         BaseDao.__init__(self, 'public.branch',
                          dict(rubric_id='(SELECT json_array_elements(draft->\'rubrics\')->>\'id\' LIMIT 1)::int',
+                              #rubric_id='ANY((SELECT (json_array_elements(draft->\'rubrics\')->>\'id\')::int))',
                               company_id='company_id'))
 
         self.attribute_dao = attribute_dao
         self.rubric_dao = rubric_dao
         self.company_dao = company_dao
+
+
+    def sql_filters(self, filters):
+
+        filter_sql = ""
+
+        for k, v in filters.items:
+            if 'rubric_id' is k:
+                filter_sql += '%s'
+
+        return " AND ".join(["%s=%s" % (self.filters_map[k], v) for (k, v) in filters.items()])
 
     def get_full(self, project_id, branch_ids=None, offset=None, limit=None, filters=None, order=None):
         """
