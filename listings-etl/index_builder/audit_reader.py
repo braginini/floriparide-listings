@@ -4,9 +4,10 @@ import json
 from mapper import branch_dao
 from elasticsearch import Elasticsearch
 from elasticsearch import helpers
+
 __author__ = 'Mike'
-#load timestamp from db of file
-#get new_timestamp in ms from DB "SELECT EXTRACT (EPOCH FROM now())"
+# load timestamp from db of file
+# get new_timestamp in ms from DB "SELECT EXTRACT (EPOCH FROM now())"
 #do a select to audit table filtering out all entries with timestamp < timestamp
 #order entries for each source_id by timestamp and take the last one
 #convert to ES index JSON
@@ -56,19 +57,37 @@ for k, v in branch_history_map.items():
     else:
         #bulding up document for index
         #first take all fields from data
-        data = {key: value for key, value in v["data"]["draft"].items() if key == "address" or key == "payment_options"
-                or key == "description"}
+        data = {key: value for key, value in v["data"]["draft"].items() if key == "address" or key == "description"}
         #add name
         data["name"] = v["data"]["name"]
+
+        #add payment options
+        payment_options = v["data"]["draft"].get("payment_options")
+        if payment_options:
+            es_p_opts = []
+            if payment_options.get("credit_cards"):
+                es_p_opts += payment_options.get("credit_cards")
+            if payment_options.get("other"):
+                es_p_opts += payment_options.get("other")
+            if payment_options.get("food_cards"):
+                es_p_opts += payment_options.get("food_cards")
+            if payment_options.get("debit_cards"):
+                es_p_opts += payment_options.get("debit_cards")
+
+            data["payment_options"] = es_p_opts
 
         #add rubrics and attributes names
         data["rubrics"] = [{"names": rubrics[str(k["id"])][2]["names"], "id": str(k["id"])}
                            for k in v["data"]["draft"].get("rubrics")]
+        #add location lat, lng
+        if v["data"]["draft"].get("geometry"):
+            data["point"] = v["data"]["draft"]["geometry"].get("point")
 
         curr_attributes = v["data"]["draft"].get("attributes")
         if curr_attributes:
-            curr_attributes = [{"names": attributes[str(key["id"])][1]["names"], "id": str(key["id"])}
-                               for key in v["data"]["draft"].get("attributes")]
+            curr_attributes = [
+                {"names": attributes[str(key["id"])][1]["names"], "id": str(key["id"]), "value": key["value"]}
+                for key in v["data"]["draft"].get("attributes")]
         data["attributes"] = curr_attributes
         action = {
             '_op_type': 'index',
@@ -86,13 +105,33 @@ if other_branches:
         data = {key: value for key, value in b["data"].items() if key == "address" or key == "payment_options"
                 or key == "description"}
         data["name"] = b["name"]
+
+        #add location lat, lng
+        if v["data"]["draft"].get("geometry"):
+            data["point"] = v["data"]["draft"]["geometry"].get("point")
+
+        #add payment options
+        payment_options = v["data"]["draft"].get("payment_options")
+        if payment_options:
+            es_p_opts = []
+            if payment_options.get("credit_cards"):
+                es_p_opts += payment_options.get("credit_cards")
+            if payment_options.get("other"):
+                es_p_opts += payment_options.get("other")
+            if payment_options.get("food_cards"):
+                es_p_opts += payment_options.get("food_cards")
+            if payment_options.get("debit_cards"):
+                es_p_opts += payment_options.get("debit_cards")
+
+            data["payment_options"] = es_p_opts
+
         data["rubrics"] = [{"names": rubrics[key["id"]][2]["names"], "id": key["id"]}
                            for key in b["data"].get("rubrics")]
 
         curr_attributes = b["data"].get("attributes")
         if curr_attributes:
-                curr_attributes = [{"names": attributes[key["id"]][1]["names"], "id": key["id"]}
-                                   for key in b["data"].get("attributes")]
+            curr_attributes = [{"names": attributes[key["id"]][1]["names"], "id": key["id"], "value": key["value"]}
+                               for key in b["data"].get("attributes")]
         data["attributes"] = curr_attributes
         action = {
             '_op_type': 'index',
@@ -107,7 +146,7 @@ if other_branches:
 
 #update ES index and DB timestamp
 if es_actions:
-    es = Elasticsearch(hosts=['104.131.54.232:9992'])
+    es = Elasticsearch(hosts=['localhost:9200'])
     print(helpers.bulk(es, es_actions))
     print(new_timestamp)
     audit_dao.update_timestamp(new_timestamp)
