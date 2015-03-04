@@ -149,3 +149,50 @@ POST test/test/_search
         }
     }
 }
+
+#search query with query param and 2 attributes as filters
+POST florianopolis/branch/_search
+{
+    "query": {
+        "filtered": {
+            "filter": {
+                "and": [
+                    {
+                        "and": [
+                            {
+                                "term": {
+                                    "attributes.id": "15"
+                                }
+                            },
+                            {
+                                "term": {
+                                    "attributes.value": true
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "and": [
+                            {
+                                "term": {
+                                    "attributes.id": "13"
+                                }
+                            },
+                            {
+                                "term": {
+                                    "attributes.value": true
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "query": {
+                "match_phrase": {
+                    "_all": "restaurantes"
+                }
+            }
+        }
+    },
+    "from": 0
+}

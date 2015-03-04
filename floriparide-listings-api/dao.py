@@ -153,7 +153,6 @@ class BranchDao(BaseDao):
         self.rubric_dao = rubric_dao
         self.company_dao = company_dao
 
-
     def sql_filters(self, filters):
 
         filter_sql = ""

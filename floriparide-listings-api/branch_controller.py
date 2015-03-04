@@ -11,8 +11,8 @@ app = bottle.Bottle()
 @app.get("/list")
 @json_response
 @enable_cors
-@validate(locale=str, project_id=int, company_id=int, rubric_id=int, start=int, limit=int)
-def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_id=None):
+@validate(locale=str, project_id=int, company_id=int, rubric_id=int, start=int, limit=int, filters=str)
+def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_id=None, filters=None):
     """
     Gets a set of branches by specified filters - rubric id and company id.
     :param project_id: project id to search branch in. Required
@@ -21,6 +21,7 @@ def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_i
     :param locale: the localization of a result set. Optional (default=pt_Br)
     :param company_id: the id of a company to. Optional (if not specified, rubric_id must be specified)
     :param rubric_id: the id of a rubric to filter out results. Optional (if not, specified company_id must be specified)
+    :param filters: the list of filters (attributes) to filter result with. Optional.
     :return:
     """
     # make some validation before
@@ -76,13 +77,16 @@ def get(project_id, id, locale='pt_Br'):
 @app.get('/search')
 @json_response
 @enable_cors
-@validate(q=str, project_id=int, start=int, limit=int, locale=str, attrs=str)
-def search(q, project_id, start, limit, locale='pt_Br', attrs=None):
+@validate(q=str, project_id=int, start=int, limit=int, locale=str, filter=str)
+def search(q, project_id, start, limit, locale='pt_Br', filter=None):
     # todo get index name from db by project id
     # todo get default locale by project id
 
     result = {}
-    branches, total = branch_service.search(q, project_id, start, limit, attrs)
+    if filter:
+        filter = json.loads(filter)
+
+    branches, total = branch_service.search(q, project_id, start, limit, filter)
 
     def localize_names(obj):
         """

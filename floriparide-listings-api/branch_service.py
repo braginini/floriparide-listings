@@ -6,15 +6,21 @@ import dao
 
 __author__ = 'mikhail'
 
-es = Elasticsearch(hosts=['104.131.54.232:9992'])
+# es = Elasticsearch(hosts=['104.131.54.232:9992'])
+es = Elasticsearch(hosts=['localhost:9200'])
 
 branch_dao = dao.branch_dao
 rubric_dao = dao.rubric_dao
 attribute_dao = dao.attribute_dao
 
-# initialize branch cache
-for b in branch_dao.get_full(0):
-    cache.branch_cache.put(b['id'], b)
+
+def populate_cache(els, el_cache):
+    for e in els:
+        el_cache.put(e['id'], e)
+
+
+populate_cache(branch_dao.get_full(0), cache.branch_cache)
+populate_cache(attribute_dao.get_entity(), cache.attribute_cache)
 
 
 def get(project_id, branch_ids):
@@ -40,17 +46,41 @@ def get(project_id, branch_ids):
     return branches
 
 
-def search(q, project_id, start, limit, attrs=None):
+def search(q, project_id, start, limit, filters=None):
+    root_filter = []
+
+    # todo add attribute filters
+
+    if filters:
+        for k, v in filters.items():
+            attr = cache.attribute_cache.get(int(k))
+            if attr:
+                t = attr['data']['input_type']
+                if t == 'boolean' and type(v) is bool and v:
+                    attr_filter = [{
+                                       "term": {
+                                           "attributes.id": str(k)
+                                       }
+                                   }, {
+                                       "term": {
+                                           "attributes.value": v
+                                       }
+                                   }]
+                    root_filter.append({"and": attr_filter})
+
+    filtered = {"query": {
+        "match_phrase": {
+            "_all": q
+        }
+    }}
+
+    if root_filter:
+        filtered['filter'] = root_filter
+
     body = {
         "from": start,
         "query": {
-            "filtered": {
-                "query": {
-                    "match_phrase": {
-                        "_all": q
-                    }
-                }
-            }
+            "filtered": filtered
         }
     }
 
@@ -172,7 +202,7 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
             }
         })
 
-    #todo add attribute filters
+    # todo add attribute filters
 
     body = {
         "from": start,
