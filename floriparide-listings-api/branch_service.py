@@ -2,12 +2,13 @@ import logging
 from operator import itemgetter
 from elasticsearch import Elasticsearch
 import cache
+import config
 import dao
 
 __author__ = 'mikhail'
 
-# es = Elasticsearch(hosts=['104.131.54.232:9992'])
-es = Elasticsearch(hosts=['localhost:9200'])
+es = Elasticsearch(hosts=['%s:%s' % (config.ES.HOST, config.ES.PORT)])
+#es = Elasticsearch(hosts=['localhost:9200'])
 
 branch_dao = dao.branch_dao
 rubric_dao = dao.rubric_dao

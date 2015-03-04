@@ -25,10 +25,15 @@ class CACHE():
         'cache.type': 'memory'
     }
 
+class ES():
+    HOST = "localhost"
+    PORT = 9200
+
 
 DB = DB()
 WEB = WEB()
 CACHE = CACHE()
+ES = ES()
 
 
 def read_config_file(config_file):
