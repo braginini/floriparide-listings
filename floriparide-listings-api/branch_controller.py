@@ -24,6 +24,10 @@ def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_i
     :param filters: the list of filters (attributes) to filter result with. Optional.
     :return:
     """
+
+    if filters:
+        filters = json.loads(filters)
+
     # make some validation before
     if not company_id and not rubric_id:
         raise bottle.HTTPError(status=400,
@@ -31,7 +35,7 @@ def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_i
 
     # branch will be a list of size 1 if the item was found
     branches, total = branch_service.get_list(project_id, company_id=company_id, rubric_id=rubric_id, start=start,
-                                              limit=limit)
+                                              limit=limit, filters=filters)
 
     if not branches:
         raise bottle.HTTPError(status=404,
@@ -77,16 +81,16 @@ def get(project_id, id, locale='pt_Br'):
 @app.get('/search')
 @json_response
 @enable_cors
-@validate(q=str, project_id=int, start=int, limit=int, locale=str, filter=str)
-def search(q, project_id, start, limit, locale='pt_Br', filter=None):
+@validate(q=str, project_id=int, start=int, limit=int, locale=str, filters=str)
+def search(q, project_id, start, limit, locale='pt_Br', filters=None):
     # todo get index name from db by project id
     # todo get default locale by project id
 
     result = {}
-    if filter:
-        filter = json.loads(filter)
+    if filters:
+        filters = json.loads(filters)
 
-    branches, total = branch_service.search(q, project_id, start, limit, filter)
+    branches, total = branch_service.search(q, project_id, start, limit, filters)
 
     def localize_names(obj):
         """

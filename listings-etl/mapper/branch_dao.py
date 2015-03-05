@@ -52,6 +52,16 @@ def create_company(branch):
             return cur.fetchone()['id']
 
 
+def update_draft(branch):
+    with psycopg2.connect(
+            "dbname=floriparide_listings user=postgres password=postgres host=localhost port=5432") as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            j = json.dumps(branch['draft'], ensure_ascii=False)
+            sql = 'UPDATE public.branch SET draft=%s::json WHERE id = %s'
+            logging.debug('Running query %s' % sql)
+            cur.execute(sql, (j, branch['id']))
+
+
 def get_all():
     return base_dao.get_all("public.branch", cursor_factory=psycopg2.extras.RealDictCursor)
 

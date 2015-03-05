@@ -1,6 +1,7 @@
 import psycopg2
 __author__ = 'mikhail'
 
+
 def get_all(table_name, cursor_factory=None):
     """
     gets all rows from specified table

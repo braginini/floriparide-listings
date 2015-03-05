@@ -47,10 +47,14 @@ def get(project_id, branch_ids):
     return branches
 
 
-def search(q, project_id, start, limit, filters=None):
-    root_filter = []
+def build_filters(filters):
+    """
+    takes filters map and returns a elastic search ready filter
+    :param filters:
+    :return:
+    """
 
-    # todo add attribute filters
+    root_filter = []
 
     if filters:
         for k, v in filters.items():
@@ -68,6 +72,12 @@ def search(q, project_id, start, limit, filters=None):
                                        }
                                    }]
                     root_filter.append({"and": attr_filter})
+
+    return root_filter
+
+
+def search(q, project_id, start, limit, filters=None):
+    root_filter = build_filters(filters)
 
     filtered = {"query": {
         "match_phrase": {
@@ -186,7 +196,7 @@ def get_top_rubrics(branches):
     return top_rubrics, attribute_groups
 
 
-def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None):
+def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None, filters=None):
     """
     gets the list of branch for the given project and company
     :param project_id: the project to search in
@@ -194,7 +204,7 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
     :return:
     """
 
-    root_filter = []
+    root_filter = build_filters(filters)
 
     if rubric_id:
         root_filter.append({
@@ -202,8 +212,6 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
                 "rubrics.id": rubric_id
             }
         })
-
-    # todo add attribute filters
 
     body = {
         "from": start,
