@@ -86,7 +86,7 @@ def search(q, project_id, start, limit, filters=None):
     }}
 
     if root_filter:
-        filtered['filter'] = root_filter
+        filtered['filter'] = {'and': root_filter}
 
     body = {
         "from": start,
