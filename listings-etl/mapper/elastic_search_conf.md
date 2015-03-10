@@ -20,7 +20,7 @@ PUT florianopolis/
     }
 }
 
-PUT florianopolis/branch/_mapping
+PUT florianopolis/_mapping/branch
 {
 "branch": {
       "_all" : {"enabled" : true, "index_analyzer": "index_analyzer", "search_analyzer": "search_analyzer"},
@@ -28,6 +28,9 @@ PUT florianopolis/branch/_mapping
         "id": {
           "type": "string",
           "index": "not_analyzed"
+        },
+        "point": {
+          "type": "geo_point"
         },
         "name": {
           "type": "string",

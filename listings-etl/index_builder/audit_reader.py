@@ -82,7 +82,9 @@ for k, v in branch_history_map.items():
                            for k in v["data"]["draft"].get("rubrics")]
         #add location lat, lng
         if v["data"]["draft"].get("geometry"):
-            data["point"] = v["data"]["draft"]["geometry"].get("point")
+            point = v["data"]["draft"]["geometry"].get("point")
+            #we use lat lon to support ES geo point type
+            data["point"] = dict(lat=point['lat'], lon=point['lng'])
 
         curr_attributes = v["data"]["draft"].get("attributes")
         if curr_attributes:
@@ -110,7 +112,9 @@ if other_branches:
 
         #add location lat, lng
         if b["draft"].get("geometry"):
-            data["point"] = b["draft"]["geometry"].get("point")
+            point = b["draft"]["geometry"].get("point")
+            #we use lat lon to support ES geo point type
+            data["point"] = dict(lat=point['lat'], lon=point['lng'])
 
         #add payment options
         payment_options = b["draft"].get("payment_options")

@@ -8,7 +8,7 @@ import dao
 __author__ = 'mikhail'
 
 es = Elasticsearch(hosts=['%s:%s' % (config.ES.HOST, config.ES.PORT)])
-#es = Elasticsearch(hosts=['localhost:9200'])
+# es = Elasticsearch(hosts=['localhost:9200'])
 
 branch_dao = dao.branch_dao
 rubric_dao = dao.rubric_dao
@@ -22,6 +22,17 @@ def populate_cache(els, el_cache):
 
 populate_cache(branch_dao.get_full(0), cache.branch_cache)
 populate_cache(attribute_dao.get_entity(), cache.attribute_cache)
+#add hardcoded attributes
+cache.attribute_cache.put('visible', dict(data={'input_type': 'bounds'}))
+cache.attribute_cache.put('open', dict(data={'input_type': 'boolean'}))
+
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 
 def get(project_id, branch_ids):
@@ -58,20 +69,32 @@ def build_filters(filters):
 
     if filters:
         for k, v in filters.items():
-            attr = cache.attribute_cache.get(int(k))
+            if is_number(k):
+                attr = cache.attribute_cache.get(int(k))
+            else:
+                attr = cache.attribute_cache.get(str(k))
+
+            #todo do a check for hard coded filters
             if attr:
                 t = attr['data']['input_type']
                 if t == 'boolean' and type(v) is bool and v:
-                    attr_filter = [{
-                                       "term": {
-                                           "attributes.id": str(k)
-                                       }
-                                   }, {
-                                       "term": {
-                                           "attributes.value": v
-                                       }
-                                   }]
+                    if k == 'open':
+                        continue
+                    else:
+                        attr_filter = [{
+                                           "term": {
+                                               "attributes.id": str(k)
+                                           }
+                                       }, {
+                                           "term": {
+                                               "attributes.value": v
+                                           }
+                                       }]
                     root_filter.append({"and": attr_filter})
+                if t == 'bounds' and type(v) is list and v and len(v) == 4 and k == 'visible':
+                    location = dict(top_left={'lat': v[0], 'lon': v[1]}, bottom_right={'lat': v[2], 'lon': v[3]})
+                    geo_bounding_box = dict(point=location)
+                    root_filter.append(dict(geo_bounding_box=geo_bounding_box))
 
     return root_filter
 

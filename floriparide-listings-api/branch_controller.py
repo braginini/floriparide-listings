@@ -105,10 +105,11 @@ def search(q, project_id, start, limit, locale='pt_Br', filters=None):
     if start == 0:
         result['markers'] = markers_response(branch_service.get_markers(branches), locale)
         result['top_rubrics'], top_attributes_group = branch_service.get_top_rubrics(branches)
-        for a in top_attributes_group:
-            a['attributes'] = list(map(localize_names, a['attributes']))
-            localize_names(a)
-        result['top_attributes'] = top_attributes_group
+        if not filters:
+            for a in top_attributes_group:
+                a['attributes'] = list(map(localize_names, a['attributes']))
+                localize_names(a)
+            result['top_attributes'] = top_attributes_group
     # cut the resulting list. Only after we get markers and top rubrics!!!
     # Cuz markers and top rubrics are calculated based on full search result
     if limit:
