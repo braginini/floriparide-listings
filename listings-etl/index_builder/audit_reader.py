@@ -1,3 +1,4 @@
+import datetime
 from mapper import audit_dao
 from mapper import base_dao
 import json
@@ -17,6 +18,8 @@ __author__ = 'Mike'
 
 old_timestamp, new_timestamp = audit_dao.load_timestamps()
 history = audit_dao.get_history(old_timestamp, "audit.a_branch")
+
+days_map = dict(sunday=0, monday=1, tuesday=2, wednesday=3, thursday=4, friday=5, saturday=6)
 
 #map with key = entity_id (e.g. branch, company) and all the rest as a value
 branch_history_map = {}
@@ -61,6 +64,36 @@ for k, v in branch_history_map.items():
         #add name
         data["name"] = v["data"]["name"]
         data["company_id"] = v["data"]["company_id"]
+
+        #add working hours
+        schedule = v["data"]["draft"].get("schedule")
+        if schedule:
+            es_hours = {}
+            for day, ranges in schedule.items():
+                int_day = days_map.get(day)
+                if int_day is not None:
+                    day_hours = []
+                    for r in ranges:
+                        try:
+                            f_date = datetime.datetime.strptime(r['from'], '%H:%M')
+                            if r['to'].startswith('24:'):
+                                r['to'] = r['to'].replace('24:', '00:')
+
+                            t_date = datetime.datetime.strptime(r['to'], '%H:%M')
+                            f = f_date.hour + f_date.minute / 60
+
+                            if 0 <= t_date.hour <= 6:
+                                t = 24 + t_date.hour + t_date.minute / 60
+                            else:
+                                t = t_date.hour + t_date.minute / 60
+
+                            day_hours.append({'from': f, 'to': t})
+                        except ValueError:
+                            print(v)
+                            continue
+                    es_hours[int_day] = day_hours
+
+            data['schedule'] = es_hours
 
         #add payment options
         payment_options = v["data"]["draft"].get("payment_options")
@@ -115,6 +148,36 @@ if other_branches:
             point = b["draft"]["geometry"].get("point")
             #we use lat lon to support ES geo point type
             data["point"] = dict(lat=point['lat'], lon=point['lng'])
+
+        #add schedule
+        schedule = b["draft"].get("schedule")
+        if schedule:
+            es_hours = {}
+            for day, ranges in schedule.items():
+                int_day = days_map.get(day)
+                if int_day is not None:
+                    day_hours = []
+                    for r in ranges:
+                        try:
+                            f_date = datetime.datetime.strptime(r['from'], '%H:%M')
+                            if r['to'].startswith('24:'):
+                                r['to'] = r['to'].replace('24:', '00:')
+
+                            t_date = datetime.datetime.strptime(r['to'], '%H:%M')
+                            f = f_date.hour + f_date.minute / 60
+
+                            if 0 <= t_date.hour <= 6:
+                                t = 24 + t_date.hour + t_date.minute / 60
+                            else:
+                                t = t_date.hour + t_date.minute / 60
+
+                            day_hours.append({'from': f, 'to': t})
+                        except ValueError:
+                            print(b)
+                            continue
+                    es_hours[int_day] = day_hours
+
+            data['schedule'] = es_hours
 
         #add payment options
         payment_options = b["draft"].get("payment_options")

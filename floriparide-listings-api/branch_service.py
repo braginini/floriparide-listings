@@ -1,5 +1,6 @@
 import logging
 from operator import itemgetter
+import datetime
 from elasticsearch import Elasticsearch
 import cache
 import config
@@ -22,9 +23,13 @@ def populate_cache(els, el_cache):
 
 populate_cache(branch_dao.get_full(0), cache.branch_cache)
 populate_cache(attribute_dao.get_entity(), cache.attribute_cache)
-#add hardcoded attributes
+# add hardcoded attributes
 cache.attribute_cache.put('visible', dict(data={'input_type': 'bounds'}))
 cache.attribute_cache.put('open', dict(data={'input_type': 'boolean'}))
+
+open_filter_script = '_source.get(\'schedule\') is not None and _source.get(\'schedule\').get(day) ' \
+                     'is not None ' \
+                     'and len([r for r in _source.get(\'schedule\').get(day) if r[\'from\'] < hour < r[\'to\']]) > 0'
 
 
 def is_number(s):
@@ -74,12 +79,15 @@ def build_filters(filters):
             else:
                 attr = cache.attribute_cache.get(str(k))
 
-            #todo do a check for hard coded filters
+            # todo do a check for hard coded filters
             if attr:
                 t = attr['data']['input_type']
                 if t == 'boolean' and type(v) is bool and v:
                     if k == 'open':
-                        continue
+                        now = datetime.datetime.now()
+                        params = dict(day=str(now.weekday()), hour=now.hour + now.minute / 60)
+                        open_filter = dict(script=open_filter_script, params=params, lang='python')
+                        root_filter.append(dict(script=open_filter))
                     else:
                         attr_filter = [{
                                            "term": {
@@ -90,7 +98,7 @@ def build_filters(filters):
                                                "attributes.value": v
                                            }
                                        }]
-                    root_filter.append({"and": attr_filter})
+                        root_filter.append({"and": attr_filter})
                 if t == 'bounds' and type(v) is list and v and len(v) == 4 and k == 'visible':
                     location = dict(top_left={'lat': v[0], 'lon': v[1]}, bottom_right={'lat': v[2], 'lon': v[3]})
                     geo_bounding_box = dict(point=location)
