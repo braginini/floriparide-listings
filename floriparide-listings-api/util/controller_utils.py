@@ -28,14 +28,14 @@ def validate(**types):
                 value = getparam(par)
                 if not value:  # None or empty str
                     if required:
-                        error = "%s() requires the parameter %s" % (wrapper.__name__, par)
-                        raise HTTPError(error)
+                        error = "Bad request - %s() requires  parameter %s" % (wrapper.__name__, par)
+                        raise HTTPError(body=error, status=400)
                     continue
                 try:
                     kargs[par] = ptype(value)
                 except:
-                    error = "Cannot convert parameter %s to %s" % (par, ptype.__name__)
-                    raise HTTPError(error)
+                    error = "Bad request - Cannot convert parameter %s to %s" % (par, ptype.__name__)
+                    raise HTTPError(body=error, status=400)
 
             return f(*args, **kargs)
 

@@ -8,11 +8,21 @@ from util.controller_utils import validate, json_response, enable_cors
 app = bottle.Bottle()
 
 
+def localize_names(obj, locale):
+    """
+    obj should contain key "names"
+    """
+    if obj:
+        obj['name'] = obj['names'].get(locale)
+        obj.pop('names', None)
+        return obj
+
+
 @app.get("/list")
 @json_response
 @enable_cors
-@validate(locale=str, project_id=int, company_id=int, rubric_id=int, start=int, limit=int, filters=str)
-def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_id=None, filters=None):
+@validate(locale=str, project_id=int, company_id=int, rubric_id=int, start=int, limit=int, filters=str, send_attrs=bool)
+def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_id=None, filters=None, send_attrs=False):
     """
     Gets a set of branches by specified filters - rubric id and company id.
     :param project_id: project id to search branch in. Required
@@ -54,6 +64,13 @@ def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_i
 
     result['items'] = branch_response(branches, locale)
 
+    if send_attrs:
+        top_rubrics, top_attributes_group = branch_service.get_top_rubrics(branches)
+        for a in top_attributes_group:
+            a['attributes'] = list(map(localize_names, a['attributes'], locale))
+            localize_names(a, locale)
+        result['top_attributes'] = top_attributes_group
+
     return result
 
 
@@ -81,8 +98,8 @@ def get(project_id, id, locale='pt_Br'):
 @app.get('/search')
 @json_response
 @enable_cors
-@validate(q=str, project_id=int, start=int, limit=int, locale=str, filters=str)
-def search(q, project_id, start, limit, locale='pt_Br', filters=None):
+@validate(q=str, project_id=int, start=int, limit=int, locale=str, filters=str, send_attrs=bool)
+def search(q, project_id, start, limit, locale='pt_Br', filters=None, send_attrs=False):
     # todo get index name from db by project id
     # todo get default locale by project id
 
@@ -92,24 +109,18 @@ def search(q, project_id, start, limit, locale='pt_Br', filters=None):
 
     branches, total = branch_service.search(q, project_id, start, limit, filters)
 
-    def localize_names(obj):
-        """
-        obj should contain key "names"
-        """
-        if obj:
-            obj['name'] = obj['names'].get(locale)
-            obj.pop('names', None)
-            return obj
-
     # prepare markers with branch_id, name, lat, lon
+    top_rubrics, top_attributes_group = branch_service.get_top_rubrics(branches)
     if start == 0:
         result['markers'] = markers_response(branch_service.get_markers(branches), locale)
-        result['top_rubrics'], top_attributes_group = branch_service.get_top_rubrics(branches)
-        if not filters:
-            for a in top_attributes_group:
-                a['attributes'] = list(map(localize_names, a['attributes']))
-                localize_names(a)
-            result['top_attributes'] = top_attributes_group
+        result['top_rubrics'] = top_rubrics
+
+    if send_attrs:
+        for a in top_attributes_group:
+            a['attributes'] = list(map(localize_names, a['attributes'], locale))
+            localize_names(a, locale)
+        result['top_attributes'] = top_attributes_group
+
     # cut the resulting list. Only after we get markers and top rubrics!!!
     # Cuz markers and top rubrics are calculated based on full search result
     if limit:
