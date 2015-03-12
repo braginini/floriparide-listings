@@ -13,6 +13,8 @@ def localize_names(obj, locale):
     obj should contain key "names"
     """
     if obj:
+        if not obj.get('names'):
+            return
         obj['name'] = obj['names'].get(locale)
         obj.pop('names', None)
         return obj

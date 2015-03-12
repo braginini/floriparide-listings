@@ -220,9 +220,16 @@ def get_top_rubrics(branches):
         top_rubrics.append(rubrics[0][0])
 
     attribute_groups = rubric_dao.get_attribute_groups(top_rubrics)
+    general_attrs = []
     for ag in attribute_groups:
         attributes = attribute_dao.get_attributes(ag['id'])
         ag['attributes'] = attributes
+        if ag['general']:
+            general_attrs += attributes
+
+    attribute_groups = [ag for ag in attribute_groups if not ag.get('general', None)]
+    if attribute_groups:
+        attribute_groups.insert(0, dict(attributes=general_attrs))
 
     return top_rubrics, attribute_groups
 

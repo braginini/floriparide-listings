@@ -113,13 +113,12 @@ class RubricDao(BaseDao):
 
     def get_attribute_groups(self, rubric_ids):
         with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            str_ids = [str(r) for r in rubric_ids]
-            query = 'SELECT id, ' \
-                    'cast(data->>(\'names\') as json) as names, ' \
+            query = 'SELECT id, cast(data->>(\'names\') as json) as names, general, ' \
                     'data->>(\'description\') as description ' \
-                    'FROM public.attributes_group ' \
-                    'WHERE id IN (SELECT attributes_group_id FROM public.rubric_attributes_group ' \
-                    'WHERE rubric_id in %s)'
+                    'FROM public.attributes_group a ' \
+                    'JOIN public.rubric_attributes_group r ' \
+                    'ON a.id = r.attributes_group_id AND r.rubric_id in %s' \
+                    ' group by id, general'
 
             cur.execute(query, (tuple(rubric_ids),))
             return cur.fetchall()
@@ -146,7 +145,7 @@ class BranchDao(BaseDao):
         # todo rubric_id filter looks difficult and query will go through all rows
         BaseDao.__init__(self, 'public.branch',
                          dict(rubric_id='(SELECT json_array_elements(draft->\'rubrics\')->>\'id\' LIMIT 1)::int',
-                              #rubric_id='ANY((SELECT (json_array_elements(draft->\'rubrics\')->>\'id\')::int))',
+                              # rubric_id='ANY((SELECT (json_array_elements(draft->\'rubrics\')->>\'id\')::int))',
                               company_id='company_id'))
 
         self.attribute_dao = attribute_dao

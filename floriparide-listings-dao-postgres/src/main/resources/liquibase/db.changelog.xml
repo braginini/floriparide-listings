@@ -1169,4 +1169,10 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="74" author="mbragin">
+        <addColumn tableName="rubric_attributes_group">
+            <column name="general" type="boolean"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>
