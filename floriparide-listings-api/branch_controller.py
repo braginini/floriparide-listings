@@ -67,7 +67,7 @@ def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_i
     if send_attrs:
         top_rubrics, top_attributes_group = branch_service.get_top_rubrics(branches)
         for a in top_attributes_group:
-            a['attributes'] = list(map(localize_names, a['attributes'], locale))
+            a['attributes'] = list(map(lambda attr: localize_names(attr, locale), a['attributes']))
             localize_names(a, locale)
         result['top_attributes'] = top_attributes_group
 
@@ -117,7 +117,7 @@ def search(q, project_id, start, limit, locale='pt_Br', filters=None, send_attrs
 
     if send_attrs:
         for a in top_attributes_group:
-            a['attributes'] = list(map(localize_names, a['attributes'], locale))
+            a['attributes'] = list(map(lambda attr: localize_names(attr, locale), a['attributes']))
             localize_names(a, locale)
         result['top_attributes'] = top_attributes_group
 
