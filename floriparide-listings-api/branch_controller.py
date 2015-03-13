@@ -160,6 +160,12 @@ def localize_attrs_rubrics(not_localized, locale):
         return [dict(id=a["id"], name=a["data"]["names"].get(locale)) for a in not_localized]
 
 
+def localize_attr_groups(not_localized, locale):
+    if not_localized:
+        return [dict(id=a["id"], name=a["names"].get(locale), string_id=a['string_id'],
+                     attributes=localize_attrs_rubrics(a['attributes'], locale)) for a in not_localized]
+
+
 def branch_response(branches, locale):
     """
     prepares branches to be sent to client
@@ -187,6 +193,7 @@ def branch_response(branches, locale):
     return [dict(id=b["id"],
                  name=b["name"],
                  attributes=localize_attrs_rubrics(b["draft"].get("attributes"), locale),
+                 attribute_groups=localize_attr_groups(b["draft"].get("attribute_groups"), locale),
                  rubrics=localize_attrs_rubrics(b["draft"].get("rubrics"), locale),
                  address=b["draft"].get("address"),
                  contacts=b["draft"].get("contacts"),

@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+from itertools import groupby
 import psycopg2
 from psycopg2 import pool
 from psycopg2 import extras
@@ -106,6 +107,15 @@ class AttributeDao(BaseDao):
             cur.execute(query, (group_id,))
             return cur.fetchall()
 
+    def get_groups(self, attr_ids):
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            query = 'SELECT id, cast(data->>(\'names\') as json) as names, data->>(\'description\') as description, ' \
+                    ' data->>(\'string_id\') as string_id ' \
+                    'FROM public.attributes_group ' \
+                    'WHERE id IN (SELECT group_id FROM public.attribute WHERE id IN %s)'
+            cur.execute(query, (tuple(attr_ids),))
+            return cur.fetchall()
+
 
 class RubricDao(BaseDao):
     def __init__(self):
@@ -180,11 +190,22 @@ class BranchDao(BaseDao):
             return {e['id']: e for e in entities}
 
         attributes = convert_to_dict(self.attribute_dao.get_entity(attr_ids))
+        attribute_groups = convert_to_dict(self.attribute_dao.get_groups(attr_ids))
         rubrics = convert_to_dict(self.rubric_dao.get_entity(rubric_ids))
         companies = convert_to_dict(self.company_dao.get_entity(company_ids))
 
         def convert_branch(branch):
             if branch['draft'].get('attributes'):
+                branch_groups = {}
+                for attr in branch['draft'].get('attributes'):
+                    group_id = attributes[int(attr['id'])]['group_id']
+                    if group_id in branch_groups:
+                        branch_groups[group_id]['attributes'].append(attributes[int(attr['id'])])
+                    else:
+                        gr = attribute_groups[group_id]
+                        branch_groups[group_id] = gr.copy()
+                        branch_groups[group_id]['attributes'] = [attributes[int(attr['id'])]]
+                branch['draft']['attribute_groups'] = [v for k, v in branch_groups.items()]
                 branch['draft']['attributes'] = [attributes[int(attr['id'])] for attr in branch['draft']['attributes']]
 
             if branch['draft'].get('rubrics'):
