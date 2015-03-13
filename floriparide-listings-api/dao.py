@@ -110,7 +110,8 @@ class AttributeDao(BaseDao):
     def get_groups(self, attr_ids):
         with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             query = 'SELECT id, cast(data->>(\'names\') as json) as names, data->>(\'description\') as description, ' \
-                    ' data->>(\'string_id\') as string_id ' \
+                    'data->>(\'string_id\') as string_id, ' \
+                    'data->>(\'icon\') as icon ' \
                     'FROM public.attributes_group ' \
                     'WHERE id IN (SELECT group_id FROM public.attribute WHERE id IN %s)'
             cur.execute(query, (tuple(attr_ids),))

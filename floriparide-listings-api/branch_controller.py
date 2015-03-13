@@ -163,6 +163,7 @@ def localize_attrs_rubrics(not_localized, locale):
 def localize_attr_groups(not_localized, locale):
     if not_localized:
         return [dict(id=a["id"], name=a["names"].get(locale), string_id=a['string_id'],
+                     icon=a.get('icon'),
                      attributes=localize_attrs_rubrics(a['attributes'], locale)) for a in not_localized]
 
 
