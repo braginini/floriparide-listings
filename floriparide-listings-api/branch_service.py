@@ -292,3 +292,7 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
         branches += branch_dao.get_full(project_id=project_id, branch_ids=ids)
 
     return branches, total
+
+
+def get_rubrics(project_id):
+    return rubric_dao.get_list(project_id)

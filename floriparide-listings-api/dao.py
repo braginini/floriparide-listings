@@ -122,6 +122,17 @@ class RubricDao(BaseDao):
     def __init__(self):
         BaseDao.__init__(self, 'public.rubric')
 
+    def get_list(self, project_id):
+        '''
+        returns a list of attributes along with attribute_group data for a given rubric.
+        :param rubric_ids:
+        :return:
+        '''
+        with get_cursor() as cur:
+            query = 'SELECT * FROM %s;' % self.table_name
+            cur.execute(query)
+            return cur.fetchall()
+
     def get_attribute_groups(self, rubric_ids):
         with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             query = 'SELECT id, cast(data->>(\'names\') as json) as names, general, ' \

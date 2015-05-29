@@ -215,7 +215,7 @@ if other_branches:
 
 #update ES index and DB timestamp
 if es_actions:
-    es = Elasticsearch(hosts=['localhost:9200'])
+    es = Elasticsearch(hosts=['104.131.54.232:9992'])
     print(helpers.bulk(es, es_actions))
     print(new_timestamp)
     audit_dao.update_timestamp(new_timestamp)
