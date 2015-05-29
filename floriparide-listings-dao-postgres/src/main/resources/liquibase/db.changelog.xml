@@ -1175,4 +1175,17 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="75" author="mbragin">
+        <createTable tableName="feedback">
+            <column name="id" type="bigserial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar"/>
+            <column name="email" type="varchar"/>
+            <column name="body" type="varchar"/>
+            <column name="project_id" type="bigint"/>
+            <column name="rating" type="int"/>
+        </createTable>
+    </changeSet>
+
 </databaseChangeLog>

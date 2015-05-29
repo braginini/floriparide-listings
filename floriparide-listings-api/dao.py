@@ -247,12 +247,24 @@ class CompanyDao(BaseDao):
     def __init__(self):
         BaseDao.__init__(self, "public.company")
 
+
+class FeedbackDao(BaseDao):
+    def __init__(self):
+        BaseDao.__init__(self, "public.feedback")
+
+    def save(self, project_id, name, email, body, rating):
+        with get_cursor() as cur:
+            query = 'INSERT INTO public.feedback (project_id, name, email, body, rating) VALUES (%s, %s, %s, %s, %s);'
+            cur.execute(query, (project_id, name, email, body, rating))
+
+
 # singletons
 attribute_dao = AttributeDao()
 rubric_dao = RubricDao()
 company_dao = CompanyDao()
 branch_dao = BranchDao(attribute_dao, rubric_dao, company_dao)
 project_dao = ProjectDao()
+feedback_dao = FeedbackDao()
 
 
 def sql_filters(filters, filters_map):
