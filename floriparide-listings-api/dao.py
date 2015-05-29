@@ -128,7 +128,7 @@ class RubricDao(BaseDao):
         :param rubric_ids:
         :return:
         '''
-        with get_cursor() as cur:
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             query = 'SELECT * FROM %s;' % self.table_name
             cur.execute(query)
             return cur.fetchall()
