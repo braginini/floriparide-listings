@@ -20,8 +20,22 @@ delete from raw_data.data where source = 'hagah';
 
 select * from raw_data.data as d where (d.data->>'name')::text = 'John Bull Pub';
 
+--query all categories
+select DISTINCT (cat->'name')::text as c from raw_data.data d, json_array_elements(d.data->'categories') as cat
+
+--query all attributes
+
+
+--query all tags (keywords)
+select DISTINCT cat::text as c from raw_data.data d, json_array_elements(d.data->'keywords') as cat
+
+
+--query all tags (keywords) for food services
+select DISTINCT cat::text as c from raw_data.data d, json_array_elements(d.data->'keywords') as cat where ((data->'billing_options')->'ticket')::text != 'null'
+
 --query to select food service categories
 --first one is more relevant
+select DISTINCT (cat->'name')::text as c from raw_data.data d, json_array_elements(d.data->'categories') as cat where ((data->'billing_options')->'ticket')::text != 'null'
 select DISTINCT cat::text as c from raw_data.data d, json_array_elements(d.data->'categories') as cat where (data->'food_cards')::text != 'null'
 select distinct cat::text from raw_data.data as d, json_array_elements(d.data->'payment_options') as card, json_array_elements(d.data->'categories') as cat where card::text LIKE '%Refeição%' or card::text LIKE '%Alimentação%' order by cat::text;
 

@@ -1,6 +1,19 @@
+from contextlib import contextmanager
 import psycopg2
 import psycopg2.extras
+from psycopg2 import pool
+import config
+
 __author__ = 'Mike'
+
+
+connection_pool = pool.ThreadedConnectionPool(config.DB.POOL_MIN_CONN,
+                                              config.DB.POOL_MAX_CONN,
+                                              dbname=config.DB.DB_NAME,
+                                              user=config.DB.USER,
+                                              password=config.DB.PASSWORD,
+                                              host=config.DB.HOST,
+                                              port=config.DB.PORT)
 
 
 class RawData:
@@ -10,9 +23,23 @@ class RawData:
     (HAGAH, FOUR_SQUARE) = ("hagah", "4square")
 
 
+def insert(batch, source):
+    with get_cursor() as curr:
+        to_insert = list()
+        query = 'INSERT INTO raw_data.data (source, data) VALUES (%s, %s::json)'
+        for line in batch:
+            to_insert.append((source, line))
+            if len(to_insert) >= 1000:
+                curr.executemany(query, to_insert)
+                to_insert.clear()
+
+        if to_insert:
+            curr.executemany(query, to_insert)
+
+
 def get_by_value_list(field, in_list):
     """
-    Selects all rows bu specified json field
+    Selects all rows by specified json field
     :param field: field to put in WHERE clause
     :param in_list: a list of values of the field to put in IN clause
     :return: a list of raw data from raw_data.data table
@@ -45,5 +72,18 @@ def get_by_value_list(field, in_list):
 
 def enum(**enums):
     return type('Enum', (), enums)
+
+
+@contextmanager
+def get_cursor(cursor_factory=None):
+    con = connection_pool.getconn()
+    con.autocommit = True
+    try:
+        if cursor_factory:
+            yield con.cursor(cursor_factory=cursor_factory)
+        else:
+            yield con.cursor()
+    finally:
+        connection_pool.putconn(con)
 
 

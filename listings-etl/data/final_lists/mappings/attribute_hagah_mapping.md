@@ -20,3 +20,4 @@ attribute_id;hagah_name_reg_exed;
 26;
 27;
 28;Aberto 24h
+46;Capacidade
