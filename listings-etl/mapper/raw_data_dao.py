@@ -26,9 +26,9 @@ class RawData:
 def insert(batch, source):
     with get_cursor() as curr:
         to_insert = list()
-        query = 'INSERT INTO raw_data.data (source, data) VALUES (%s, %s::json)'
+        query = 'INSERT INTO raw_data.data (source, draft, raw) VALUES (%s, %s::json, %s::json)'
         for line in batch:
-            to_insert.append((source, line))
+            to_insert.append((source, line['draft'], line['raw']))
             if len(to_insert) >= 1000:
                 curr.executemany(query, to_insert)
                 to_insert.clear()

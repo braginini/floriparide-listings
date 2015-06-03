@@ -1,35 +1,32 @@
 import json
-from mapper import mappings_reader
+from mapper import raw_data_dao
+import util
 
 __author__ = 'mikhail'
 
-attr_map = mappings_reader.get_map(
-    r'C:\Users\mikhail\Documents\projects\floriparide-listings\listings-etl\data\final_lists\mappings\attribute_hagah_mapping.md')
+days_map = {7: 'sunday', 1: 'monday', 2: 'tuesday', 3: 'wednesday', 4: 'thursday', 5: 'friday', 6: 'saturday'}
 
-rubric_map = mappings_reader.get_map(
-    r'C:\Users\mikhail\Documents\projects\floriparide-listings\listings-etl\data\final_lists\mappings\rubric_hagah_mapping.md')
-
-days_map = {0: 'sunday', 1: 'monday', 2: 'tuesday', 3: 'wednesday', 4: 'thursday', 5: 'friday', 6: 'saturday'}
-
-with open('C:\\Users\\mikhail\\Documents\\projects\\floriparide-listings\\listings-etl\\data\\hagah\\floripa_page_1',
+with open('C:\\Users\\mikhail\\Documents\\projects\\floriparide-listings\\listings-etl\\data\\hagah\\floripa_page_3',
           encoding='utf-8') \
         as data_file:
     data = json.load(data_file)['docs']
+    new_data = []
     for d in data:
         new = {}
         if 'categories' in d:
             cat = []
             for c in d['categories']:
-                if c['name'].lower() in rubric_map:
-                    cat.append(dict(id=rubric_map.get(c['name'].lower())))
+                if 'name' in c:
+                    cat.append(c['name'])
             new['rubrics'] = cat
 
         if 'headline' in d:
             new['headline'] = d['headline']
         if 'summary' in d:
-            new['description'] = d['summary']
+            new['description'] = util.strip_tags(d['summary'])
         if 'address' in d:
             address = {}
+            new['address'] = address
             if 'loc' in d['address']:
                 point = dict(lat=d['address']['loc'][1], lng=d['address']['loc'][0])
                 new['geometry'] = dict(point=point)
@@ -45,10 +42,10 @@ with open('C:\\Users\\mikhail\\Documents\\projects\\floriparide-listings\\listin
 
         if 'resources' in d:
             attrs = []
-            for c in d['resources']:
-                if c['name'] in attr_map:
-                    attrs.append(dict(id=rubric_map.get(c['name']), value=True))
             new['attributes'] = attrs
+            for c in d['resources']:
+                attrs.append(dict(name=c['name'], value=True))
+
         if 'billing_options' in d:
             payment_options = {}
             if 'debit' in d['billing_options']:
@@ -96,16 +93,18 @@ with open('C:\\Users\\mikhail\\Documents\\projects\\floriparide-listings\\listin
             attrs = new.get('attributes')
             if not attrs:
                 attrs = []
-            attrs.append(dict(id=rubric_map.get('Capacidade'), value=d['capacity']))
+            attrs.append(dict(name='Capacidade', value=d['capacity']))
 
         contacts = []
+        new['contacts'] = contacts
         if 'phones' in d:
-            contacts = []
             for p in d['phones']:
                 contacts.append(dict(contact='phone', value=p['value']))
 
         if 'sites' in d:
             for s in d['sites']:
+                if 'type' not in d['sites']:
+                    continue
                 if s['type'] == 'site':
                     contacts.append(dict(contact='website', value=s['value']))
                 elif s['type'] == 'facebook':
@@ -123,29 +122,84 @@ with open('C:\\Users\\mikhail\\Documents\\projects\\floriparide-listings\\listin
             contacts.append(dict(contact='email', value=d['svas']['email'].get('address')))
 
         if 'hours_of_operation' in d:
-            schedule = {}
+            schedule = {'monday': [], 'tuesday': [], 'wednesday': [], 'thursday': [], 'friday': [], 'saturday': [],
+                        'sunday': [], 'holidays': []}
+
             for oh in d['hours_of_operation']:
                 if not 'days' in oh or not 'hours' in oh:
                     continue
-                for day in range(oh['days']['from'], oh['days']['to']):
-                    day_schedule = {}
-                    for hour in oh['hours']:
-                        m, s = divmod(hour['from'], 60)
+
+                start_day = oh['days']['from']
+                end_day = oh['days'].get('to')
+
+                def get_hours(raw):
+                    hs = []
+                    for hr in raw['hours']:
+                        m, s = divmod(hr['from'], 60)
                         h, m = divmod(m, 60)
-                        frm = '%d:%02d' % (h, m)
+                        frm = '%02d:%02d' % (h, m)
 
-                        m, s = divmod(hour['to'], 60)
+                        m, s = divmod(hr['to'], 60)
                         h, m = divmod(m, 60)
-                        to = '%d:%02d' % (h, m)
+                        to = '%02d:%02d' % (h, m)
 
-                        day_schedule['from'] = frm
-                        day_schedule['to'] = to
+                        hs.append({'from': frm, 'to': to})
 
-                    schedule[days_map[d]] = day_schedule
+                    return hs
+
+                if start_day is 7:
+                    schedule['holidays'] += get_hours(oh)
+                    continue
+
+                if start_day is 8:
+                    hrs = get_hours(oh)
+                    schedule['saturday'] += hrs
+                    schedule['sunday'] += hrs
+                    continue
+
+                if start_day is 9:
+                    hrs = get_hours(oh)
+                    schedule['saturday'] += hrs
+                    schedule['sunday'] += hrs
+                    schedule['holidays'] += hrs
+                    continue
+
+                if start_day is 10:
+                    hrs = get_hours(oh)
+                    schedule['monday'] += hrs
+                    schedule['tuesday'] += hrs
+                    schedule['wednesday'] += hrs
+                    schedule['thursday'] += hrs
+                    schedule['friday'] += hrs
+                    schedule['saturday'] += hrs
+                    schedule['sunday'] += hrs
+                    schedule['holidays'] += hrs
+                    continue
+
+                if start_day is 0:
+                    start_day = 7
+
+                if end_day is None:
+                    end_day = start_day
+
+                if end_day is 0:
+                    end_day = 7
+
+                if start_day > 7 or end_day > 7:
+                    continue
+
+                for day in range(start_day, end_day + 1):
+                    schedule[days_map[day]] += get_hours(oh)
 
             new['schedule'] = schedule
 
+        if 'legacy' in d and 'photos' in d['legacy']:
+            photos = []
+            for p in d['legacy']['photos']:
+                photos.append(p['media'])
 
+            new['photos'] = photos
 
-                # data = [json.dumps(d, ensure_ascii=False) for d in data['docs']]
-                # raw_data_dao.insert(data, 'hagah')
+        new_data.append(dict(draft=json.dumps(new, ensure_ascii=False), raw=json.dumps(d, ensure_ascii=False)))
+
+    raw_data_dao.insert(new_data, 'hagah')
