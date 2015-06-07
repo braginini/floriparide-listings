@@ -4,9 +4,6 @@ import urllib.request
 import shutil
 import dao
 
-# todo read all branches from db
-
-
 
 #todo read html from pahntom js
 
@@ -28,14 +25,15 @@ root_url = 'http://localhost:8888/?_escaped_fragment_=/firm/'
 root_path = 'C:\\Users\\mikhail\\Documents\\projects\\floriparide-listings\\floriparide-listings-api\\catalog\\firm\\'
 
 branch_dao = dao.branch_dao
+rubric_dao = dao.rubric_dao
 
 branches = branch_dao.get_full(0, order='id')
 
+#prepare branches pages
 for b in branches:
     url = '%s%d/' % (root_url, b['id'])
 
     resp = urllib.request.urlopen(url)
-    #resp.headers['content-type'] = 'text/html; charset=utf-8'
 
     html = resp.read()
 
@@ -51,4 +49,5 @@ for b in branches:
 
     print('Done %d' % b['id'])
 
+#prepare rubric list page
 
