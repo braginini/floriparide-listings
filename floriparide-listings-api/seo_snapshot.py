@@ -65,6 +65,7 @@ root_path = 'C:/Users/mikhail/Documents/projects/floriparide-listings/floriparid
 
 branches = branch_dao.get_full(0, order='id')
 
+#prepare branches pages
 for b in branches:
     url = '%s%d/' % (root_url, b['id'])
 
@@ -87,4 +88,5 @@ for b in branches:
 
     print('Done %d' % b['id'])
 
+#prepare rubric list page
 

@@ -50,8 +50,7 @@ def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_i
                                               limit=limit, filters=filters)
 
     if not branches:
-        raise bottle.HTTPError(status=404,
-                               body='No branches were found for given request')
+        return {'total': 0, 'items': []}
 
     result = {
         'total': total
