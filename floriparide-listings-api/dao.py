@@ -92,6 +92,12 @@ class BaseDao(object):
             cur.execute(query)
             return cur.fetchone()[0]
 
+    def get_list(self, project_id):
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            query = 'SELECT * FROM %s;' % self.table_name
+            cur.execute(query)
+            return cur.fetchall()
+
 
 class AttributeDao(BaseDao):
     def __init__(self):
