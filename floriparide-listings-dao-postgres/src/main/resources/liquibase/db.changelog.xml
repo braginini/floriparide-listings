@@ -1199,4 +1199,8 @@
                       tableName="data"/>
     </changeSet>
 
+    <changeSet id="77" author="mbragin">
+        <dropForeignKeyConstraint baseTableName="rubric" constraintName="rubric_parent_id"/>
+    </changeSet>
+
 </databaseChangeLog>
