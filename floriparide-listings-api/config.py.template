@@ -35,6 +35,7 @@ WEB = WEB()
 CACHE = CACHE()
 ES = ES()
 
+result_limit = 100
 
 def read_config_file(config_file):
     """

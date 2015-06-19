@@ -2,6 +2,7 @@ import json
 import random
 import bottle
 import branch_service
+import config
 from util.controller_utils import validate, json_response, enable_cors
 
 
@@ -36,6 +37,9 @@ def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_i
     :param filters: the list of filters (attributes) to filter result with. Optional.
     :return:
     """
+
+    if not limit or limit > config.result_limit:
+        limit = config.result_limit
 
     if filters:
         filters = json.loads(filters)
@@ -103,6 +107,9 @@ def get(project_id, id, locale='pt_Br'):
 def search(q, project_id, start, limit, locale='pt_Br', filters=None, send_attrs=False):
     # todo get index name from db by project id
     # todo get default locale by project id
+
+    if not limit or limit > config.result_limit:
+        limit = config.result_limit
 
     result = {}
     if filters:

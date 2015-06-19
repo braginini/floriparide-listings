@@ -1,0 +1,15 @@
+sudo -u postgres dropdb floriparide_listings
+sudo -u postgres createdb floriparide_listings
+sudo -u postgres psql floriparide_listings
+
+
+psql console:
+floriparide_listings=# ALTER DATABASE floriparide_listings OWNER TO listings;
+ALTER DATABASE
+floriparide_listings=# CREATE SCHEMA raw_data AUTHORIZATION listings;
+CREATE SCHEMA
+floriparide_listings=# CREATE SCHEMA journal AUTHORIZATION listings;
+CREATE SCHEMA
+
+mvn liquibase:update (use postgres user for db update)
+

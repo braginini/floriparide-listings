@@ -6,7 +6,7 @@ __author__ = 'mikhail'
 
 days_map = {7: 'sunday', 1: 'monday', 2: 'tuesday', 3: 'wednesday', 4: 'thursday', 5: 'friday', 6: 'saturday'}
 
-with open('C:\\Users\\mikhail\\Documents\\projects\\floriparide-listings\\listings-etl\\data\\hagah\\floripa_page_3',
+with open('C:\\Users\\mikhail\\Documents\\projects\\floriparide-listings\\listings-etl\\data\\hagah\\floripa_page_1',
           encoding='utf-8') \
         as data_file:
     data = json.load(data_file)['docs']
@@ -25,6 +25,7 @@ with open('C:\\Users\\mikhail\\Documents\\projects\\floriparide-listings\\listin
         if 'summary' in d:
             new['description'] = util.strip_tags(d['summary'])
         if 'address' in d:
+            if ''
             address = {}
             new['address'] = address
             if 'loc' in d['address']:
