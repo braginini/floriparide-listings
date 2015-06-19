@@ -9,11 +9,25 @@ from elasticsearch import helpers
 __author__ = 'Mike'
 # load timestamp from db of file
 # get new_timestamp in ms from DB "SELECT EXTRACT (EPOCH FROM now())"
-#do a select to audit table filtering out all entries with timestamp < timestamp
-#order entries for each source_id by timestamp and take the last one
+# do a select to audit table filtering out all entries with timestamp < timestamp
+# order entries for each source_id by timestamp and take the last one
 #convert to ES index JSON
 #send to ES in a batch
 #update timestamp in DB or file by new_timestamp
+
+def recreate_index(es, index_name, doc_type):
+    delete_index(es, index_name)
+    create_index(es, index_name, doc_type)
+
+
+def delete_index(es, index_name):
+    es.indices.delete(index=index_name)
+
+
+def create_index(es, index_name, doc_type):
+    es.indices.create(index=index_name, body=json.loads(
+        '{"settings":{"analysis":{"analyzer":{"index_analyzer":{"tokenizer":"standard","filter":["standard","lowercase","stop","asciifolding","porter_stem"]},"search_analyzer":{"tokenizer":"standard","filter":["standard","lowercase","stop","asciifolding","porter_stem"]}}},"index":{"number_of_shards":1,"number_of_replicas":1}}}'))
+    es.indices.put_mapping(index=index_name, doc_type=doc_type, body='{"branch":{"_all":{"enabled":true,"index_analyzer":"index_analyzer","search_analyzer":"search_analyzer"},"properties":{"id":{"type":"string","index":"not_analyzed"},"point":{"type":"geo_point"},"name":{"type":"string","boost":7,"index":"analyzed","index_analyzer":"index_analyzer","search_analyzer":"search_analyzer","store":"yes"}}}}')
 
 
 old_timestamp, new_timestamp = audit_dao.load_timestamps()
@@ -215,10 +229,13 @@ if other_branches:
 
 #update ES index and DB timestamp
 if es_actions:
-    es = Elasticsearch(hosts=['104.131.54.232:9992'])
+    #es = Elasticsearch(hosts=['104.131.54.232:9992'])
+    es = Elasticsearch(hosts=['localhost:9200'])
+    recreate_index(es, 'florianopolis', 'branch')
     print(helpers.bulk(es, es_actions))
     print(new_timestamp)
     audit_dao.update_timestamp(new_timestamp)
+
 
 
 
