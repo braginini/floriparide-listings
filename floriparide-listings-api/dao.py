@@ -124,6 +124,51 @@ class AttributeDao(BaseDao):
             return cur.fetchall()
 
 
+class AuditDao():
+
+    table_index_builder = 'audit.index_builder'
+    table_audit_rubric = 'audit.a_rubric'
+    table_audit_attribute = 'audit.a_attribute'
+
+    def load_timestamps(self):
+        """
+        loads the last run timestamp along with current timestamp of the DB
+        :return: timestamp with timezone
+        """
+        with get_cursor() as cur:
+            query = "SELECT timestamp, now() FROM %s" % self.table_index_builder
+            print("Running query %s" % query)
+            cur.execute(query)
+            return cur.fetchone()
+
+
+    def update_timestamp(self, new_timestamp):
+        """
+        """
+
+        conn = None
+        cur = None
+        with get_cursor() as cur:
+            query = 'UPDATE ' + self.table_index_builder + ' SET timestamp = %s WHERE id = 1'
+            logging.debug('Running query %s' % query)
+            cur.execute(query,  (tuple(new_timestamp),))
+            conn.commit()
+
+    def get_history(self, ts, audit_table):
+        """
+        selects all fields from specified audit_table that have timestamp >= specified one
+        :param ts: timestamp with timezone
+        :param audit_table: the audit table with schema specified
+        :return: the set of rows specified audit_table
+        """
+
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            query = 'SELECT * FROM ' + audit_table + ' WHERE timestamp >= %s'
+            logging.debug('Running query %s' % query)
+            cur.execute(query, (ts,))
+            return cur.fetchall()
+
+
 class RubricDao(BaseDao):
     def __init__(self):
         BaseDao.__init__(self, 'public.rubric')
@@ -243,6 +288,40 @@ class BranchDao(BaseDao):
             query += ' WHERE id=%s' % entity_id
             cur.execute(query)
 
+    def get_by_attrs_rubrics(self, attribute_ids=None, rubric_ids=None, exclude_ids=None):
+        if not attribute_ids and not rubric_ids:
+            return
+
+        conn = None
+        cur = None
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            query = "SELECT b.* FROM branch b, " \
+                    "json_array_elements((data->>'attributes')::json) as a, " \
+                    "json_array_elements((data->>'rubrics')::json) as r"
+
+            if exclude_ids:
+                query += " WHERE id NOT IN (%s)" % ",".join(str(x) for x in exclude_ids)
+
+            if attribute_ids:
+                if exclude_ids:
+                    query += " AND"
+                else:
+                    query += " WHERE"
+                query += " (a->>'id')::bigint IN (%s)" % ",".join(str(x) for x in attribute_ids)
+
+            if rubric_ids:
+                if attribute_ids:
+                    query += " OR"
+                elif exclude_ids:
+                    query += " AND"
+                else:
+                    query += " WHERE"
+                query += " (r->>'id')::bigint IN (%s)" % ",".join(str(x) for x in rubric_ids)
+
+            print("Running query %s" % query)
+            cur.execute(query)
+            return cur.fetchall()
+
 
 class ProjectDao(BaseDao):
     def __init__(self):
@@ -269,6 +348,7 @@ attribute_dao = AttributeDao()
 rubric_dao = RubricDao()
 company_dao = CompanyDao()
 branch_dao = BranchDao(attribute_dao, rubric_dao, company_dao)
+audit_dao = AuditDao()
 project_dao = ProjectDao()
 feedback_dao = FeedbackDao()
 
