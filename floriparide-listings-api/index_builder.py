@@ -133,8 +133,8 @@ for k, v in branch_history_map.items():
             data["payment_options"] = es_p_opts
 
         #add rubrics and attributes names
-        data["rubrics"] = [{"names": rubrics[str(k["id"])][2]["names"], "id": str(k["id"])}
-                           for k in v["data"]["draft"].get("rubrics")]
+        data["rubrics"] = [{'names': rubrics[str(k['id'])]['data']['names'], "id": str(k['id'])}
+                           for k in v['data']['draft'].get('rubrics')]
         #add location lat, lng
         if v["data"]["draft"].get("geometry"):
             point = v["data"]["draft"]["geometry"].get("point")
@@ -144,8 +144,8 @@ for k, v in branch_history_map.items():
         curr_attributes = v["data"]["draft"].get("attributes")
         if curr_attributes:
             curr_attributes = [
-                {"names": attributes[str(key["id"])][1]["names"], "id": str(key["id"]), "value": key["value"]}
-                for key in v["data"]["draft"].get("attributes")]
+                {"names": attributes[str(key['id'])]['data']['names'], 'id': str(key['id']), 'value': key['value']}
+                for key in v['data']['draft'].get('attributes')]
         data["attributes"] = curr_attributes
         action = {
             '_op_type': 'index',
@@ -238,7 +238,7 @@ if other_branches:
 #update ES index and DB timestamp
 if es_actions:
     #es = Elasticsearch(hosts=['104.131.54.232:9992'])
-    #recreate_index(es, 'florianopolis', 'branch')
+    recreate_index(es, 'florianopolis', 'branch')
     print(helpers.bulk(es, es_actions))
     print(new_timestamp)
     audit_dao.update_timestamp(new_timestamp)

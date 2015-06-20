@@ -149,10 +149,9 @@ class AuditDao():
         conn = None
         cur = None
         with get_cursor() as cur:
-            query = 'UPDATE ' + self.table_index_builder + ' SET timestamp = %s WHERE id = 1'
+            query = 'UPDATE ' + self.table_index_builder + ' SET timestamp = %(date)s WHERE id = 1'
             logging.debug('Running query %s' % query)
-            cur.execute(query,  (tuple(new_timestamp),))
-            conn.commit()
+            cur.execute(query,  {'date': new_timestamp})
 
     def get_history(self, ts, audit_table):
         """
