@@ -86,7 +86,7 @@ for k, v in branch_history_map.items():
         #add name
         data["name"] = v["data"]["name"]
         data["company_id"] = v["data"]["company_id"]
-        data["tags"] = v["data"].get("tags")
+        data["tags"] = v["data"]['draft'].get("tags")
 
         #add working hours
         schedule = v["data"]["draft"].get("schedule")
@@ -165,7 +165,7 @@ if other_branches:
                 or key == "description"}
         data["name"] = b["name"]
         data["company_id"] = b["company_id"]
-        data["tags"] = v["data"].get("tags")
+        data["tags"] = v["data"]['draft'].get("tags")
 
         #add location lat, lng
         if b["draft"].get("geometry"):
