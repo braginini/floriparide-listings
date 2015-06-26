@@ -156,21 +156,23 @@ def markers_response(markers, locale):
                  lat=b['lat'],
                  lng=b['lng'],
                  paid=b['paid'],
-                 attributes=localize_attrs_rubrics(b.get('attributes'), locale))
+                 attributes=attrs_rubrics_response(b.get('attributes'), locale))
             for b in markers]
 
 
 # localize attributes and rubrics by specified locale
-def localize_attrs_rubrics(not_localized, locale):
+def attrs_rubrics_response(not_localized, locale):
     if not_localized:
-        return [dict(id=a["id"], name=a["data"]["names"].get(locale)) for a in not_localized]
+        return [dict(id=a["id"], name=a["data"]["names"].get(locale), itemprop=a["data"].get('itemprop'),
+                     input_type=a["data"].get('input_type'),
+                     value=a["data"].get('value')) for a in not_localized]
 
 
 def localize_attr_groups(not_localized, locale):
     if not_localized:
         return [dict(id=a["id"], name=a["names"].get(locale), string_id=a['string_id'],
                      icon=a.get('icon'),
-                     attributes=localize_attrs_rubrics(a['attributes'], locale)) for a in not_localized]
+                     attributes=attrs_rubrics_response(a['attributes'], locale)) for a in not_localized]
 
 
 def branch_response(branches, locale):
@@ -199,9 +201,9 @@ def branch_response(branches, locale):
 
     return [dict(id=b["id"],
                  name=b["name"],
-                 attributes=localize_attrs_rubrics(b["draft"].get("attributes"), locale),
+                 attributes=attrs_rubrics_response(b["draft"].get("attributes"), locale),
                  attribute_groups=localize_attr_groups(b["draft"].get("attribute_groups"), locale),
-                 rubrics=localize_attrs_rubrics(b["draft"].get("rubrics"), locale),
+                 rubrics=attrs_rubrics_response(b["draft"].get("rubrics"), locale),
                  address=b["draft"].get("address"),
                  contacts=b["draft"].get("contacts"),
                  payment_options=payment_opts(b["draft"].get("payment_options")),
