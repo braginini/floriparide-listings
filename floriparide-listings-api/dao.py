@@ -268,11 +268,12 @@ class BranchDao(BaseDao):
                         branch_groups[group_id]['attributes'] = [attributes[int(attr['id'])]]
                 branch['draft']['attribute_groups'] = [v for k, v in branch_groups.items()]
 
-                def add_attr_value(attr, value):
-                    attr['value'] = value
-                    return attr
+                def complete_attr(attr):
+                    result = attributes[int(attr['id'])]
+                    result['data']['value'] = attr['value']
+                    return result
 
-                branch['draft']['attributes'] = [add_attr_value(attributes[int(attr['id'])], attr['value']) for attr in
+                branch['draft']['attributes'] = [complete_attr(attr) for attr in
                                                  branch['draft']['attributes']]
 
             if branch['draft'].get('rubrics'):
