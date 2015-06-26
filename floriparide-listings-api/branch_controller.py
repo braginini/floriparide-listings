@@ -167,9 +167,10 @@ def attributes_response(not_localized, locale):
                      input_type=a["data"].get('input_type'),
                      value=a["data"].get('value')) for a in not_localized]
 
+
 def rubrics_response(not_localized, locale):
     if not_localized:
-        return [dict(id=a["id"], name=a["data"]["names"].get(locale), itemprop=a["data"].get('itemtype'))
+        return [dict(id=a["id"], name=a["data"]["names"].get(locale), itemtype=a["data"].get('itemtype'))
                 for a in not_localized]
 
 
