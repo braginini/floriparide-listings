@@ -125,7 +125,6 @@ class AttributeDao(BaseDao):
 
 
 class AuditDao():
-
     table_index_builder = 'audit.index_builder'
     table_audit_rubric = 'audit.a_rubric'
     table_audit_attribute = 'audit.a_attribute'
@@ -151,7 +150,7 @@ class AuditDao():
         with get_cursor() as cur:
             query = 'UPDATE ' + self.table_index_builder + ' SET timestamp = %(date)s WHERE id = 1'
             logging.debug('Running query %s' % query)
-            cur.execute(query,  {'date': new_timestamp})
+            cur.execute(query, {'date': new_timestamp})
 
     def get_history(self, ts, audit_table):
         """
@@ -268,7 +267,13 @@ class BranchDao(BaseDao):
                         branch_groups[group_id] = gr.copy()
                         branch_groups[group_id]['attributes'] = [attributes[int(attr['id'])]]
                 branch['draft']['attribute_groups'] = [v for k, v in branch_groups.items()]
-                branch['draft']['attributes'] = [attributes[int(attr['id'])] for attr in branch['draft']['attributes']]
+
+                def add_attr_value(attr, value):
+                    attr['value'] = value
+                    return attr
+
+                branch['draft']['attributes'] = [add_attr_value(attributes[int(attr['id'])], attr['value']) for attr in
+                                                 branch['draft']['attributes']]
 
             if branch['draft'].get('rubrics'):
                 branch['draft']['rubrics'] = [rubrics[int(ru['id'])] for ru in branch['draft']['rubrics']]
