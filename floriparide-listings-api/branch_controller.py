@@ -165,7 +165,8 @@ def attributes_response(not_localized, locale):
     if not_localized:
         return [dict(id=a["id"], name=a["data"]["names"].get(locale), itemprop=a["data"].get('itemprop'),
                      input_type=a["data"].get('input_type'),
-                     value=a["data"].get('value')) for a in not_localized]
+                     value=a["data"].get('value'),
+                     suffix=a['suffix']) for a in not_localized]
 
 
 def rubrics_response(not_localized, locale):
@@ -220,7 +221,8 @@ def branch_response(branches, locale):
                  company=company(b["draft"].get("company")),
                  comments=hardcoded_comments(),
                  rating=round(random.uniform(0, 5), 1),
-                 geometry=b["draft"].get("geometry"))
+                 geometry=b["draft"].get("geometry"),
+                 headline=b["draft"].get("headline"))
             for b in branches]
 
 
