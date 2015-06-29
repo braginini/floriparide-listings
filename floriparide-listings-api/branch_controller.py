@@ -3,6 +3,7 @@ import random
 import bottle
 import branch_service
 import config
+import itertools
 from util.controller_utils import validate, json_response, enable_cors
 
 
@@ -193,9 +194,11 @@ def branch_response(branches, locale):
 
     def payment_opts(raw_opts):
         if raw_opts:
-            opts = filter(None, raw_opts.values())
+            opts = list(filter(None, itertools.chain(*[v if isinstance(v, list) else [v]  for v in raw_opts.values()])))
             opts.sort()
             return opts
+        else:
+            return []
 
     def company(raw_company):
         if raw_company:
