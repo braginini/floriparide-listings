@@ -193,10 +193,7 @@ def branch_response(branches, locale):
 
     def payment_opts(raw_opts):
         if raw_opts:
-            opts = []
-            for k, v in raw_opts.items():
-                if v:
-                    opts += v
+            opts = filter(None, raw_opts.values())
             opts.sort()
             return opts
 
