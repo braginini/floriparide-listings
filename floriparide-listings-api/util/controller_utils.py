@@ -23,7 +23,7 @@ def validate(**types):
 
         @functools.wraps(f)
         def wrapper(*args, **kargs):
-            getparam = request.GET.get
+            getparam = request.GET.getunicode
             for par, ptype, required in param_info:
                 value = getparam(par)
                 if not value:  # None or empty str
