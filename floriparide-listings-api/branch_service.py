@@ -110,9 +110,19 @@ def build_filters(filters):
 def search(q, project_id, start, limit, filters=None):
     root_filter = build_filters(filters)
 
-    filtered = {"query": {
-        "match_phrase": {
-            "_all": q
+    #todo add dynamic locale specific query fields (e.g. rubrics.names.pt_Br applied if pt_Br arrives)
+    filtered = {'query': {
+        'multi_match': {
+            'fields': ['name',
+                       'address.street',
+                       'address.additional',
+                       'address.neighborhood',
+                       'payment_options',
+                       'rubrics.names.pt_Br',
+                       'attributes.names.pt_Br',
+                       'tags',
+                       'headline'],
+            'query': q
         }
     }}
 
