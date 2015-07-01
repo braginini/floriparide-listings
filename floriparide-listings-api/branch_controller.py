@@ -219,8 +219,8 @@ def branch_response(branches, locale):
                  article=b["draft"].get("article"),
                  photos=b["draft"].get("photos"),
                  company=company(b["draft"].get("company")),
-                 comments=hardcoded_comments(),
-                 rating=round(random.uniform(0, 5), 1),
+                 comments={},
+                 rating=b['draft'].get('rating'),
                  geometry=b["draft"].get("geometry"),
                  headline=b["draft"].get("headline"))
             for b in branches]
