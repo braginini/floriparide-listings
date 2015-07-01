@@ -11,8 +11,8 @@ __author__ = 'Mike'
 # do a select to audit table filtering out all entries with timestamp < timestamp
 # order entries for each source_id by timestamp and take the last one
 # convert to ES index JSON
-#send to ES in a batch
-#update timestamp in DB or file by new_timestamp
+# send to ES in a batch
+# update timestamp in DB or file by new_timestamp
 
 es = Elasticsearch(hosts=['%s:%s' % (config.ES.HOST, config.ES.PORT)])
 rubric_dao = dao.rubric_dao
@@ -42,7 +42,7 @@ history = audit_dao.get_history(old_timestamp, 'audit.a_branch')
 
 days_map = dict(sunday=0, monday=1, tuesday=2, wednesday=3, thursday=4, friday=5, saturday=6)
 
-#map with key = entity_id (e.g. branch, company) and all the rest as a value
+# map with key = entity_id (e.g. branch, company) and all the rest as a value
 branch_history_map = {}
 for h in history:
     key = h["data"]["id"]
@@ -68,11 +68,79 @@ attributes = {str(a['id']): a for a in attribute_dao.get_list(0)}
 
 other_branches = branch_dao.get_by_attrs_rubrics(attribute_history_set, rubric_history_set, branch_history_map.keys())
 
+
+def format_schedule(schedule):
+    if schedule:
+        es_hours = {}
+        for day, ranges in schedule.items():
+            int_day = days_map.get(day)
+            if int_day is not None:
+                day_hours = []
+                for r in ranges:
+                    try:
+                        f_date = datetime.datetime.strptime(r['from'], '%H:%M')
+                        if r['to'].startswith('24:'):
+                            r['to'] = r['to'].replace('24:', '00:')
+
+                        t_date = datetime.datetime.strptime(r['to'], '%H:%M')
+                        f = f_date.hour + f_date.minute / 60
+
+                        if 0 <= t_date.hour <= 6:
+                            t = 24 + t_date.hour + t_date.minute / 60
+                        else:
+                            t = t_date.hour + t_date.minute / 60
+
+                        day_hours.append({'from': f, 'to': t})
+                    except ValueError:
+                        print(v)
+                        continue
+                es_hours[int_day] = day_hours
+
+        return es_hours
+
+
+def format_payment_options(payment_opts):
+    if payment_opts:
+        formatted = []
+        if payment_opts.get("credit_cards"):
+            formatted += payment_opts.get("credit_cards")
+        if payment_opts.get("other"):
+            formatted += payment_opts.get("other")
+        if payment_opts.get("food_cards"):
+            formatted += payment_opts.get("food_cards")
+        if payment_opts.get("debit_cards"):
+            formatted += payment_opts.get("debit_cards")
+        return formatted
+
+
+def format_point(geometry):
+    if geometry:
+        pnt = geometry.get("point")
+        if pnt:
+            #we use lat lon to support ES geo point type
+            return dict(lat=pnt['lat'], lon=pnt['lng'])
+
+
+def format_rubric(branch_rubric_entry):
+    rubric_id = str(branch_rubric_entry['id'])
+
+    return dict(names=rubrics[rubric_id]['data']['names'], id=rubric_id)
+
+
+def format_attribute(branch_attribute_entry):
+    attr_id = str(branch_attribute_entry['id'])
+    value = branch_attribute_entry['value']
+    input_type = attributes[attr_id]['data']['input_type']
+    if input_type == 'timerange':
+        value = [value['from'], value['to']]
+
+    return dict(names=attributes[attr_id]['data']['names'], value=value, id=attr_id)
+
 es_actions = []
 for k, v in branch_history_map.items():
     action = {}
-    operation = v["operation_type"]
-    if operation is "D":
+    operation = v['operation_type']
+    if operation == 'D':
         action = {
             '_op_type': 'delete',
             '_index': 'florianopolis',
@@ -82,73 +150,30 @@ for k, v in branch_history_map.items():
     else:
         #bulding up document for index
         #first take all fields from data
-        data = {key: value for key, value in v["data"]["draft"].items() if key == "address" or key == "description"}
+        data = {key: value for key, value in v['data']['draft'].items() if key == 'address' or key == 'description'}
         #add name
-        data["name"] = v["data"]["name"]
-        data["company_id"] = v["data"]["company_id"]
-        data["tags"] = v["data"]['draft'].get("tags")
-        data["headline"] = v["data"]['draft'].get("headline")
+        data['name'] = v['data']['name']
+        data['company_id'] = v['data']['company_id']
+        data['tags'] = v['data']['draft'].get('tags')
+        data['headline'] = v['data']['draft'].get('headline')
 
         #add working hours
-        schedule = v["data"]["draft"].get("schedule")
-        if schedule:
-            es_hours = {}
-            for day, ranges in schedule.items():
-                int_day = days_map.get(day)
-                if int_day is not None:
-                    day_hours = []
-                    for r in ranges:
-                        try:
-                            f_date = datetime.datetime.strptime(r['from'], '%H:%M')
-                            if r['to'].startswith('24:'):
-                                r['to'] = r['to'].replace('24:', '00:')
-
-                            t_date = datetime.datetime.strptime(r['to'], '%H:%M')
-                            f = f_date.hour + f_date.minute / 60
-
-                            if 0 <= t_date.hour <= 6:
-                                t = 24 + t_date.hour + t_date.minute / 60
-                            else:
-                                t = t_date.hour + t_date.minute / 60
-
-                            day_hours.append({'from': f, 'to': t})
-                        except ValueError:
-                            print(v)
-                            continue
-                    es_hours[int_day] = day_hours
-
-            data['schedule'] = es_hours
+        data['schedule'] = format_schedule(v['data']['draft'].get('schedule'))
 
         #add payment options
-        payment_options = v["data"]["draft"].get("payment_options")
-        if payment_options:
-            es_p_opts = []
-            if payment_options.get("credit_cards"):
-                es_p_opts += payment_options.get("credit_cards")
-            if payment_options.get("other"):
-                es_p_opts += payment_options.get("other")
-            if payment_options.get("food_cards"):
-                es_p_opts += payment_options.get("food_cards")
-            if payment_options.get("debit_cards"):
-                es_p_opts += payment_options.get("debit_cards")
-
-            data["payment_options"] = es_p_opts
+        data['payment_options'] = format_payment_options(v['data']['draft'].get('payment_options'))
 
         #add rubrics and attributes names
-        data["rubrics"] = [{'names': rubrics[str(k['id'])]['data']['names'], "id": str(k['id'])}
-                           for k in v['data']['draft'].get('rubrics')]
-        #add location lat, lng
-        if v["data"]["draft"].get("geometry"):
-            point = v["data"]["draft"]["geometry"].get("point")
-            #we use lat lon to support ES geo point type
-            data["point"] = dict(lat=point['lat'], lon=point['lng'])
+        data['rubrics'] = [format_rubric(k) for k in v['data']['draft'].get('rubrics')]
 
-        curr_attributes = v["data"]["draft"].get("attributes")
+        #add location lat, lng
+        data['point'] = format_point(v['data']['draft'].get('geometry'))
+
+        curr_attributes = v['data']['draft'].get('attributes')
         if curr_attributes:
-            curr_attributes = [
-                {"names": attributes[str(key['id'])]['data']['names'], 'id': str(key['id']), 'value': key['value']}
-                for key in v['data']['draft'].get('attributes')]
-        data["attributes"] = curr_attributes
+            curr_attributes = [format_attribute(key) for key in v['data']['draft'].get('attributes')]
+        data['attributes'] = curr_attributes
+
         action = {
             '_op_type': 'index',
             '_index': 'florianopolis',
@@ -162,77 +187,33 @@ for k, v in branch_history_map.items():
 #add branches who's attributes or rubrics were updated
 if other_branches:
     for b in other_branches:
-        data = {key: value for key, value in b["draft"].items() if key == "address" or key == "payment_options"
-                or key == "description"}
-        data["name"] = b["name"]
-        data["company_id"] = b["company_id"]
-        data["tags"] = v["data"]['draft'].get("tags")
-        data["headline"] = v["data"]['draft'].get("headline")
+        data = {key: value for key, value in b['draft'].items() if key == 'address' or key == 'payment_options'
+                or key == 'description'}
+        data['name'] = b['name']
+        data['company_id'] = b['company_id']
+        data['tags'] = v['data']['draft'].get('tags')
+        data['headline'] = v['data']['draft'].get('headline')
 
         #add location lat, lng
-        if b["draft"].get("geometry"):
-            point = b["draft"]["geometry"].get("point")
-            #we use lat lon to support ES geo point type
-            data["point"] = dict(lat=point['lat'], lon=point['lng'])
+        data['point'] = format_point(b['draft'].get('geometry'))
 
         #add schedule
-        schedule = b["draft"].get("schedule")
-        if schedule:
-            es_hours = {}
-            for day, ranges in schedule.items():
-                int_day = days_map.get(day)
-                if int_day is not None:
-                    day_hours = []
-                    for r in ranges:
-                        try:
-                            f_date = datetime.datetime.strptime(r['from'], '%H:%M')
-                            if r['to'].startswith('24:'):
-                                r['to'] = r['to'].replace('24:', '00:')
-
-                            t_date = datetime.datetime.strptime(r['to'], '%H:%M')
-                            f = f_date.hour + f_date.minute / 60
-
-                            if 0 <= t_date.hour <= 6:
-                                t = 24 + t_date.hour + t_date.minute / 60
-                            else:
-                                t = t_date.hour + t_date.minute / 60
-
-                            day_hours.append({'from': f, 'to': t})
-                        except ValueError:
-                            print(b)
-                            continue
-                    es_hours[int_day] = day_hours
-
-            data['schedule'] = es_hours
+        data['schedule'] = format_schedule(b['draft'].get('schedule'))
 
         #add payment options
-        payment_options = b["draft"].get("payment_options")
-        if payment_options:
-            es_p_opts = []
-            if payment_options.get("credit_cards"):
-                es_p_opts += payment_options.get("credit_cards")
-            if payment_options.get("other"):
-                es_p_opts += payment_options.get("other")
-            if payment_options.get("food_cards"):
-                es_p_opts += payment_options.get("food_cards")
-            if payment_options.get("debit_cards"):
-                es_p_opts += payment_options.get("debit_cards")
+        data['payment_options'] = format_payment_options(b['draft'].get('payment_options'))
 
-            data["payment_options"] = es_p_opts
+        data['rubrics'] = [format_rubric(key) for key in b['data'].get('rubrics')]
 
-        data["rubrics"] = [{"names": rubrics[key["id"]][2]["names"], "id": key["id"]}
-                           for key in b["data"].get("rubrics")]
-
-        curr_attributes = b["draft"].get("attributes")
+        curr_attributes = b['draft'].get('attributes')
         if curr_attributes:
-            curr_attributes = [{"names": attributes[key["id"]][1]["names"], "id": key["id"], "value": key["value"]}
-                               for key in b["draft"].get("attributes")]
-        data["attributes"] = curr_attributes
+            curr_attributes = [format_attribute(key) for key in b['draft'].get('attributes')]
+        data['attributes'] = curr_attributes
         action = {
             '_op_type': 'index',
             '_index': 'florianopolis',
             '_type': 'branch',
-            '_id': b["id"],
+            '_id': b['id'],
             '_source': data
         }
 
