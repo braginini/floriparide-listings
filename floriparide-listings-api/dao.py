@@ -256,25 +256,31 @@ class BranchDao(BaseDao):
         companies = convert_to_dict(self.company_dao.get_entity(company_ids))
 
         def convert_branch(branch):
+
+            def complete_attr(attr):
+                result = attributes[int(attr['id'])]
+                attr['data'] = {}
+                attr['data'].update(result['data'])
+                attr['data']['value'] = attr['value']
+                attr.pop('value')
+                return attr
+
             if branch['draft'].get('attributes'):
                 branch_groups = {}
                 for attr in branch['draft'].get('attributes'):
                     group_id = attributes[int(attr['id'])]['group_id']
                     if group_id in branch_groups:
-                        branch_groups[group_id]['attributes'].append(attributes[int(attr['id'])])
+                        branch_groups[group_id]['attributes'].append(complete_attr(attr))
                     else:
                         gr = attribute_groups[group_id]
                         branch_groups[group_id] = gr.copy()
-                        branch_groups[group_id]['attributes'] = [attributes[int(attr['id'])]]
+                        branch_groups[group_id]['attributes'] = [complete_attr(attr)]
                 branch['draft']['attribute_groups'] = [v for k, v in branch_groups.items()]
 
-                def complete_attr(attr):
-                    result = attributes[int(attr['id'])]
-                    result['data']['value'] = attr['value']
-                    return result
 
-                branch['draft']['attributes'] = [complete_attr(attr) for attr in
-                                                 branch['draft']['attributes']]
+
+                # branch['draft']['attributes'] = [complete_attr(attr) for attr in
+                #                                  branch['draft']['attributes']]
 
             if branch['draft'].get('rubrics'):
                 branch['draft']['rubrics'] = [rubrics[int(ru['id'])] for ru in branch['draft']['rubrics']]

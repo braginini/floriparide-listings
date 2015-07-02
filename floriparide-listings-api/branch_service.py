@@ -20,7 +20,6 @@ def populate_cache(els, el_cache):
     for e in els:
         el_cache.put(e['id'], e)
 
-
 populate_cache(branch_dao.get_full(0), cache.branch_cache)
 populate_cache(attribute_dao.get_entity(), cache.attribute_cache)
 # add hardcoded attributes

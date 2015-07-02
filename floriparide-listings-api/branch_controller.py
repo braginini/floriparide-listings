@@ -164,21 +164,23 @@ def markers_response(markers, locale):
 # localize attributes and rubrics by specified locale
 def attributes_response(not_localized, locale):
     if not_localized:
-        return [dict(id=a["id"], name=a["data"]["names"].get(locale), itemprop=a["data"].get('itemprop'),
-                     input_type=a["data"].get('input_type'),
-                     value=a["data"].get('value'),
+        print(not_localized)
+        return [dict(id=a['id'], name=a['data']['names'].get(locale), itemprop=a['data'].get('itemprop'),
+                     input_type=a['data'].get('input_type'),
+                     filter_type=a['data'].get('filter_type'),
+                     value=a['data'].get('value'),
                      suffix=a['data'].get('suffix')) for a in not_localized]
 
 
 def rubrics_response(not_localized, locale):
     if not_localized:
-        return [dict(id=a["id"], name=a["data"]["names"].get(locale), itemtype=a["data"].get('itemtype'))
+        return [dict(id=a['id'], name=a['data']['names'].get(locale), itemtype=a["data"].get('itemtype'))
                 for a in not_localized]
 
 
 def localize_attr_groups(not_localized, locale):
     if not_localized:
-        return [dict(id=a["id"], name=a["names"].get(locale), string_id=a['string_id'],
+        return [dict(id=a['id'], name=a['names'].get(locale), string_id=a['string_id'],
                      icon=a.get('icon'),
                      attributes=attributes_response(a['attributes'], locale)) for a in not_localized]
 
@@ -208,7 +210,6 @@ def branch_response(branches, locale):
 
     return [dict(id=b["id"],
                  name=b["name"],
-                 attributes=attributes_response(b["draft"].get("attributes"), locale),
                  attribute_groups=localize_attr_groups(b["draft"].get("attribute_groups"), locale),
                  rubrics=rubrics_response(b["draft"].get("rubrics"), locale),
                  address=b["draft"].get("address"),
