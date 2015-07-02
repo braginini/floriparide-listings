@@ -171,7 +171,7 @@ def home_snapshot():
     html = resp.read()
     with open(home_path + 'Home.html', 'wb') as f:
         title = '<title>%s</title>' % 'Mapa de Florianópolis e de cidades próximas: ruas, casas e ' \
-                                      'organizações na cidade - Go Floripa'
+                                      'negócios na cidade - Go Floripa'
         description = '<meta name="description" content="%s">' % \
                       'Mapa detalhado de Florianópolis. ' \
                       'Procurar por endereço, números de telefone, opiniões, fotos, horário de atendimento. ' \
