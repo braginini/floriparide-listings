@@ -158,6 +158,8 @@ for k, v in branch_history_map.items():
         data['headline'] = v['data']['draft'].get('headline')
         if v['data']['draft'].get('rating'):
             data['rating'] = float(v['data']['draft'].get('rating'))
+        else:
+            data['rating'] = float(0)
 
         #add working hours
         data['schedule'] = format_schedule(v['data']['draft'].get('schedule'))
@@ -197,6 +199,8 @@ if other_branches:
         data['headline'] = v['data']['draft'].get('headline')
         if v['data']['draft'].get('rating'):
             data['rating'] = float(v['data']['draft'].get('rating'))
+        else:
+            data['rating'] = float(0)
 
         #add location lat, lng
         data['point'] = format_point(b['draft'].get('geometry'))

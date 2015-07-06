@@ -40,6 +40,10 @@ PUT florianopolis/_mapping/branch
                 "type": "string",
                 "index": "not_analyzed"
             },
+            "rating": {
+                "type": "float",
+                "index": "not_analyzed"
+            },
             "point": {
                 "type": "geo_point"
             },
