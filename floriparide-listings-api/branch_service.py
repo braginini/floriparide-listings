@@ -146,15 +146,15 @@ def search(q, project_id, start, limit, filters=None, sort=None):
     if root_filter:
         filtered['filter'] = {'and': root_filter}
 
-    if sort_obj:
-        filtered['sort'] = sort_obj
-
     body = {
         "from": start,
         "query": {
             "filtered": filtered
         }
     }
+
+    if sort_obj:
+        body['sort'] = sort_obj
 
     if start == 0:
         # we need to take all the results (internal limit is 1k) to be able to return markers and rubrics
