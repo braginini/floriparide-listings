@@ -72,7 +72,10 @@ def build_sort(sort):
     sort_obj = []
     if sort:
         for k, v in sort.items():
-            sort_obj.append({k: 'desc'})
+            if k == 'rating':
+                sort_obj.append({k: {'order': 'desc', 'unmapped_type': 'float'}})
+            else:
+                sort_obj.append({k: 'desc'})
 
     return sort_obj
 
