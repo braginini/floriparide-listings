@@ -20,6 +20,7 @@ def populate_cache(els, el_cache):
     for e in els:
         el_cache.put(e['id'], e)
 
+
 populate_cache(branch_dao.get_full(0), cache.branch_cache)
 populate_cache(attribute_dao.get_entity(), cache.attribute_cache)
 # add hardcoded attributes
@@ -60,6 +61,21 @@ def get(project_id, branch_ids):
         branches += branch_dao.get_full(project_id=project_id, branch_ids=ids)
 
     return branches
+
+
+def build_sort(sort):
+    """
+    creates ES sort object
+    :param sort:
+    :return:
+    """
+    sort_obj = []
+    if sort:
+        for k, v in sort.items():
+            sort_obj.append({k: 'desc'})
+
+    return sort_obj
+
 
 
 def build_filters(filters):
@@ -106,10 +122,11 @@ def build_filters(filters):
     return root_filter
 
 
-def search(q, project_id, start, limit, filters=None):
+def search(q, project_id, start, limit, filters=None, sort=None):
     root_filter = build_filters(filters)
+    sort_obj = build_sort(sort)
 
-    #todo add dynamic locale specific query fields (e.g. rubrics.names.pt_Br applied if pt_Br arrives)
+    # todo add dynamic locale specific query fields (e.g. rubrics.names.pt_Br applied if pt_Br arrives)
     filtered = {'query': {
         'multi_match': {
             'fields': ['name',
@@ -117,16 +134,20 @@ def search(q, project_id, start, limit, filters=None):
                        'address.additional',
                        'address.neighborhood',
                        'payment_options',
-                       'rubrics.names.pt_Br',
-                       'attributes.names.pt_Br',
+                       'rubrics.names.pt_Br^3',
+                       'attributes.names.pt_Br^3',
                        'tags',
-                       'headline'],
+                       'headline.'
+                       'description'],
             'query': q
         }
     }}
 
     if root_filter:
         filtered['filter'] = {'and': root_filter}
+
+    if sort_obj:
+        filtered['sort'] = sort_obj
 
     body = {
         "from": start,
@@ -243,7 +264,7 @@ def get_top_rubrics(branches):
     return top_rubrics, attribute_groups
 
 
-def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None, filters=None):
+def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None, filters=None, sort=None):
     """
     gets the list of branch for the given project and company
     :param project_id: the project to search in
@@ -252,6 +273,7 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
     """
 
     root_filter = build_filters(filters)
+    sort_obj = build_sort(sort)
 
     if rubric_id:
         root_filter.append({

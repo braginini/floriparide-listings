@@ -104,8 +104,8 @@ def get(project_id, id, locale='pt_Br'):
 @app.get('/search')
 @json_response
 @enable_cors
-@validate(q=str, project_id=int, start=int, limit=int, locale=str, filters=str, send_attrs=bool)
-def search(q, project_id, start, limit, locale='pt_Br', filters=None, send_attrs=False):
+@validate(q=str, project_id=int, start=int, limit=int, locale=str, filters=str, send_attrs=bool, sort=str)
+def search(q, project_id, start, limit, locale='pt_Br', filters=None, send_attrs=False, sort=None):
     # todo get index name from db by project id
     # todo get default locale by project id
 
@@ -116,7 +116,10 @@ def search(q, project_id, start, limit, locale='pt_Br', filters=None, send_attrs
     if filters:
         filters = json.loads(filters)
 
-    branches, total = branch_service.search(q, project_id, start, limit, filters)
+    if sort:
+        sort = json.loads(sort)
+
+    branches, total = branch_service.search(q, project_id, start, limit, filters, sort)
 
     # prepare markers with branch_id, name, lat, lon
     top_rubrics, top_attributes_group = branch_service.get_top_rubrics(branches)
