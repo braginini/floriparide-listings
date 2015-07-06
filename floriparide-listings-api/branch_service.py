@@ -72,8 +72,8 @@ def build_sort(sort):
     sort_obj = []
     if sort:
         for k, v in sort.items():
-            if k == 'raiting':
-                sort_obj.append({k: {'order': 'desc', 'unmapped_type': 'float'}})
+            if k == 'raiting' or k == 'rating':
+                sort_obj.append({'rating': 'desc'})
             else:
                 sort_obj.append({k: 'desc'})
 
