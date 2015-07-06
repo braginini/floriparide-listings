@@ -169,6 +169,8 @@ def attributes_response(not_localized, locale):
                      input_type=a['data'].get('input_type'),
                      filter_type=a['data'].get('filter_type'),
                      value=a['data'].get('value'),
+                     timerange=a['data'].get('timerange'),
+                     description=a['data'].get('description'),
                      suffix=a['data'].get('suffix')) for a in not_localized]
 
 

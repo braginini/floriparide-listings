@@ -262,6 +262,8 @@ class BranchDao(BaseDao):
                 attr['data'] = {}
                 attr['data'].update(result['data'])
                 attr['data']['value'] = attr['value']
+                attr['data']['timerange'] = attr.get('timerange')
+                attr['data']['description'] = attr.get('description')
                 attr.pop('value')
                 return attr
 
