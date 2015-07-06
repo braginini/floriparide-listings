@@ -190,7 +190,8 @@ def search(q, project_id, start, limit, filters=None, sort=None):
     if ids:
         branches += branch_dao.get_full(project_id=project_id, branch_ids=ids)
 
-    branches = sorted(branches, key=lambda branch: es_scores[str(branch['id'])], reverse=True)
+    if not sort:
+        branches = sorted(branches, key=lambda branch: es_scores[str(branch['id'])], reverse=True)
 
     return branches, total
 
