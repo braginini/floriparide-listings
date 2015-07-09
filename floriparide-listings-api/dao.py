@@ -108,7 +108,8 @@ class AttributeDao(BaseDao):
             query = 'SELECT id, group_id, ' \
                     'cast(data->>(\'names\') as json) as names,  ' \
                     'data->>(\'input_type\') as input_type, ' \
-                    'data->>(\'filter_type\') as filter_type ' \
+                    'data->>(\'filter_type\') as filter_type, ' \
+                    'data->>(\'weight\') as weight ' \
                     'FROM public.attribute WHERE group_id = %s'
             cur.execute(query, (group_id,))
             return cur.fetchall()
