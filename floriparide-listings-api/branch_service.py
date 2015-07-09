@@ -254,16 +254,29 @@ def get_top_rubrics(branches):
         top_rubrics.append(rubrics[0][0])
 
     attribute_groups = rubric_dao.get_attribute_groups(top_rubrics)
-    general_attrs = []
+    general_attrs = {}
+    slider_attr = {}
     for ag in attribute_groups:
         attributes = attribute_dao.get_attributes(ag['id'])
         ag['attributes'] = attributes
         if ag['general']:
-            general_attrs += attributes
+            for a in attributes:
+                if a['filter_type'] == 'slider':
+                    if not slider_attr or slider_attr['weight'] < a.get('weight', 0):
+                        general_attrs.pop(slider_attr.get('id'), None)
+                        slider_attr = dict(id=a['id'], weight=a.get('weight', 0))
+                        general_attrs[a['id']] = a
+                else:
+                    general_attrs[a['id']] = a
 
     attribute_groups = [ag for ag in attribute_groups if not ag.get('general', None)]
+    # for ag in attribute_groups:
+    #     for a in ag['attributes']:
+    #         if a['id'] in general_attrs:
+    #             general_attrs.pop(a['id'])
+
     if attribute_groups:
-        attribute_groups.insert(0, dict(attributes=general_attrs))
+        attribute_groups.insert(0, dict(attributes=list(general_attrs.values())))
 
     return top_rubrics, attribute_groups
 
