@@ -133,9 +133,9 @@ def search(q, project_id, start, limit, filters=None, sort=None):
     filtered = {'query': {
         'multi_match': {
             'fields': ['name',
-                       'address.street',
-                       'address.additional',
-                       'address.neighborhood',
+                       'address.street^2',
+                       'address.additional^2',
+                       'address.neighborhood^2',
                        'payment_options',
                        'rubrics.names.pt_Br^3',
                        'attributes.names.pt_Br^3',
