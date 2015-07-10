@@ -174,6 +174,8 @@ def attributes_response(not_localized, locale):
                      value=a['data'].get('value'),
                      timerange=a['data'].get('timerange'),
                      description=a['data'].get('description'),
+                     min=a['data'].get('min'),
+                     max=a['data'].get('max'),
                      suffix=a['data'].get('suffix')) for a in not_localized]
 
 
