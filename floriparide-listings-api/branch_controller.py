@@ -167,7 +167,6 @@ def markers_response(markers, locale):
 # localize attributes and rubrics by specified locale
 def attributes_response(not_localized, locale):
     if not_localized:
-        print(not_localized)
         return [dict(id=a['id'], name=a['data']['names'].get(locale), itemprop=a['data'].get('itemprop'),
                      input_type=a['data'].get('input_type'),
                      filter_type=a['data'].get('filter_type'),
