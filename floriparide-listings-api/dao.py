@@ -111,7 +111,8 @@ class AttributeDao(BaseDao):
                     'data->>(\'filter_type\') as filter_type, ' \
                     'data->>(\'weight\') as weight, ' \
                     'data->>(\'min\') as min, ' \
-                    'data->>(\'max\') as max ' \
+                    'data->>(\'max\') as max, ' \
+                    'data->>(\'suffix\') as suffix ' \
                     'FROM public.attribute WHERE group_id = %s'
             cur.execute(query, (group_id,))
             return cur.fetchall()
