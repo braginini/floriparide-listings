@@ -6,7 +6,6 @@ import config
 import itertools
 from util.controller_utils import validate, json_response, enable_cors
 
-
 app = bottle.Bottle()
 
 
@@ -25,8 +24,10 @@ def localize_names(obj, locale):
 @app.get("/list")
 @json_response
 @enable_cors
-@validate(locale=str, project_id=int, company_id=int, rubric_id=int, start=int, limit=int, filters=str, send_attrs=bool)
-def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_id=None, filters=None, send_attrs=False):
+@validate(locale=str, project_id=int, company_id=int, rubric_id=int, start=int, limit=int, filters=str, send_attrs=bool,
+          sort=str)
+def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_id=None, filters=None, send_attrs=False,
+             sort=None):
     """
     Gets a set of branches by specified filters - rubric id and company id.
     :param project_id: project id to search branch in. Required
@@ -45,6 +46,9 @@ def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_i
     if filters:
         filters = json.loads(filters)
 
+    if sort:
+        sort = json.loads(sort)
+
     # make some validation before
     if not company_id and not rubric_id:
         raise bottle.HTTPError(status=400,
@@ -52,7 +56,7 @@ def get_list(project_id, start, limit, locale='pt_Br', company_id=None, rubric_i
 
     # branch will be a list of size 1 if the item was found
     branches, total = branch_service.get_list(project_id, company_id=company_id, rubric_id=rubric_id, start=start,
-                                              limit=limit, filters=filters)
+                                              limit=limit, filters=filters, sort=sort)
 
     if not branches:
         return {'total': 0, 'items': []}
@@ -202,7 +206,7 @@ def branch_response(branches, locale):
 
     def payment_opts(raw_opts):
         if raw_opts:
-            opts = list(filter(None, itertools.chain(*[v if isinstance(v, list) else [v]  for v in raw_opts.values()])))
+            opts = list(filter(None, itertools.chain(*[v if isinstance(v, list) else [v] for v in raw_opts.values()])))
             opts.sort()
             return opts
         else:
