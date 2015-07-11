@@ -306,6 +306,9 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
         }
     }
 
+    if sort_obj:
+        body['sort'] = sort_obj
+
     if start == 0:
         # we need to take all the results (internal limit is 1k) to be able to return markers and rubrics
         body['size'] = 1000
@@ -338,6 +341,9 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
             ids.append(v['_id'])
     if ids:
         branches += branch_dao.get_full(project_id=project_id, branch_ids=ids)
+
+    if not sort:
+        branches = sorted(branches, key=lambda branch: es_scores[str(branch['id'])], reverse=True)
 
     return branches, total
 
