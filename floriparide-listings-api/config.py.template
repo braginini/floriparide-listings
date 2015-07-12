@@ -37,6 +37,10 @@ ES = ES()
 
 result_limit = 100
 
+snapshot_path = 'C:/Users/mike/Documents/projects/listings/floriparide-listings-api/snapshots/'
+snapshot_server_url = 'http://service.prerender.io/http://ruadebaixo.com.br/?_escaped_fragment_=/'
+snapshot_host = 'http://ruadebaixo.com.br/#!/'
+
 def read_config_file(config_file):
     """
     reads a config file and fills up fields
