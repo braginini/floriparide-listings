@@ -15,6 +15,7 @@ history = audit_dao.get_history(snapshot_timestamp, 'audit.a_branch')
 
 #prepare only changed branches
 branch_history = {h['data']['id'] for h in history}
+print('%d branch snapshots to make' % len(branch_history))
 
 rubric_map = {e['id']: e for e in rubric_dao.get_list(0)}
 attribute_map = {e['id']: e for e in attribute_dao.get_list(0)}
