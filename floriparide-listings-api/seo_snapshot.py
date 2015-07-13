@@ -250,7 +250,7 @@ def sitemap():
 
     # prepare branches pages
     for b in branches:
-        url = '%sfirm/%d/%s' % (host, b['id'], urllib.request.quote(get_branch_url_name(b)))
+        url = '%sfirm/%d/%s' % (host, b['id'], get_branch_url_name(b))
         branch_el = sitemap_el_tmpl() % (url, iso_time, 'weekly', '1.0')
         result += branch_el
 
