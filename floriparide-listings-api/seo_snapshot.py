@@ -108,8 +108,9 @@ def branch_snapshot():
             continue
 
         url = '%s%d/' % (root_branch_url, b['id'])
-
-        resp = urllib.request.urlopen(url)
+        req = urllib.request.Request(url)
+        req.add_header('X-Prerender-Token', '41p3g3K5rzCAYppic2Fd')
+        resp = urllib.request.urlopen(req)
 
         html = resp.read()
 
@@ -270,8 +271,8 @@ def sitemap():
         f.write(bytes(result, encoding='utf8'))
 
 branch_snapshot()
-#rubric_snapshot()
-#home_snapshot()
-#home_rubrics_snapshot()
+rubric_snapshot()
+home_snapshot()
+home_rubrics_snapshot()
 sitemap()
 audit_dao.update_snapshot_timestamp(new_timestamp)
