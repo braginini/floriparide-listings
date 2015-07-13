@@ -1203,4 +1203,16 @@
         <dropForeignKeyConstraint baseTableName="rubric" constraintName="rubric_parent_id"/>
     </changeSet>
 
+    <changeSet id="78" author="mbragin">
+        <addColumn tableName="index_builder"  schemaName="audit">
+            <column name="snapshot_timestamp" type="timestamp with timezone">
+
+            </column>
+        </addColumn>
+        <sql>
+            UPDATE audit.index_builder
+            SET snapshot_timestamp = '2014-01-01 00:00:00.000-03';
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
