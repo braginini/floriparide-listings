@@ -139,7 +139,7 @@ class AuditDao():
         :return: timestamp with timezone
         """
         with get_cursor() as cur:
-            query = "SELECT timestamp, now() FROM %s" % self.table_index_builder
+            query = "SELECT timestamp, now(), snapshot_timestamp FROM %s" % self.table_index_builder
             print("Running query %s" % query)
             cur.execute(query)
             return cur.fetchone()
@@ -155,6 +155,18 @@ class AuditDao():
             query = 'UPDATE ' + self.table_index_builder + ' SET timestamp = %(date)s WHERE id = 1'
             logging.debug('Running query %s' % query)
             cur.execute(query, {'date': new_timestamp})
+
+    def update_snapshot_timestamp(self, new_timestamp):
+        """
+        """
+
+        conn = None
+        cur = None
+        with get_cursor() as cur:
+            query = 'UPDATE ' + self.table_index_builder + ' SET snapshot_timestamp = %(date)s WHERE id = 1'
+            logging.debug('Running query %s' % query)
+            cur.execute(query, {'date': new_timestamp})
+
 
     def get_history(self, ts, audit_table):
         """

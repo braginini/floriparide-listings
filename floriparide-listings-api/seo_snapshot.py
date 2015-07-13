@@ -9,6 +9,12 @@ import dao
 branch_dao = dao.branch_dao
 rubric_dao = dao.rubric_dao
 attribute_dao = dao.attribute_dao
+audit_dao = dao.audit_dao
+old_timestamp, new_timestamp, snapshot_timestamp = audit_dao.load_timestamps()
+history = audit_dao.get_history(snapshot_timestamp, 'audit.a_branch')
+
+#prepare only changed branches
+branch_history = {h['data']['id'] for h in history}
 
 rubric_map = {e['id']: e for e in rubric_dao.get_list(0)}
 attribute_map = {e['id']: e for e in attribute_dao.get_list(0)}
@@ -97,6 +103,9 @@ def branch_snapshot():
 
     # prepare branches pages
     for b in branches:
+        if b['id'] not in branch_history:
+            continue
+
         url = '%s%d/' % (root_branch_url, b['id'])
 
         resp = urllib.request.urlopen(url)
@@ -260,7 +269,8 @@ def sitemap():
         f.write(bytes(result, encoding='utf8'))
 
 branch_snapshot()
-rubric_snapshot()
-home_snapshot()
-home_rubrics_snapshot()
+#rubric_snapshot()
+#home_snapshot()
+#home_rubrics_snapshot()
 sitemap()
+audit_dao.update_snapshot_timestamp(new_timestamp)
