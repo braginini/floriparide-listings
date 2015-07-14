@@ -129,6 +129,8 @@ def branch_snapshot():
             html = html.replace(bytes('<meta name="description" content="">', encoding='utf8'),
                                 bytes(get_description(b),
                                       encoding='utf8'))
+            html = re.sub(b'<div class="description-text ng-binding" ng-class="\{show: !collapseDescr}">.+<\/div>',
+                          bytes('', encoding='utf8'), html)
             f.write(html)
 
         print('Done %d' % b['id'])
