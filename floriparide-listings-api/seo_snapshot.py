@@ -214,7 +214,7 @@ def home_snapshot():
     html = resp.read()
     with open(home_path + 'index', 'wb') as f:
         title = '<title>%s</title>' % 'Mapa de Florianópolis e de cidades próximas: ruas, casas e ' \
-                                      'negócios na cidade - Go Floripa'
+                                      'negócios na cidade - Rua de baixo'
         description = '<meta name="description" content="%s">' % \
                       'Mapa detalhado de Florianópolis. ' \
                       'Procurar por endereço, números de telefone, opiniões, fotos, horário de atendimento. ' \
@@ -294,8 +294,8 @@ def sitemap():
         f.write(bytes(result, encoding='utf8'))
 
 #branch_snapshot()
-rubric_snapshot()
-#home_snapshot()
-home_rubrics_snapshot()
+#rubric_snapshot()
+home_snapshot()
+#home_rubrics_snapshot()
 sitemap()
 audit_dao.update_snapshot_timestamp(new_timestamp)
