@@ -37,7 +37,7 @@ def create_index(es, index_name, doc_type):
                            body='{"branch":{"_all":{"enabled":true,"index_analyzer":"index_analyzer","search_analyzer":"search_analyzer"},"properties":{"id":{"type":"string","index":"not_analyzed"},"point":{"type":"geo_point"},"name":{"type":"string","boost":7,"index":"analyzed","index_analyzer":"index_analyzer","search_analyzer":"search_analyzer","store":"yes"}}}}')
 
 
-old_timestamp, new_timestamp = audit_dao.load_timestamps()
+old_timestamp, new_timestamp, snapshot_ts = audit_dao.load_timestamps()
 history = audit_dao.get_history(old_timestamp, 'audit.a_branch')
 
 days_map = dict(sunday=0, monday=1, tuesday=2, wednesday=3, thursday=4, friday=5, saturday=6)
@@ -230,8 +230,6 @@ if other_branches:
 
 #update ES index and DB timestamp
 if es_actions:
-    #es = Elasticsearch(hosts=['104.131.54.232:9992'])
-    #recreate_index(es, 'florianopolis', 'branch')
     print(helpers.bulk(es, es_actions))
     print(new_timestamp)
     audit_dao.update_timestamp(new_timestamp)
