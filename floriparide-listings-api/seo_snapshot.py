@@ -25,6 +25,21 @@ home_path = config.snapshot_path
 host = config.snapshot_host
 
 
+def access_resource(request):
+    attempt = 0
+    while True:
+        try:
+            attempt += 1
+            return urllib.request.urlopen(request)
+        except urllib.error.HTTPError as e:
+            print('Oops!  Awful server response.')
+            if attempt > 10:
+                print('Giving up')
+                raise e
+            time.sleep(30)
+            print('Trying again...')
+
+
 def get_street_address(branch):
     addr = ''
     if branch['draft'].get('address') and isinstance(branch['draft'].get('address'), dict) and branch['draft'].get(
@@ -113,11 +128,12 @@ def branch_snapshot():
         url = '%s%d/' % (root_branch_url, b['id'])
         req = urllib.request.Request(url)
         req.add_header('X-Prerender-Token', '41p3g3K5rzCAYppic2Fd')
-        resp = urllib.request.urlopen(req)
+
+        resp = access_resource(req)
 
         html = resp.read()
 
-        time.sleep(10)
+        time.sleep(5)
 
         f_dir = root_path + str(b['id']) + '/'
         if not os.path.exists(f_dir):
@@ -175,7 +191,7 @@ def rubric_snapshot():
             url = '%s%d/%s/' % (parent_rubric_url, k, urllib.request.quote(v['data']['names']['pt_Br']))
             f_dir = parent_rubric_path + str(k) + '/'
 
-        resp = urllib.request.urlopen(url)
+        resp = access_resource(urllib.request.Request(url))
         html = resp.read()
 
         if not os.path.exists(f_dir):
@@ -194,7 +210,7 @@ def rubric_snapshot():
 
 
 def home_snapshot():
-    resp = urllib.request.urlopen(home_url)
+    resp = access_resource(urllib.request.Request(home_url))
     html = resp.read()
     with open(home_path + 'index', 'wb') as f:
         title = '<title>%s</title>' % 'Mapa de Florianópolis e de cidades próximas: ruas, casas e ' \
@@ -216,7 +232,7 @@ def home_rubrics_snapshot():
     if not os.path.exists(rubrics_path):
         os.mkdir(rubrics_path)
 
-    resp = urllib.request.urlopen(url)
+    resp = access_resource(urllib.request.Request(url))
     html = resp.read()
     with open(rubrics_path + 'Todas-as-categorias', 'wb') as f:
         title = '<title>%s</title>' % 'Todas as empresas e organizações de Florianópolis com endereços, ' \
