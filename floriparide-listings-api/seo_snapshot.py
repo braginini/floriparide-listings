@@ -256,9 +256,9 @@ def sitemap():
     #rubric
     for k, v in rubric_map.items():
         if v['parent_id']:
-            url = '%s%d/%s' % (host + 'rubric/', k, urllib.request.quote(v['data']['names']['pt_Br']))
+            url = '%s%d/%s' % (host + 'rubric/', k, urllib.request.quote(v['data']['names']['pt_Br'], safe=''))
         else:
-            url = '%s%d/%s' % (host + 'rubrics/', k, urllib.request.quote(v['data']['names']['pt_Br']))
+            url = '%s%d/%s' % (host + 'rubrics/', k, urllib.request.quote(v['data']['names']['pt_Br'], safe=''))
 
         rubric_el = sitemap_el_tmpl() % (url, iso_time, 'monthly', '1.0')
         result += rubric_el
@@ -277,9 +277,9 @@ def sitemap():
     with open(home_path + 'sitemap.xml', 'wb') as f:
         f.write(bytes(result, encoding='utf8'))
 
-#branch_snapshot()
-rubric_snapshot()
-#home_snapshot()
-home_rubrics_snapshot()
+# branch_snapshot()
+# rubric_snapshot()
+# home_snapshot()
+# home_rubrics_snapshot()
 sitemap()
 audit_dao.update_snapshot_timestamp(new_timestamp)
