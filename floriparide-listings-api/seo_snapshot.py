@@ -117,7 +117,7 @@ def branch_snapshot():
 
         html = resp.read()
 
-        time.sleep(5)
+        time.sleep(10)
 
         f_dir = root_path + str(b['id']) + '/'
         if not os.path.exists(f_dir):
