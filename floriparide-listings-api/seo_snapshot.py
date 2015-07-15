@@ -185,10 +185,10 @@ def rubric_snapshot():
 
     for k, v in rubric_map.items():
         if v['parent_id']:
-            url = '%s%d/%s' % (root_rubric_url, k, urllib.request.quote(v['data']['names']['pt_Br']))
+            url = '%s%d/' % (root_rubric_url, k)
             f_dir = rubric_path + str(k) + '/'
         else:
-            url = '%s%d/%s/' % (parent_rubric_url, k, urllib.request.quote(v['data']['names']['pt_Br']))
+            url = '%s%d/' % (parent_rubric_url, k)
             f_dir = parent_rubric_path + str(k) + '/'
 
         resp = access_resource(urllib.request.Request(url))
@@ -293,9 +293,9 @@ def sitemap():
     with open(home_path + 'sitemap.xml', 'wb') as f:
         f.write(bytes(result, encoding='utf8'))
 
-branch_snapshot()
+#branch_snapshot()
 rubric_snapshot()
-home_snapshot()
+#home_snapshot()
 home_rubrics_snapshot()
 sitemap()
 audit_dao.update_snapshot_timestamp(new_timestamp)
