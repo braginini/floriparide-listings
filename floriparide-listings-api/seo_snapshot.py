@@ -82,11 +82,14 @@ def get_description(branch):
     return description
 
 
+def get_url_name(name):
+    return urllib.request.quote(re.sub('\s+', '-', re.sub('\s+-\s+', ' ', name.strip(' '))).replace('/', '').replace(',',''))
+
+
 def get_branch_url_name(branch):
     name = branch['name'] + ' '
     name += get_street_address(branch)
-
-    return urllib.request.quote(re.sub('\s+', '-', re.sub('\s+-\s+', ' ', name.strip(' '))).replace('/', '').replace(',',''))
+    return get_url_name(name)
 
 
 def branch_snapshot():
@@ -123,7 +126,7 @@ def branch_snapshot():
             file_list = glob.glob(f_dir + '*')
             for f in file_list:
                 os.remove(f)
-        with open(f_dir + get_branch_url_name(b), 'wb') as f:
+        with open(f_dir + str(b['id']), 'wb') as f:
             html = re.sub(b'<title>.*</title>', bytes(get_title(b), encoding='utf8'), html)
             html = html.replace(bytes('#!/', encoding='utf8'), bytes(host, encoding='utf8'))
             html = html.replace(bytes('<meta name="description" content="">', encoding='utf8'),
@@ -142,7 +145,7 @@ def branch_snapshot():
 def get_rubric_url_name(rubric):
     name = rubric['data']['names']['pt_Br']
 
-    return urllib.request.quote(re.sub('\s+', '-', re.sub('\s+-\s+', ' ', name.strip(' '))).replace('/', ''))
+    return get_url_name(name)
 
 
 def get_rubric_title(rubric):
@@ -169,7 +172,7 @@ def rubric_snapshot():
             url = '%s%d/%s' % (root_rubric_url, k, urllib.request.quote(v['data']['names']['pt_Br']))
             f_dir = rubric_path + str(k) + '/'
         else:
-            url = '%s%d/%s' % (parent_rubric_url, k, urllib.request.quote(v['data']['names']['pt_Br']))
+            url = '%s%d/%s/' % (parent_rubric_url, k, urllib.request.quote(v['data']['names']['pt_Br']))
             f_dir = parent_rubric_path + str(k) + '/'
 
         resp = urllib.request.urlopen(url)
@@ -181,7 +184,7 @@ def rubric_snapshot():
             file_list = glob.glob(f_dir + '*')
             for f in file_list:
                 os.remove(f)
-        with open(f_dir + get_rubric_url_name(v), 'wb') as f:
+        with open(f_dir + str(v['id']), 'wb') as f:
             title = '<title>%s</title>' % get_rubric_title(v)
             description = '<meta name="description" content="%s">' % get_rubric_description(v)
             html = re.sub(b'<title>.*</title>', bytes(title, encoding='utf8'), html)
@@ -247,7 +250,7 @@ def sitemap():
     home_el = sitemap_el_tmpl() % (host, iso_time, 'weekly', '1.0')
     result += home_el
 
-    home_rubric_el = sitemap_el_tmpl() % (host + 'rubrics/', iso_time, 'weekly', '1.0')
+    home_rubric_el = sitemap_el_tmpl() % (host + 'rubrics/Todas-as-categorias', iso_time, 'weekly', '1.0')
     result += home_rubric_el
 
     #rubric
@@ -274,9 +277,9 @@ def sitemap():
     with open(home_path + 'sitemap.xml', 'wb') as f:
         f.write(bytes(result, encoding='utf8'))
 
-branch_snapshot()
+#branch_snapshot()
 rubric_snapshot()
-home_snapshot()
+#home_snapshot()
 home_rubrics_snapshot()
 sitemap()
 audit_dao.update_snapshot_timestamp(new_timestamp)
