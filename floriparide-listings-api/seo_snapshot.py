@@ -293,9 +293,9 @@ def sitemap():
     with open(home_path + 'sitemap.xml', 'wb') as f:
         f.write(bytes(result, encoding='utf8'))
 
-#branch_snapshot()
-#rubric_snapshot()
+branch_snapshot()
+rubric_snapshot()
 home_snapshot()
-#home_rubrics_snapshot()
-#sitemap()
-#audit_dao.update_snapshot_timestamp(new_timestamp)
+home_rubrics_snapshot()
+sitemap()
+audit_dao.update_snapshot_timestamp(new_timestamp)
