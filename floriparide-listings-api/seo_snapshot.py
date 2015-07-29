@@ -213,8 +213,8 @@ def home_snapshot():
     resp = access_resource(urllib.request.Request(home_url))
     html = resp.read()
     with open(home_path + 'index', 'wb') as f:
-        title = '<title>%s</title>' % 'Mapa de Florianópolis e de cidades próximas: ruas, casas e ' \
-                                      'negócios na cidade - Rua de baixo'
+        title = '<title>%s</title>' % 'RuaDeBaixo - mapa de Florianópolis e de cidades próximas: ruas, casas e ' \
+                                      'negócios na cidade.'
         description = '<meta name="description" content="%s">' % \
                       'Mapa detalhado de Florianópolis. ' \
                       'Procurar por endereço, números de telefone, opiniões, fotos, horário de atendimento. ' \
@@ -236,7 +236,7 @@ def home_rubrics_snapshot():
     html = resp.read()
     with open(rubrics_path + 'Todas-as-categorias', 'wb') as f:
         title = '<title>%s</title>' % 'Todas as empresas e organizações de Florianópolis com endereços, ' \
-                                      'números de telefone e horário de atendimento - Go Floripa'
+                                      'números de telefone e horário de atendimento - Rua De Baixo'
         description = '<meta name="description" content="%s">' % \
                       'Na lista de empresas e organizações de Florianópolis você pode facilmente encontrar exatamente o que você precisa. ' \
                       'Todas as empresas são classificadas por tipo de atividade e são marcados no mapa.'
@@ -293,9 +293,9 @@ def sitemap():
     with open(home_path + 'sitemap.xml', 'wb') as f:
         f.write(bytes(result, encoding='utf8'))
 
-branch_snapshot()
-rubric_snapshot()
+#branch_snapshot()
+#rubric_snapshot()
 home_snapshot()
-home_rubrics_snapshot()
-sitemap()
-audit_dao.update_snapshot_timestamp(new_timestamp)
+#home_rubrics_snapshot()
+#sitemap()
+#audit_dao.update_snapshot_timestamp(new_timestamp)
