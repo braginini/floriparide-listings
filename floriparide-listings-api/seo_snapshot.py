@@ -3,6 +3,7 @@ import os
 import re
 import urllib.request
 import time
+import shutil
 import config
 import dao
 
@@ -293,9 +294,29 @@ def sitemap():
     with open(home_path + 'sitemap.xml', 'wb') as f:
         f.write(bytes(result, encoding='utf8'))
 
+
+def back_up_snapshots(folder_name):
+    """
+    makes a backup for newly generated snapshots
+    :param folder_name:
+    :return:
+    """
+    if not os.path.exists(config.snapshot_bkp_path):
+        os.makedirs(config.snapshot_bkp_path)
+
+    try:
+        shutil.copytree(config.snapshot_path, config.snapshot_bkp_path + folder_name)
+    except OSError as e:
+        print('Directory not copied. Error: %s' % e)
+
+
+if not os.path.exists(config.snapshot_path):
+        os.makedirs(config.snapshot_path)
+
 branch_snapshot()
 rubric_snapshot()
 home_snapshot()
 home_rubrics_snapshot()
 sitemap()
 audit_dao.update_snapshot_timestamp(new_timestamp)
+back_up_snapshots(snapshot_timestamp.strftime("%Y%m%d%H%M%S"))
