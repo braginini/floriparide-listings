@@ -51,6 +51,7 @@ def get(id, locale="pt_Br"):
 
 def project_response(project, locale):
     return dict(id=project["id"],
+                string_id=project["data"]["string_id"],
                 name=project["data"]["names"].get(locale),
                 locale=project["data"]["locale"],
                 language=project["data"]["language"],
