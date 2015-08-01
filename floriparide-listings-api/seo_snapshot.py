@@ -231,10 +231,9 @@ def home_snapshot():
 
 def home_rubrics_snapshot():
     url = home_url + city_path + 'rubrics/'
-    rubrics_path = home_path + 'rubrics/'
+    rubrics_path = home_path + city_path + 'rubrics/'
 
-    if not os.path.exists(rubrics_path):
-        os.mkdir(rubrics_path)
+    check_crete_folder(rubrics_path)
 
     resp = access_resource(urllib.request.Request(url))
     html = resp.read()
@@ -294,7 +293,7 @@ def sitemap():
 
     result += '</urlset>'
 
-    with open(home_path + 'sitemap.xml', 'wb') as f:
+    with open(config.sitemap_path + 'sitemap.xml', 'wb') as f:
         f.write(bytes(result, encoding='utf8'))
 
 
