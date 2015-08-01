@@ -24,6 +24,12 @@ attribute_map = {e['id']: e for e in attribute_dao.get_list(0)}
 home_url = config.snapshot_server_url
 home_path = config.snapshot_path
 host = config.snapshot_host
+city_path = 'florianopolis/'
+city_host = host + city_path
+
+def check_crete_folder(folder):
+    if not os.path.exists(folder):
+        os.mkdir(folder)
 
 
 def access_resource(request):
@@ -113,9 +119,9 @@ def branch_snapshot():
     creates a branch pages snapshot
     :return:
     """
-
-    root_branch_url = home_url + 'firm/'
-    root_path = home_path + 'firm/'
+    #todo dynamically resolve city path
+    root_branch_url = home_url + city_path + 'firm/'
+    root_path = home_path + city_path + 'firm/'
     if not os.path.exists(root_path):
         os.mkdir(root_path)
 
@@ -134,8 +140,6 @@ def branch_snapshot():
 
         html = resp.read()
 
-        time.sleep(5)
-
         f_dir = root_path + str(b['id']) + '/'
         if not os.path.exists(f_dir):
             os.mkdir(f_dir)
@@ -145,7 +149,7 @@ def branch_snapshot():
                 os.remove(f)
         with open(f_dir + str(b['id']), 'wb') as f:
             html = re.sub(b'<title>.*</title>', bytes(get_title(b), encoding='utf8'), html)
-            html = html.replace(bytes('#!/', encoding='utf8'), bytes(host, encoding='utf8'))
+            html = html.replace(bytes('#!/', encoding='utf8'), bytes(city_host, encoding='utf8'))
             html = html.replace(bytes('<meta name="description" content="">', encoding='utf8'),
                                 bytes(get_description(b),
                                       encoding='utf8'))
@@ -154,6 +158,7 @@ def branch_snapshot():
             f.write(html)
 
         print('Done %d' % b['id'])
+        time.sleep(5)
 
 
 # prepare rubric list page
@@ -174,15 +179,13 @@ def get_rubric_description(rubric):
 
 
 def rubric_snapshot():
-    root_rubric_url = home_url + 'rubric/'
-    parent_rubric_url = home_url + 'rubrics/'
-    rubric_path = home_path + 'rubric/'
-    parent_rubric_path = home_path + 'rubrics/'
-    if not os.path.exists(rubric_path):
-        os.mkdir(rubric_path)
+    root_rubric_url = home_url + city_path + 'rubric/'
+    parent_rubric_url = home_url + city_path + 'rubrics/'
+    rubric_path = home_path + city_path + 'rubric/'
+    parent_rubric_path = home_path + city_path + 'rubrics/'
 
-    if not os.path.exists(parent_rubric_path):
-        os.mkdir(parent_rubric_path)
+    check_crete_folder(rubric_path)
+    check_crete_folder(parent_rubric_path)
 
     for k, v in rubric_map.items():
         if v['parent_id']:
@@ -211,9 +214,9 @@ def rubric_snapshot():
 
 
 def home_snapshot():
-    resp = access_resource(urllib.request.Request(home_url))
+    resp = access_resource(urllib.request.Request(home_url + city_path))
     html = resp.read()
-    with open(home_path + 'index', 'wb') as f:
+    with open(home_path + city_path + 'index', 'wb') as f:
         title = '<title>%s</title>' % 'RuaDeBaixo - mapa de Florianópolis e de cidades próximas: ruas, casas e ' \
                                       'negócios na cidade.'
         description = '<meta name="description" content="%s">' % \
@@ -227,7 +230,7 @@ def home_snapshot():
 
 
 def home_rubrics_snapshot():
-    url = home_url + 'rubrics/'
+    url = home_url + city_path + 'rubrics/'
     rubrics_path = home_path + 'rubrics/'
 
     if not os.path.exists(rubrics_path):
@@ -264,18 +267,18 @@ def sitemap():
     result = '<?xml version="1.0" encoding="UTF-8"?>' \
              '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
 
-    home_el = sitemap_el_tmpl() % (host, iso_time, 'weekly', '1.0')
+    home_el = sitemap_el_tmpl() % (city_host, iso_time, 'weekly', '1.0')
     result += home_el
 
-    home_rubric_el = sitemap_el_tmpl() % (host + 'rubrics/Todas-as-categorias', iso_time, 'weekly', '1.0')
+    home_rubric_el = sitemap_el_tmpl() % (city_host + 'rubrics/Todas-as-categorias', iso_time, 'weekly', '1.0')
     result += home_rubric_el
 
     #rubric
     for k, v in rubric_map.items():
         if v['parent_id']:
-            url = '%s%d/%s' % (host + 'rubric/', k, urllib.request.quote(v['data']['names']['pt_Br'], safe=''))
+            url = '%s%d/%s' % (city_host + 'rubric/', k, urllib.request.quote(v['data']['names']['pt_Br'], safe=''))
         else:
-            url = '%s%d/%s' % (host + 'rubrics/', k, urllib.request.quote(v['data']['names']['pt_Br'], safe=''))
+            url = '%s%d/%s' % (city_host + 'rubrics/', k, urllib.request.quote(v['data']['names']['pt_Br'], safe=''))
 
         rubric_el = sitemap_el_tmpl() % (url, iso_time, 'monthly', '1.0')
         result += rubric_el
@@ -285,7 +288,7 @@ def sitemap():
 
     # prepare branches pages
     for b in branches:
-        url = '%sfirm/%d/%s' % (host, b['id'], get_branch_url_name(b))
+        url = '%sfirm/%d/%s' % (city_host, b['id'], get_branch_url_name(b))
         branch_el = sitemap_el_tmpl() % (url, iso_time, 'weekly', '1.0')
         result += branch_el
 
@@ -310,8 +313,8 @@ def back_up_snapshots(folder_name):
         print('Directory not copied. Error: %s' % e)
 
 
-if not os.path.exists(config.snapshot_path):
-        os.makedirs(config.snapshot_path)
+check_crete_folder(config.snapshot_path)
+check_crete_folder(home_path + city_path)
 
 branch_snapshot()
 rubric_snapshot()
