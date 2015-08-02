@@ -9,3 +9,11 @@ system users:
 
 
 access postgres: psql -U listings floriparide_listings
+
+
+access to mysql:
+root 1234mudar@
+piwik piwikanalytics2015
+
+access to piwik:
+ruadb kkkbrasil15
