@@ -97,6 +97,7 @@ def get(project_id, id, locale='pt_Br'):
     :return:
     """
     # branch will be a list of size 1 if the item was found
+    print(bottle.request.headers)
     branch_ids = id.split(",")
     branches = branch_service.get(project_id, branch_ids)
     if not branches:
