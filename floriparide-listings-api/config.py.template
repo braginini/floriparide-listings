@@ -28,6 +28,7 @@ class CACHE():
 class ES():
     HOST = "localhost"
     PORT = 9200
+    INDEX = "floripa"
 
 
 DB = DB()

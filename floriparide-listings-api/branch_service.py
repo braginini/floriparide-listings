@@ -168,7 +168,7 @@ def search(q, project_id, start, limit, filters=None, sort=None):
     # search in ES
     logging.info('Running ES query %s' % body)
     # todo remove hardcoded florianopolis index name
-    es_result = es.search(index="florianopolis", doc_type='branch', body=body)
+    es_result = es.search(index=config.ES.INDEX, doc_type='branch', body=body)
     logging.info('Got ES result for query %s' % body)
 
     total = es_result['hits']['total']
@@ -315,7 +315,7 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
     else:
         body['size'] = limit
 
-    es_result = es.search(index="florianopolis", doc_type='branch', body=body)
+    es_result = es.search(index=config.ES.INDEX, doc_type='branch', body=body)
 
     total = es_result['hits']['total']
     # dictionary with branch id as a key and score as a value

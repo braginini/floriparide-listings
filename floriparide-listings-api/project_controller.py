@@ -12,8 +12,8 @@ app = bottle.Bottle()
 @validate(locale=str)
 def get_list(locale="pt_Br"):
 
-    if locale:
-        locale = locale.lower()
+    # if locale:
+    #     locale = locale.lower()
 
     projects = project_service.get()
     if not projects:
@@ -36,8 +36,8 @@ def get(id, locale="pt_Br"):
     :param locale:
     :return:
     """
-    if locale:
-        locale = locale.lower()
+    # if locale:
+    #     locale = locale.lower()
     project_ids = id.split(",")
     projects = project_service.get(project_ids=project_ids)
     if not projects:

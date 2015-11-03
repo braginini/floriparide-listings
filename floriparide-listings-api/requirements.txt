@@ -1,0 +1,5 @@
+gunicorn
+bottle>=0.12
+elasticsearch>=2.1.0
+beaker
+psycopg2

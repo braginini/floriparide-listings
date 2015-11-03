@@ -143,7 +143,7 @@ for k, v in branch_history_map.items():
     if operation == 'D':
         action = {
             '_op_type': 'delete',
-            '_index': 'florianopolis',
+            '_index': config.ES.INDEX,
             '_type': 'branch',
             '_id': int(k)
         }
@@ -180,7 +180,7 @@ for k, v in branch_history_map.items():
 
         action = {
             '_op_type': 'index',
-            '_index': 'florianopolis',
+            '_index': config.ES.INDEX,
             '_type': 'branch',
             '_id': int(k),
             '_source': data
@@ -219,7 +219,7 @@ if other_branches:
         data['attributes'] = curr_attributes
         action = {
             '_op_type': 'index',
-            '_index': 'florianopolis',
+            '_index': config.ES.INDEX,
             '_type': 'branch',
             '_id': b['id'],
             '_source': data
