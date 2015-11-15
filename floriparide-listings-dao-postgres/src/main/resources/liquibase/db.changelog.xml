@@ -1215,4 +1215,16 @@
         </sql>
     </changeSet>
 
+    <changeSet id="79" author="andr83">
+        <addColumn tableName="data"  schemaName="raw_data">
+            <column name="source_id" type="bigserial"></column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="80" runInTransaction="false" author="andr83">
+        <sql>
+            ALTER TYPE raw_data_source ADD VALUE 'osm';
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
