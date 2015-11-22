@@ -1,2 +1,4 @@
 Scrapy
 service_identity
+psycopg2
+click

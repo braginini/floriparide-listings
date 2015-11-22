@@ -21,17 +21,17 @@ class A1188Spider(CrawlSpider):
         'http://www.1188.lv/katalogs/Restor%C4%81ni%2C%20%C4%93din%C4%81%C5%A1ana',
         'http://www.1188.lv/katalogs/Pic%C4%93rijas%2C%20%C4%93din%C4%81%C5%A1ana',
         'http://www.1188.lv/katalogs/%C4%92dienu%20pieg%C4%81de%2C%20%C4%93din%C4%81%C5%A1ana',
-        'http://www.1188.lv/%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3/%D0%9A%D0%B0%D1%84%D0%B5%2C%20%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%B8%D0%B5',
-        'http://www.1188.lv/%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3/%D0%A0%D0%B5%D1%81%D1%82%D0%BE%D1%80%D0%B0%D0%BD%2C%20%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%B8%D0%B5http://www.1188.lv/%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3/%D0%A0%D0%B5%D1%81%D1%82%D0%BE%D1%80%D0%B0%D0%BD%2C%20%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%B8%D0%B5',
-        'http://www.1188.lv/%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3/%D0%9F%D0%B8%D1%86%D0%B5%D1%80%D0%B8%D1%8F%2C%20%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%B8%D0%B5',
-        'http://www.1188.lv/%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3/%D0%94%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BA%D0%B0%20%D0%B5%D0%B4%D1%8B%2C%20%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%B8%D0%B5'
+        'http://www.1188.lv/каталог/Кафе%2C%20питание',
+        'http://www.1188.lv/каталог/Ресторан%2C%20питание',
+        'http://www.1188.lv/каталог/Пицерия%2C%20питание',
+        'http://www.1188.lv/каталог/Доставка%20еды%2C%20питание'
     ]
 
     rules = (
         Rule(LinkExtractor(allow='.+1188\.lv\/catalog\/[\w\s%2C%20]*(\?page=\d+)*$', unique=True)),
         Rule(LinkExtractor(allow='.+1188\.lv\/katalogs\/[\w\s%2C%20]*(\?page=\d+)*$', unique=True)),
         Rule(
-            LinkExtractor(allow='.+1188\.lv\/%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3\/[\w\s%2C%20]*(\?page=\d+)*$',
+            LinkExtractor(allow='.+1188\.lv\/каталог/[\w\s%2C%20]*(\?page=\d+)*$',
                           unique=True)
         ),
         Rule(LinkExtractor(allow=[
@@ -43,10 +43,10 @@ class A1188Spider(CrawlSpider):
             '.+1188\.lv\/katalogs\/.+\/restorani-edinasana\/\d+$',
             '.+1188\.lv\/katalogs\/.+\/picerijas-edinasana\/\d+$',
             '.+1188\.lv\/katalogs\/.+\/dienu-piegade-edinasana\/\d+$',
-            '.+1188\.lv\/%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3\/.+\/afe-pitanie\/\d+$',
-            '.+1188\.lv\/%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3\/.+\/estoran-pitanie\/\d+$',
-            '.+1188\.lv\/%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3\/.+\/icerija-pitanie\/\d+$',
-            '.+1188\.lv\/%D0%BA%D0%B0%D1%82%D0%B0%D0%BB%D0%BE%D0%B3\/.+\/ostavka-ed-pitanie\/\d+$',
+            '.+1188\.lv\/каталог\/.+\/afe-pitanie\/\d+$',
+            '.+1188\.lv\/каталог\/.+\/estoran-pitanie\/\d+$',
+            '.+1188\.lv\/каталог\/.+\/icerija-pitanie\/\d+$',
+            '.+1188\.lv\/каталог\/.+\/ostavka-ed-pitanie\/\d+$',
         ], canonicalize=False, unique=True),
             callback='parse_company', follow=False
         ),
