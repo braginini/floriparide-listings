@@ -1227,4 +1227,10 @@
         </sql>
     </changeSet>
 
+    <changeSet id="81" runInTransaction="false" author="andr83">
+        <sql>
+            ALTER TYPE raw_data_source ADD VALUE '1188.lv';
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
