@@ -13,10 +13,16 @@ BOT_NAME = 'scrapy_crawler'
 SPIDER_MODULES = ['scrapy_crawler.spiders']
 NEWSPIDER_MODULE = 'scrapy_crawler.spiders'
 
+DOWNLOAD_DELAY = 2
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'scrapy_crawler (+http://www.yourdomain.com)'
 
-########### Item pipeline
-ITEM_PIPELINES = [
-                  "scrapy_crawler.pipelines.JsonPaidItemPipeline",
-]
+########## Item pipeline
+# ITEM_PIPELINES = [
+#     "scrapy_crawler.pipelines.JsonPaidItemPipeline",
+# ]
+#
+ITEM_PIPELINES = {
+    'scrapy_crawler.pipelines.JsonItemPipeline': 800,
+}

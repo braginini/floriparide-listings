@@ -31,3 +31,28 @@ class JsonPaidItemPipeline(object):
             self.exporter.export_item(item)
             self.items_seen.add(item['name'])
             return item
+
+
+class JsonItemPipeline(object):
+    def __init__(self):
+        self.file = None
+        self.exporter = None
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        pipeline = cls()
+        return pipeline
+
+    def open_spider(self, spider):
+        file_name = '/Users/nik/projects/riga-listings/parser_results/%s_companies.json' % spider.name
+        self.file = open(file_name, 'w')
+        self.exporter = JsonLinesItemExporter(self.file, ensure_ascii=False)
+        self.exporter.start_exporting()
+
+    def close_spider(self, spider):
+        self.exporter.finish_exporting()
+        self.file.close()
+
+    def process_item(self, item, spider):
+        self.exporter.export_item(item)
+        return item

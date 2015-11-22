@@ -34,3 +34,26 @@ class CompanyProfileItem(HighlightedCompany):
     food_cards = scrapy.Field()
     other_payment_methods = scrapy.Field()
     opened_from = scrapy.Field()
+
+
+class BranchItem(HighlightedCompany):
+    """
+    class that holds parsing result of a company profile page
+    """
+    id = scrapy.Field()
+    headline = scrapy.Field()
+    lang = scrapy.Field()
+    logo = scrapy.Field()
+    categories = scrapy.Field()
+    address = scrapy.Field()
+    url = scrapy.Field()
+    contacts = scrapy.Field()
+    phones = scrapy.Field()
+    short_description = scrapy.Field()
+    full_description = scrapy.Field()
+    attributes = scrapy.Field()
+    schedule = scrapy.Field()
+    photos = scrapy.Field()
+    opened_from = scrapy.Field()
+    geometry = scrapy.Field()
+    tags = scrapy.Field()
