@@ -2,21 +2,10 @@
 import bottle
 from util.controller_utils import validate, json_response, enable_cors
 from beaker.cache import cache_managers
+from index_builder import update_index
 
 
 app = bottle.Bottle()
-
-
-def localize_names(obj, locale):
-    """
-    obj should contain key "names"
-    """
-    if obj:
-        if not obj.get('data').get('names'):
-            return
-        obj['name'] = obj['data']['names'].get(locale)
-        obj.pop('data', None)
-        return obj
 
 
 @app.get("/clear_cache")
@@ -31,3 +20,16 @@ def get_list():
         ch.clear()
         names.append(ch.namespace_name)
     return names
+
+
+@app.get("/update_index")
+@json_response
+@enable_cors
+@validate(project_id=str)
+def update_index(project_id):
+    """
+    :param project_id:
+    :return:
+    """
+    update_index(project_id)
+    return "Ok"
