@@ -1,0 +1,88 @@
+{
+    "branch": {
+        "properties": {
+            "id": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "rating": {
+                "type": "float",
+                "index": "not_analyzed"
+            },
+            "point": {
+                "type": "geo_point"
+            },
+            "name": {
+                "type": "string",
+                "boost": 7,
+                "index": "analyzed",
+                "analyzer": "brazilian",
+                "store": "yes"
+            },
+            "address": {
+                "properties": {
+                    "street": {
+                        "type": "string",
+                        "analyzer": "brazilian"
+                    },
+                    "additional": {
+                        "type": "string",
+                        "analyzer": "brazilian"
+                    },
+                    "neighborhood": {
+                        "type": "string",
+                        "analyzer": "brazilian"
+                    }
+                }
+            },
+            "payment_options": {
+                "type": "string",
+                "analyzer": "brazilian"
+            },
+            "description": {
+                "type": "string",
+                "analyzer": "brazilian"
+            },
+            "tags": {
+                "type": "string",
+                "analyzer": "brazilian"
+            },
+            "headline": {
+                "type": "string",
+                "analyzer": "brazilian"
+            },
+            "rubrics": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    },
+                    "names": {
+                        "properties": {
+                            "pt_Br": {
+                                "type": "string",
+                                "analyzer": "brazilian"
+                            }
+                        }
+                    }
+                }
+            },
+            "attributes": {
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "index": "not_analyzed"
+                    },
+                    "names": {
+                        "properties": {
+                            "pt_Br": {
+                                "type": "string",
+                                "analyzer": "brazilian"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
