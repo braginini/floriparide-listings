@@ -356,6 +356,13 @@ class ProjectDao(BaseDao):
     def __init__(self):
         BaseDao.__init__(self, "public.project")
 
+    def get_by_string_id(self, string_id):
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            query = "SELECT * FROM project where data->>'string_id' = %s"
+            cur.execute(query, (string_id, ))
+            return cur.fetchone()
+
+
 
 class CompanyDao(BaseDao):
     def __init__(self):

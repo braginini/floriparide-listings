@@ -3,3 +3,5 @@ bottle>=0.12
 elasticsearch>=2.1.0
 beaker
 psycopg2
+click
+Unidecode>=0.04.17

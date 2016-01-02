@@ -125,23 +125,33 @@ def build_filters(filters):
     return root_filter
 
 
-def search(q, project_id, start, limit, filters=None, sort=None):
+def search(q, project_id, start, limit, filters=None, sort=None, lang=None):
     root_filter = build_filters(filters)
     sort_obj = build_sort(sort)
 
     # todo add dynamic locale specific query fields (e.g. rubrics.names.pt_Br applied if pt_Br arrives)
+    fields = ['name*',
+              'address*',
+              'address.street^2',
+              'address.additional^2',
+              'address.neighborhood^2',
+              'payment_options',
+              'rubrics.names*',
+              'attributes.names*',
+              'tags*',
+              'headline*',
+              'description*'
+              ]
+    if lang:
+        fields += [
+            'rubrics.names.%s^3' % lang,
+            'attributes.names.%s^3' % lang,
+            'tags.%s^3' % lang,
+            'description.%s^3' % lang,
+        ]
     filtered = {'query': {
         'multi_match': {
-            'fields': ['name',
-                       'address.street^2',
-                       'address.additional^2',
-                       'address.neighborhood^2',
-                       'payment_options',
-                       'rubrics.names.pt_Br^3',
-                       'attributes.names.pt_Br^3',
-                       'tags',
-                       'headline.'
-                       'description'],
+            'fields': fields,
             'query': q
         }
     }}

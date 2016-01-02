@@ -1,0 +1,194 @@
+{
+  "branch": {
+    "properties": {
+      "id": {
+        "type": "string",
+        "index": "not_analyzed"
+      },
+      "rating": {
+        "type": "float",
+        "index": "not_analyzed"
+      },
+      "point": {
+        "type": "geo_point"
+      },
+      "name": {
+        "type": "string",
+        "boost": 7,
+        "analyzer": "latvian",
+        "fields": {
+          "en_Us": {
+            "type": "string",
+            "analyzer": "english",
+            "boost": 7
+          },
+          "general": {
+            "type": "string",
+            "analyzer": "ngrams",
+            "boost": 7
+          }
+        }
+      },
+      "headline": {
+        "type": "string",
+        "analyzer": "latvian",
+        "fields": {
+          "en_Us": {
+            "type": "string",
+            "analyzer": "english"
+          },
+          "general": {
+            "type": "string",
+            "analyzer": "ngrams"
+          }
+        }
+      },
+      "address": {
+        "properties": {
+          "street": {
+            "type": "string",
+            "analyzer": "latvian",
+            "fields": {
+              "general": {
+                "type": "string",
+                "analyzer": "ngrams"
+              }
+            }
+          },
+          "additional": {
+            "type": "string",
+            "analyzer": "latvian",
+            "fields": {
+              "general": {
+                "type": "string",
+                "analyzer": "ngrams"
+              }
+            }
+          },
+          "neighborhood": {
+            "type": "string",
+            "analyzer": "latvian",
+            "fields": {
+              "general": {
+                "type": "string",
+                "analyzer": "ngrams"
+              }
+            }
+          }
+        }
+      },
+      "payment_options": {
+        "type": "string",
+        "analyzer": "english"
+      },
+      "description": {
+        "properties": {
+          "ru_Ru": {
+            "type": "string",
+            "analyzer": "russian"
+          },
+          "en_Us": {
+            "type": "string",
+            "analyzer": "english",
+            "fields": {
+              "general": {
+                "type": "string",
+                "analyzer": "ngrams"
+              }
+            }
+          },
+          "lv_Lv": {
+            "type": "string",
+            "analyzer": "latvian"
+          }
+        }
+      },
+      "tags": {
+        "properties": {
+          "ru_Ru": {
+            "type": "string",
+            "analyzer": "russian"
+          },
+          "en_Us": {
+            "type": "string",
+            "analyzer": "english",
+            "fields": {
+              "general": {
+                "type": "string",
+                "analyzer": "ngrams"
+              }
+            }
+          },
+          "lv_Lv": {
+            "type": "string",
+            "analyzer": "latvian"
+          }
+        }
+      },
+      "rubrics": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "index": "not_analyzed"
+          },
+          "names": {
+            "properties": {
+              "ru_Ru": {
+                "type": "string",
+                "analyzer": "russian"
+              },
+              "en_Us": {
+                "type": "string",
+                "analyzer": "english",
+                "fields": {
+                  "general": {
+                    "type": "string",
+                    "analyzer": "ngrams"
+                  }
+                }
+              },
+              "lv_Lv": {
+                "type": "string",
+                "analyzer": "latvian"
+              }
+            }
+          }
+        }
+      },
+      "attributes": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "index": "not_analyzed"
+          },
+          "value": {
+            "type": "string",
+            "index": "not_analyzed"
+          },
+          "names": {
+            "properties": {
+              "ru_Ru": {
+                "type": "string",
+                "analyzer": "russian"
+              },
+              "en_Us": {
+                "type": "string",
+                "analyzer": "english",
+                "fields": {
+                  "general": {
+                    "type": "string",
+                    "analyzer": "ngrams"
+                  }
+                }
+              },
+              "lv_Lv": {
+                "type": "string",
+                "analyzer": "latvian"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

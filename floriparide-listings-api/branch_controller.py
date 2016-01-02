@@ -125,7 +125,7 @@ def search(q, project_id, start, limit, locale='pt_Br', filters=None, send_attrs
     if sort:
         sort = json.loads(sort)
 
-    branches, total = branch_service.search(q, project_id, start, limit, filters, sort)
+    branches, total = branch_service.search(q, project_id, start, limit, filters, sort, locale)
 
     # prepare markers with branch_id, name, lat, lon
     top_rubrics, top_attributes_group = branch_service.get_top_rubrics(branches)
@@ -228,7 +228,7 @@ def branch_response(branches, locale):
                  contacts=b["draft"].get("contacts"),
                  payment_options=payment_opts(b["draft"].get("payment_options")),
                  schedule=b["draft"].get("schedule"),
-                 description=b["draft"].get("description"),
+                 description=b["draft"].get("description").get(locale),
                  article=b["draft"].get("article"),
                  photos=b["draft"].get("photos"),
                  company=company(b["draft"].get("company")),
