@@ -80,7 +80,6 @@ def build_sort(sort):
     return sort_obj
 
 
-
 def build_filters(filters):
     """
     takes filters map and returns a elastic search ready filter
@@ -108,15 +107,29 @@ def build_filters(filters):
                         root_filter.append(dict(script=open_filter))
                     else:
                         attr_filter = [{
-                                           "term": {
-                                               "attributes.id": str(k)
-                                           }
-                                       }, {
-                                           "term": {
-                                               "attributes.value": v
-                                           }
-                                       }]
-                        root_filter.append({"and": attr_filter})
+                            'term': {
+                                "attributes.id": str(k)
+                            }
+                        }, {
+                            'term': {
+                                "attributes.value": v
+                            }
+                        }]
+                        root_filter.append({'and': attr_filter})
+                if t == 'number' and type(v) is list and len(v) == 2:
+                    attr_filter = [{
+                        'term': {
+                            'attributes.id': str(k)
+                        }
+                    }, {
+                        'range': {
+                            'attributes.value': {
+                                'gte': v[0],
+                                'lte': v[1]
+                            }
+                        }
+                    }]
+                    root_filter.append({'and': attr_filter})
                 if t == 'bounds' and type(v) is list and v and len(v) == 4 and k == 'visible':
                     location = dict(top_left={'lat': v[0], 'lon': v[1]}, bottom_right={'lat': v[2], 'lon': v[3]})
                     geo_bounding_box = dict(point=location)
