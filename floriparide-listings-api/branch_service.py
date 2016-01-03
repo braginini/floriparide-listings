@@ -1,4 +1,5 @@
 import logging
+import json
 from operator import itemgetter
 import datetime
 from elasticsearch import Elasticsearch
@@ -108,28 +109,35 @@ def build_filters(filters):
                     else:
                         attr_filter = [{
                             'term': {
-                                "attributes.id": str(k)
+                                'attributes.id': str(k)
                             }
                         }, {
                             'term': {
-                                "attributes.value": v
+                                'attributes.value': v
                             }
                         }]
                         root_filter.append({'and': attr_filter})
-                if t == 'number' and type(v) is list and len(v) == 2:
-                    attr_filter = [{
-                        'term': {
-                            'attributes.id': str(k)
-                        }
-                    }, {
-                        'range': {
-                            'attributes.value': {
-                                'gte': v[0],
-                                'lte': v[1]
+                if t == 'number':
+                    if type(v) is list and len(v) == 2:
+                        attr_filter = [{
+                            'term': {
+                                'attributes.id': str(k)
                             }
-                        }
-                    }]
-                    root_filter.append({'and': attr_filter})
+                        }, {
+                            'range': {
+                                'attributes.value': {
+                                    'gte': v[0],
+                                    'lte': v[1]
+                                }
+                            }
+                        }]
+                        root_filter.append({'and': attr_filter})
+                    elif type(v) is bool:
+                        root_filter.append({
+                            'term': {
+                                'attributes.id': str(k)
+                            }
+                        })
                 if t == 'bounds' and type(v) is list and v and len(v) == 4 and k == 'visible':
                     location = dict(top_left={'lat': v[0], 'lon': v[1]}, bottom_right={'lat': v[2], 'lon': v[3]})
                     geo_bounding_box = dict(point=location)
@@ -173,9 +181,9 @@ def search(q, project_id, start, limit, filters=None, sort=None, lang=None):
         filtered['filter'] = {'and': root_filter}
 
     body = {
-        "from": start,
-        "query": {
-            "filtered": filtered
+        'from': start,
+        'query': {
+            'filtered': filtered
         }
     }
 
@@ -189,10 +197,10 @@ def search(q, project_id, start, limit, filters=None, sort=None, lang=None):
         body['size'] = limit
 
     # search in ES
-    logging.info('Running ES query %s' % body)
+    logging.info('Running ES query %s' % json.dumps(body).encode('utf-8'))
     # todo remove hardcoded florianopolis index name
     es_result = es.search(index=config.ES.INDEX, doc_type='branch', body=body)
-    logging.info('Got ES result for query %s' % body)
+    logging.info('Got ES result')
 
     total = es_result['hits']['total']
     # dictionary with branch id as a key and score as a value
@@ -258,7 +266,9 @@ def get_top_rubrics(branches):
     # prepare top rubrics. minimum = 1 rubric and 30% threshold
     # key - id, value number of times appeared
     rubrics = {}
+    branch_ids = []
     for b in branches:
+        branch_ids.append(str(b['id']))
         if b['draft'].get('rubrics'):
             for r in b['draft']['rubrics']:
                 r_id = r['id']
@@ -280,7 +290,7 @@ def get_top_rubrics(branches):
     general_attrs = {}
     slider_attr = {}
     for ag in attribute_groups:
-        attributes = attribute_dao.get_attributes(ag['id'])
+        attributes = attribute_dao.get_branch_attributes(ag['id'], branch_ids)
         ag['attributes'] = attributes
         if ag['general']:
             for a in attributes:
@@ -317,15 +327,15 @@ def get_list(project_id, company_id=None, rubric_id=None, start=None, limit=None
 
     if rubric_id:
         root_filter.append({
-            "term": {
-                "rubrics.id": rubric_id
+            'term': {
+                'rubrics.id': rubric_id
             }
         })
 
     body = {
-        "from": start,
-        "filter": {
-            "and": root_filter
+        'from': start,
+        'filter': {
+            'and': root_filter
         }
     }
 

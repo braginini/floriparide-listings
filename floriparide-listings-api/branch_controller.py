@@ -125,10 +125,17 @@ def search(q, project_id, start, limit, locale='pt_Br', filters=None, send_attrs
     if sort:
         sort = json.loads(sort)
 
-    branches, total = branch_service.search(q, project_id, start, limit, filters, sort, locale)
+    if send_attrs or start == 0:
+        branches, total = branch_service.search(q, project_id, start, 1000, filters, sort, locale)
+    else:
+        branches, total = branch_service.search(q, project_id, start, limit, filters, sort, locale)
 
-    # prepare markers with branch_id, name, lat, lon
-    top_rubrics, top_attributes_group = branch_service.get_top_rubrics(branches)
+    top_attributes_group = []
+    top_rubrics = []
+    if start == 0 or send_attrs:
+        # prepare markers with branch_id, name, lat, lon
+        top_rubrics, top_attributes_group = branch_service.get_top_rubrics(branches)
+
     if start == 0:
         result['markers'] = markers_response(branch_service.get_markers(branches), locale)
         result['top_rubrics'] = top_rubrics
@@ -138,6 +145,8 @@ def search(q, project_id, start, limit, locale='pt_Br', filters=None, send_attrs
             a['attributes'] = list(map(lambda attr: localize_names(attr, locale), a['attributes']))
             localize_names(a, locale)
         result['top_attributes'] = top_attributes_group
+    elif start == 0:
+        result['has_attributes'] = list({a['id'] for g in top_attributes_group for a in g['attributes']})
 
     # cut the resulting list. Only after we get markers and top rubrics!!!
     # Cuz markers and top rubrics are calculated based on full search result

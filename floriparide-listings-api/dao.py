@@ -117,6 +117,27 @@ class AttributeDao(BaseDao):
             cur.execute(query, (group_id,))
             return cur.fetchall()
 
+    def get_branch_attributes(self, group_id, branch_ids):
+        with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            bids = ','.join(branch_ids)
+            query = 'SELECT id, group_id, ' \
+                    'cast(data->>(\'names\') as json) as names,  ' \
+                    'data->>(\'input_type\') as input_type, ' \
+                    'data->>(\'filter_type\') as filter_type, ' \
+                    'data->>(\'weight\') as weight, ' \
+                    'data->>(\'min\') as min, ' \
+                    'data->>(\'max\') as max, ' \
+                    'data->>(\'suffix\') as suffix ' \
+                    'FROM public.attribute a ' \
+                    'INNER JOIN ' \
+                    '  (SELECT DISTINCT cast(attr->>\'id\' as int) as attr_id ' \
+                    '       FROM public.branch b, json_array_elements(b.draft->\'attributes\') attr' \
+                    '       WHERE b.id in (' + bids + ')' \
+                    '  ) ba on (a.id = ba.attr_id)' \
+                    'WHERE group_id = %s'
+            cur.execute(query, (group_id,))
+            return cur.fetchall()
+
     def get_groups(self, attr_ids):
         with get_cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             query = 'SELECT id, cast(data->>(\'names\') as json) as names, data->>(\'description\') as description, ' \
