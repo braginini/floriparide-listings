@@ -55,6 +55,7 @@ def project_response(project, locale):
                 name=project["data"]["names"].get(locale),
                 locale=project["data"]["locale"],
                 language=project["data"]["language"],
+                phone_codes=project["data"]["phone_codes"],
                 time_zone=project["data"]["time_zone"],
                 zoom=project["data"]["zoom"],
                 #bounds=project["data"]["bounds"],  todo use from DB
